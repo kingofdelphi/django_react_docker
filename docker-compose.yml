@@ -5,12 +5,15 @@ services:
     restart: always
     build: ./django
     ports:
-      - 8060:8000
+      - 8000:8000
         #environment:
       #DEBUG: 'true'
       #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
-  nginx:
-    build: ./nginx
+  nginx-frontend:
+    build: 
+      # set set context to root folder so that we can copy frontend inside nginx
+      context: ./
+      dockerfile: ./nginx-frontend/Dockerfile
     ports:
-      - 8080:80
+      - 80:80
 
