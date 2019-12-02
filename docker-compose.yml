@@ -9,4 +9,8 @@ services:
         #environment:
       #DEBUG: 'true'
       #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
+  nginx:
+    build: ./nginx
+    ports:
+      - 8080:80
 
