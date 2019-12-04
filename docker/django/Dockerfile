@@ -12,10 +12,10 @@ WORKDIR /code
 
 # Install dependencies
 RUN pip install pipenv
-COPY Pipfile Pipfile.lock /code/
+COPY django/Pipfile django/Pipfile.lock ./
 RUN pipenv install --system
 
 # Copy project
-COPY ./backend /code/
+COPY django/backend /code/
 
 ENTRYPOINT sh -c "python manage.py runserver 0.0.0.0:8000"

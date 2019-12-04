@@ -3,7 +3,9 @@ version: '3'
 services:
   web:
     restart: always
-    build: ./django
+    build: 
+      dockerfile: docker/django/Dockerfile
+      context: ../
     expose:
       - "8000"
         #environment:
@@ -12,8 +14,8 @@ services:
   nginx-frontend:
     build: 
       # set set context to root folder so that we can copy frontend inside nginx
-      context: ./
-      dockerfile: ./nginx-frontend/Dockerfile
+      context: ../
+      dockerfile: docker/nginx-frontend/Dockerfile.prod
     ports:
       - 80:80
 
