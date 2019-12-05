@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
-WORKDIR /code
+WORKDIR /src
 
 # Install dependencies
 RUN pip install pipenv
@@ -16,6 +16,6 @@ COPY django/Pipfile django/Pipfile.lock ./
 RUN pipenv install --system
 
 # Copy project
-COPY django/backend /code/
+COPY django/src /src/
 
 ENTRYPOINT sh -c "python manage.py runserver 0.0.0.0:8000"
