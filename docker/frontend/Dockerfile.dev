@@ -4,3 +4,4 @@ WORKDIR /app
 COPY frontend/package*.json .
 RUN yarn install
 
+ENTRYPOINT ["yarn", "start"]
