@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: 
+      context: ../
+      dockerfile: docker/django/Dockerfile
+    volumes:
+      - "../django/src:/src"
+    expose:
+      - "8000"
+        #environment:
+      #DEBUG: 'true'
+      #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
+  frontend:
+    build: 
+      context: ../
+      dockerfile: docker/frontend/Dockerfile.dev
+    volumes:
+      - "../frontend:/app"
+      - "/app/node_modules" # mounting local node_modules is really slow on mac, so we create a data volume
+    tty: true # without terminal sh exists immediately as it has nothing to do
+    ports:
+      - 3000:3000
+  nginx-frontend:
+    build: 
+      # set set context to root folder so that we can copy frontend inside nginx
+      context: ../
+      dockerfile: docker/nginx-frontend/Dockerfile.dev
+    ports:
+      - 80:80
+

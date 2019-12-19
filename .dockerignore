@@ -1,0 +1,3 @@
+# this file should be placed at the location that is referenced in build context of nginx-frontend 
+# mentioned in docker-compose
+frontend/node_modules
