@@ -22,8 +22,7 @@ def index(request):
     return HttpResponse("Hello world")
 
 urlpatterns = [
-    path('api/admin/', admin.site.urls),
-    path('api/', index, name='index'),
-    path('api/accounts/', include('accounts.urls'))
-    
+    path('admin/', admin.site.urls),
+    path('/', index, name='index'),
+    path('accounts/', include('accounts.urls'))
 ]
