@@ -24,5 +24,6 @@ def index(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
-    path('users/', include('accounts.urls'))
+    path('users/', include('accounts.urls')),
+    path('timezones/', include('timezone.urls'))
 ]

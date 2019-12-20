@@ -37,7 +37,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         # get the password from the data
         password = data.get('password')
 
-        errors = dict() 
+        errors = dict()
         try:
             # validate the password and catch the exception
             validators.validate_password(password=password, user=User)
