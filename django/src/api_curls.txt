@@ -1,0 +1,2 @@
+# obtain token auth
+curl -X POST -H "Content-Type: application/json" -d '{"username":"admin","password":"changeme"}' http://localhost/api/accounts/api-token-auth/

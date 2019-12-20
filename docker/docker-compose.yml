@@ -8,8 +8,8 @@ services:
       dockerfile: docker/django/Dockerfile
     volumes:
       - "../django/src:/src"
-    expose:
-      - "8000"
+    ports:
+      - 8000:8000
         #environment:
       #DEBUG: 'true'
       #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
