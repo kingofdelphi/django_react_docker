@@ -1,6 +1,10 @@
 from rest_framework_jwt.views import obtain_jwt_token
-from django.urls import re_path
+from django.urls import path
+
+from .views import UserList
+
 
 urlpatterns = [
-    re_path(r'^api-token-auth/', obtain_jwt_token),
+    path('', UserList.as_view()),
+    path('login/', obtain_jwt_token),
 ]

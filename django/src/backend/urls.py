@@ -19,10 +19,10 @@ from django.urls import path, include
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("Hello world")
+    return HttpResponse("This is the backend server for TimeZone app")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', index, name='index'),
-    path('accounts/', include('accounts.urls'))
+    path('', index, name='index'),
+    path('users/', include('accounts.urls'))
 ]
