@@ -14,11 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username',)
 
+class TokenSerializer(serializers.Serializer):
+    """
+    This serializer serializes the token data
+    """
+    token = serializers.CharField(max_length=255)
+
 
 # for creating user as well as logging him in
 class UserSerializerWithToken(serializers.ModelSerializer):
 
-    token = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
 
     # We need to implement this method as we have used a custom
@@ -46,14 +51,6 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
         return super(self.__class__, self).validate(data)
 
-    def get_token(self, obj):
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-        payload = jwt_payload_handler(obj)
-        token = jwt_encode_handler(payload)
-        return token
-
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
@@ -64,5 +61,5 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('token', 'username', 'password')
+        fields = ('username', 'password')
 
