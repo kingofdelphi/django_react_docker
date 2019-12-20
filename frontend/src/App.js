@@ -1,26 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import styles from './App.module.scss';
+import Button from './components/button';
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className={styles.main}>
+        <header className={styles.header}>
+          <div>
+            Welcome to TimeZone app
+          </div>
+        </header>
+        <section>
+          <div className={styles['action-buttons']}>
+            <Button>Login</Button>
+            <Button>SignUp</Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
 }
 
 export default App;

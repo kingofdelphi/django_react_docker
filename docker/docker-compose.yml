@@ -19,7 +19,7 @@ services:
       dockerfile: docker/frontend/Dockerfile.dev
     volumes:
       - "../frontend:/app"
-      - "/app/node_modules" # mounting local node_modules is really slow on mac, so we create a data volume
+      - "node_modules:/app/node_modules" # mounting local node_modules is really slow on mac, so we create a data volume
     tty: true # without terminal sh exists immediately as it has nothing to do
     ports:
       - 3000:3000
@@ -31,3 +31,9 @@ services:
     ports:
       - 80:80
 
+volumes:
+  # with each package addition outside the container, need to remove the old volume and build 
+  # front end image again otherwise new package additions won't be found
+  # named data volume will help to remove this particular volume easily
+  # But if we install new package inside the container
+  node_modules:
