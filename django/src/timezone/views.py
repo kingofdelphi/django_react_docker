@@ -1,21 +1,32 @@
-from rest_framework.views import APIView
+from rest_framework import generics
+
 from rest_framework import permissions, status
 
 from rest_framework.response import Response
 
+from .models import TimeZone
 from .serializers import TimeZoneSerializer
 
 # Create your views here.
-class TimeZoneList(APIView):
-    """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
-    """
-
+class TimeZoneList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = TimeZone.objects.filter(user=user)
+        return queryset
+
+    def list(self, request):
+        # Note the use of `get_queryset()` instead of `self.queryset`
+        queryset = self.get_queryset()
+        serializer = TimeZoneSerializer(queryset, many=True)
+        print('hi', request)
+        return Response(serializer.data)
+
     def post(self, request, format=None):
-        serializer = TimeZoneSerializer(data=request.data)
+        # serializer needs context to automatically add current user to the timezone
+        # about to be created
+        serializer = TimeZoneSerializer(data=request.data, context={"request": self.request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

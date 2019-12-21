@@ -1,0 +1,34 @@
+$padding: 5px 10px;
+.main {
+  margin: 5px;
+  display: inline-block;
+  background: white;
+  label {
+    padding: 4px;
+  }
+}
+
+.header {
+  padding: $padding;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: skyblue;
+  .name {
+    font-size: 2em;
+    padding: 4px;
+  }
+}
+
+.content {
+  padding: $padding;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-buttons {
+  margin-left: 20px;
+  > *:not(:first-child) {
+    margin-left: 5px;
+  }
+}

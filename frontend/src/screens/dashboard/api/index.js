@@ -1,14 +1,12 @@
 import E from '../../../utils';
 
-export const login = (data, success_callback, failure_callback) => {
+export const get_timezones = (success_callback, failure_callback) => {
   fetch(
-    E('/users/login/'),
+    E('/timezones/'),
     {
-      method: "POST",
       headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data)
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
     }
   ).then(res => {
     if (res.status === 200) {
@@ -20,4 +18,5 @@ export const login = (data, success_callback, failure_callback) => {
     failure_callback('Unexpected error occurred');
    });
 };
+
 
