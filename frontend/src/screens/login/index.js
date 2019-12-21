@@ -31,11 +31,17 @@ class Login extends React.PureComponent {
   }
 
   onUsernameChange = (event) => {
-    this.setState({ username: event.target.value });
+    this.setState({ 
+      username: event.target.value,
+      validation_error: '',
+    });
   };
 
   onPasswordChange = (event) => {
-    this.setState({ password: event.target.value });
+    this.setState({ 
+      password: event.target.value,
+      validation_error: '',
+    });
   };
 
   render() {
@@ -66,11 +72,7 @@ class Login extends React.PureComponent {
             label="Password" 
           />
           <Button>Login</Button>
-            { validation_error && 
-                (
-                  <span className={styles['error-message']}>{validation_error}</span> 
-                )
-            }
+          <span className={styles['error-message']}>{validation_error}&nbsp;</span> 
         </form>
       </div>
     );

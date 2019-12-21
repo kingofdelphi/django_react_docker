@@ -12,12 +12,12 @@ export const login = (data, success_callback, failure_callback) => {
     }
   ).then(res => {
     if (res.status === 200) {
-      success_callback(res.json());
+      res.json().then(success_callback);
     } else {
       failure_callback("Invalid credentials");
     }
   }).catch((e) => {
-     console.log(e);
+    failure_callback('Unexpected error occurred');
    });
 };
 
