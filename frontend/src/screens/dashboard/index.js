@@ -43,6 +43,8 @@ class Dashboard extends React.Component {
 
   render() {
     const { timezones } = this.state;
+    const description = timezones.length > 0 ?
+      "Timezones you've added" : "You have not added any timezones.";
     return (
       <div className={styles['main']}>
         <header>
@@ -53,7 +55,7 @@ class Dashboard extends React.Component {
           </div>
         </header>
         <section>
-          <h3>Timezones you've added</h3>
+          <h3>{description}</h3>
           {
             timezones.map(timezone => {
               return (
