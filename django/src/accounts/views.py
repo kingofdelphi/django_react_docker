@@ -35,6 +35,9 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(generics.CreateAPIView):
+    # redundant ??
+    serializer_class = TokenSerializer
+    
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):

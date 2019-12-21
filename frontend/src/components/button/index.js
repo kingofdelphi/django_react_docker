@@ -2,9 +2,12 @@ import React from 'react';
 import styles from './styles.module.scss';
 
 function Button(props) {
-  const { children } = props;
+  const { 
+    onClick,
+    children, 
+  } = props;
   return (
-    <button className={styles.button}>
+    <button onClick={onClick} className={styles.button}>
       {children}
     </button>
   );
