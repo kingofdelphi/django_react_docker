@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import Button from '../../components/button';
 
 import TimeZone from './components/time_zone';
-import { get_timezones } from './api';
+import { 
+  get_timezones,
+  delete_timezone
+} from './api';
 
 import styles from './styles.module.scss';
 
@@ -24,6 +27,20 @@ class Dashboard extends React.Component {
     );
   }
 
+  handleTimeZoneDelete = (timezone) => {
+    delete_timezone(
+      timezone.id,
+      () => {
+        this.setState({
+          timezones: this.state.timezones.filter(tz => tz.id !== timezone.id),
+        });
+      },
+      () => {
+        alert('cant delete');
+      },
+    );
+  };
+
   render() {
     const { timezones } = this.state;
     return (
@@ -41,9 +58,11 @@ class Dashboard extends React.Component {
             timezones.map(timezone => {
               return (
                 <TimeZone
-                  key={timezone.name}
+                  key={timezone.id}
+                  id={timezone.id}
                   name={timezone.name}
                   city={timezone.city}
+                  onDelete={() => this.handleTimeZoneDelete(timezone)}
                   difference_to_GMT={timezone.difference_to_GMT}
                 />
               );

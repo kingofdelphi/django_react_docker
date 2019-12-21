@@ -1,6 +1,7 @@
 from rest_framework import generics
 
 from rest_framework import permissions, status
+from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 
@@ -20,7 +21,6 @@ class TimeZoneList(generics.ListCreateAPIView):
         # Note the use of `get_queryset()` instead of `self.queryset`
         queryset = self.get_queryset()
         serializer = TimeZoneSerializer(queryset, many=True)
-        print('hi', request)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -32,3 +32,7 @@ class TimeZoneList(generics.ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class TimeZoneDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TimeZone.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)

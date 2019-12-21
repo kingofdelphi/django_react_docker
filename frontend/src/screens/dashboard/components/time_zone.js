@@ -5,15 +5,12 @@ import Button from '../../../components/button';
 import styles from './styles.module.scss';
 
 class TimeZone extends React.Component {
-  delete = () => {
-    console.log('delete the app');
-  }
-
   render() {
     const { 
       name,
       city,
-      difference_to_GMT
+      difference_to_GMT,
+      onDelete,
     } = this.props;
     return (
       <div className={styles.main}>
@@ -21,7 +18,7 @@ class TimeZone extends React.Component {
           <label className={styles.name}>{name}</label>
             <div className={styles['action-buttons']}>
               <Button>Edit</Button>
-              <Button onClick={this.delete}>Delete</Button>
+              <Button onClick={onDelete}>Delete</Button>
             </div>
         </div>
         <div className={styles.content}>

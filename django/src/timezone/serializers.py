@@ -8,4 +8,4 @@ class TimeZoneSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TimeZone
-        fields = ('user', 'name', 'city', 'difference_to_GMT')
+        fields = ('id', 'user', 'name', 'city', 'difference_to_GMT')
