@@ -10,6 +10,9 @@ const timezones = (state = [], action) => {
   if (action.type === ActionTypes.DELETE_TIME_ZONE_DETAIL) {
     state = state.filter(tz => tz.id !== action.data.id);
   }
+  if (action.type === ActionTypes.UPDATE_TIME_ZONE_DETAIL) {
+    state = state.map(tz => tz.id === action.data.id ? action.data : tz);
+  }
   return state;
 };
 

@@ -35,4 +35,5 @@ class TimeZoneList(generics.ListCreateAPIView):
 
 class TimeZoneDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = TimeZone.objects.all()
+    serializer_class = TimeZoneSerializer
     permission_classes = (permissions.IsAuthenticated,)

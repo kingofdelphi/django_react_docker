@@ -22,7 +22,7 @@ import {
 import { 
   get_timezones,
   delete_timezone
-} from './api';
+} from './api/timezones';
 
 import styles from './styles.module.scss';
 
@@ -52,7 +52,6 @@ class Dashboard extends React.Component {
 
   render() {
     const { timezones } = this.props;
-    console.log(timezones);
     const description = timezones.length > 0 ?
       "These are the timezones you've added." : "You have not added any timezones.";
     return (

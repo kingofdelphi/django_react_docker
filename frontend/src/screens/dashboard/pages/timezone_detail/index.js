@@ -6,12 +6,13 @@ import Input from '../../../../components/input';
 import Button from '../../../../components/button';
 
 import { closeModal } from '../../../../store/modals/actionCreators';
+
 import { 
   addTimeZoneDetail,
   updateTimeZoneDetail,
-} from './actions';
+} from '../../../../store/timezones/actionCreators';
 
-import { add_timezone, edit_timezone } from './api';
+import { add_timezone, edit_timezone } from '../../api/timezones';
 
 import styles from './styles.module.scss';
 
@@ -44,9 +45,15 @@ class TimeZoneDetailView extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const data = {
+      name: this.state.name,
+      city: this.state.city,
+      difference_to_GMT: this.state.difference_to_GMT,
+    };
     if (this.state.edit_mode) {
       edit_timezone(
-        this.state,
+        this.props.detail.id,
+        data,
         (time_zone_detail) => {
           this.props.updateTimeZoneDetail(time_zone_detail);
           this.props.close();
@@ -57,7 +64,7 @@ class TimeZoneDetailView extends React.Component {
       );
     } else {
       add_timezone(
-        this.state,
+        data,
         (time_zone_detail) => {
           this.props.addTimeZoneDetail(time_zone_detail);
           this.props.close();
