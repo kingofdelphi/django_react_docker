@@ -10,6 +10,7 @@ class Modal extends React.Component {
   constructor(props) {
     super(props);
     this.el = document.createElement('div');
+    this.content = React.createRef();
   }
 
   componentDidMount() {
@@ -32,7 +33,7 @@ class Modal extends React.Component {
 
     const content = (
       <div className={styles.main}>
-        <div className={contentStyle}>
+        <div ref={(content) => this.content = content } className={contentStyle}>
           {children}
         </div>
       </div>

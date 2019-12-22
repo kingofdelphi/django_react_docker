@@ -89,6 +89,7 @@ class TimeZoneDetailView extends React.Component {
           <section>
             <form onSubmit={this.handleSubmit}>
               <Input 
+                active
                 id="name" 
                 onChange={this.handleNameChange}
                 value={this.state.name} 
