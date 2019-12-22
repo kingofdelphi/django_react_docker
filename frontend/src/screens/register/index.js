@@ -72,6 +72,7 @@ class Register extends React.PureComponent {
         </header>
         <form className={styles.form} onSubmit={this.handleSubmit}>
           <Input 
+            active
             id="username" 
             onChange={this.onUsernameChange}
             value={username} 
