@@ -1,12 +1,15 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux'
 
 import Button from '../../components/button';
-import { mountModal } from '../../components/modal';
+import { 
+  addModal,
+  closeModal
+} from '../../modals/actionCreators';
+
+import * as ModalTypes from '../../modals/modal_types';
 
 import TimeZone from './components/time_zone';
-import AddNewTimeZone from './pages/add_new_timezone';
-import LogOut from './pages/logout';
 
 import { 
   get_timezones,
@@ -31,20 +34,6 @@ class Dashboard extends React.Component {
     );
   }
 
-  handleLogout = () => {
-    let modal;
-    const content = (
-      <LogOut 
-        onSubmit={() => {
-          this.props.history.push('/logout');
-          modal.close();
-        }}
-        onCancel={() => modal.close()}
-      />
-    );
-    modal = mountModal(content);
-  }
-
   handleTimeZoneDelete = (timezone) => {
     delete_timezone(
       timezone.id,
@@ -59,24 +48,6 @@ class Dashboard extends React.Component {
     );
   };
 
-  handleTimeZoneSubmit = () => {
-    this.modal.close();
-  };
-
-  handleTimeZoneClose = () => {
-    this.modal.close();
-  };
-
-  handleTimeZoneAdd = () => {
-    const content = (
-      <AddNewTimeZone 
-        onSubmit={this.handleTimeZoneSubmit}
-        onCancel={this.handleTimeZoneClose}
-      />
-    );
-    this.modal = mountModal(content);
-  }
-
   render() {
     const { timezones } = this.state;
     const description = timezones.length > 0 ?
@@ -86,8 +57,8 @@ class Dashboard extends React.Component {
         <header>
           <h1 className={styles['dashboard-title']}>Dashboard - TimeZone app</h1>
           <div className={styles['profile-actions']}>
-            <Button onClick={this.handleTimeZoneAdd}>Add</Button>
-            <Button onClick={this.handleLogout}>LogOut</Button>
+            <Button onClick={this.props.addTimeZoneDetailScreen}>Add</Button>
+            <Button onClick={this.props.addLogoutScreen}>LogOut</Button>
           </div>
         </header>
         <section>
@@ -112,5 +83,11 @@ class Dashboard extends React.Component {
   }
 }
 
-export default withRouter(Dashboard);
+const mapDispatchToProps = dispatch => ({ 
+  addTimeZoneDetailScreen: () => dispatch(addModal(ModalTypes.TimeZoneDetail)),
+  addLogoutScreen: () => dispatch(addModal(ModalTypes.LogOut)),
+  closeModal: () => dispatch(closeModal()),
+});
 
+
+export default connect(null, mapDispatchToProps)(Dashboard);

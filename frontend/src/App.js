@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux'
 
 import {
   BrowserRouter as Router,
@@ -12,6 +13,8 @@ import Login from './screens/login';
 import Logout from './screens/logout';
 import Register from './screens/register';
 import Dashboard from './screens/dashboard';
+
+import { map_modals_config_to_jsx } from './modals/utils';
 
 const guest_user_routes = ['/', '/login', '/register'];
 
@@ -59,14 +62,20 @@ const RoutesWrapped = withRouter(Routes);
 
 class App extends React.Component {
   render() {
+    const { modals } = this.props;
     return (
       <Router>
         <Switch>
           <RoutesWrapped />
         </Switch>
+        {map_modals_config_to_jsx(modals)}
       </Router>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  modals: state.modals,
+});
+
+export default connect(mapStateToProps, null)(App);

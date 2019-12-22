@@ -7,23 +7,21 @@ const appRoot = document.getElementById('root');
 const modalRoot = document.getElementById('modal-root');
 
 class Modal extends React.Component {
-  modalContainer = () => {
-    return ReactDOM.findDOMNode(this).parentNode;
+  constructor(props) {
+    super(props);
+    this.el = document.createElement('div');
   }
 
   componentDidMount() {
     appRoot.classList.add(styles.root);
+    modalRoot.appendChild(this.el);
   }
 
   componentWillUnmount() {
     appRoot.classList.remove(styles.root);
-    modalRoot.removeChild(this.modalContainer());
+    modalRoot.removeChild(this.el);
   }
   
-  close() {
-    ReactDOM.unmountComponentAtNode(this.modalContainer());
-  }
-
   render() {
     const { 
       children,
@@ -32,23 +30,19 @@ class Modal extends React.Component {
 
     const contentStyle = [styles.content, contentClass].join(' ');
 
-    return (
+    const content = (
       <div className={styles.main}>
         <div className={contentStyle}>
           {children}
         </div>
       </div>
     );
+
+    return ReactDOM.createPortal(
+      content,
+      this.el,
+    );
   }
 }
-
-export const mountModal = (children) => {
-  const modalContainer = document.createElement('div');
-  modalRoot.appendChild(modalContainer);
-  const modal = (
-    <Modal>{children}</Modal>
-  );
-  return ReactDOM.render(modal, modalContainer);
-};
 
 export default Modal;
