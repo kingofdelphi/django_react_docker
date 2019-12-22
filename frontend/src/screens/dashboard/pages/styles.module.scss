@@ -1,0 +1,26 @@
+$padding: 10px;
+
+.main {
+  border: 1px solid black;
+  display: flex;
+  background: white;
+  flex-direction: column;
+  section {
+    padding: $padding;
+    display: flex;
+    flex-direction: column;
+    > *:not(:first-child) {
+      margin-top: 10px;
+    }
+  }
+}
+
+.title {
+  border-bottom: 1px solid black;
+  padding: $padding;
+}
+
+.buttons {
+  padding: 10px 0;
+  display: flex;
+}

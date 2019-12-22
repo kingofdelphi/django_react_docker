@@ -1,9 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
 import Button from '../../components/button';
+import { mountModal } from '../../components/modal';
 
 import TimeZone from './components/time_zone';
+import AddNewTimeZone from './pages/add_new_timezone';
+import LogOut from './pages/logout';
+
 import { 
   get_timezones,
   delete_timezone
@@ -27,6 +31,20 @@ class Dashboard extends React.Component {
     );
   }
 
+  handleLogout = () => {
+    let modal;
+    const content = (
+      <LogOut 
+        onSubmit={() => {
+          this.props.history.push('/logout');
+          modal.close();
+        }}
+        onCancel={() => modal.close()}
+      />
+    );
+    modal = mountModal(content);
+  }
+
   handleTimeZoneDelete = (timezone) => {
     delete_timezone(
       timezone.id,
@@ -41,6 +59,24 @@ class Dashboard extends React.Component {
     );
   };
 
+  handleTimeZoneSubmit = () => {
+    this.modal.close();
+  };
+
+  handleTimeZoneClose = () => {
+    this.modal.close();
+  };
+
+  handleTimeZoneAdd = () => {
+    const content = (
+      <AddNewTimeZone 
+        onSubmit={this.handleTimeZoneSubmit}
+        onCancel={this.handleTimeZoneClose}
+      />
+    );
+    this.modal = mountModal(content);
+  }
+
   render() {
     const { timezones } = this.state;
     const description = timezones.length > 0 ?
@@ -50,8 +86,8 @@ class Dashboard extends React.Component {
         <header>
           <h1 className={styles['dashboard-title']}>Dashboard - TimeZone app</h1>
           <div className={styles['profile-actions']}>
-            <Button>Add</Button>
-            <Link to='/logout'>LogOut</Link>
+            <Button onClick={this.handleTimeZoneAdd}>Add</Button>
+            <Button onClick={this.handleLogout}>LogOut</Button>
           </div>
         </header>
         <section>
@@ -76,5 +112,5 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default withRouter(Dashboard);
 
