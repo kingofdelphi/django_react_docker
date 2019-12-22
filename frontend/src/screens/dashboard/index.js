@@ -5,16 +5,19 @@ import Button from '../../components/button';
 import TimeZone from './components/time_zone';
 
 import { 
-  addModal,
   closeModal
-} from '../../modals/actionCreators';
+} from '../../store/modals/actionCreators';
+
+import { 
+  showLogOutModal,
+  showAddNewTimeZoneDetailModal,
+  showEditTimeZoneDetailModal,
+} from './actions';
 
 import { 
   setTimeZoneList,
   deleteTimeZoneDetail,
-} from './meta/actionCreators';
-
-import * as ModalTypes from '../../modals/modal_types';
+} from '../../store/timezones/actionCreators';
 
 import { 
   get_timezones,
@@ -49,6 +52,7 @@ class Dashboard extends React.Component {
 
   render() {
     const { timezones } = this.props;
+    console.log(timezones);
     const description = timezones.length > 0 ?
       "These are the timezones you've added." : "You have not added any timezones.";
     return (
@@ -56,8 +60,8 @@ class Dashboard extends React.Component {
         <header>
           <h1 className={styles['dashboard-title']}>Dashboard - TimeZone app</h1>
           <div className={styles['profile-actions']}>
-            <Button onClick={this.props.addTimeZoneDetailScreen}>Add</Button>
-            <Button onClick={this.props.addLogoutScreen}>LogOut</Button>
+            <Button onClick={this.props.showAddNewTimeZoneDetailModal}>Add</Button>
+            <Button onClick={this.props.showLogOutModal}>LogOut</Button>
           </div>
         </header>
         <section>
@@ -70,6 +74,7 @@ class Dashboard extends React.Component {
                   id={timezone.id}
                   name={timezone.name}
                   city={timezone.city}
+                  onEdit={() => this.props.showEditTimeZoneDetailModal(timezone)}
                   onDelete={() => this.handleTimeZoneDelete(timezone)}
                   difference_to_GMT={timezone.difference_to_GMT}
                 />
@@ -86,8 +91,9 @@ const mapDispatchToProps = dispatch => ({
   setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
   deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
 
-  addTimeZoneDetailScreen: () => dispatch(addModal(ModalTypes.TimeZoneDetail)),
-  addLogoutScreen: () => dispatch(addModal(ModalTypes.LogOut)),
+  showAddNewTimeZoneDetailModal: () => dispatch(showAddNewTimeZoneDetailModal()),
+  showEditTimeZoneDetailModal: (timezone_detail) => dispatch(showEditTimeZoneDetailModal(timezone_detail)),
+  showLogOutModal: () => dispatch(showLogOutModal()),
   closeModal: () => dispatch(closeModal()),
 });
 

@@ -10,6 +10,7 @@ class TimeZone extends React.Component {
       name,
       city,
       difference_to_GMT,
+      onEdit,
       onDelete,
     } = this.props;
     return (
@@ -17,7 +18,7 @@ class TimeZone extends React.Component {
         <div className={styles.header}>
           <label className={styles.name}>{name}</label>
             <div className={styles['action-buttons']}>
-              <Button>Edit</Button>
+              <Button onClick={onEdit}>Edit</Button>
               <Button onClick={onDelete}>Delete</Button>
             </div>
         </div>

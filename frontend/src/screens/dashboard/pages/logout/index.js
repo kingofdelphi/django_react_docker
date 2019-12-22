@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 import Modal from '../../../../components/modal';
 import Button from '../../../../components/button';
 
-import { closeModal } from '../../../../modals/actionCreators';
+import { closeModal } from '../../../../store/modals/actionCreators';
 
 import styles from './styles.module.scss';
 

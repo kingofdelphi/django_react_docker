@@ -14,7 +14,7 @@ import Logout from './screens/logout';
 import Register from './screens/register';
 import Dashboard from './screens/dashboard';
 
-import { map_modals_config_to_jsx } from './modals/utils';
+import { map_modals_config_to_jsx } from './store/modals/utils';
 
 const guest_user_routes = ['/', '/login', '/register'];
 

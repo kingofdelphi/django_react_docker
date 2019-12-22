@@ -3,10 +3,13 @@ import {
   CLOSE_MODAL,
 } from './actions';
 
-export const addModal = (modal_info) => {
+export const addModal = (modal_type, modal_info) => {
   return {
     type: ADD_MODAL,
-    data: modal_info,
+    data: {
+      type: modal_type,
+      data: modal_info,
+    },
   }
 };
 
