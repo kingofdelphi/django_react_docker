@@ -2,14 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux'
 
 import Button from '../../components/button';
+import TimeZone from './components/time_zone';
+
 import { 
   addModal,
   closeModal
 } from '../../modals/actionCreators';
 
-import * as ModalTypes from '../../modals/modal_types';
+import { 
+  setTimeZoneList,
+  deleteTimeZoneDetail,
+} from './meta/actionCreators';
 
-import TimeZone from './components/time_zone';
+import * as ModalTypes from '../../modals/modal_types';
 
 import { 
   get_timezones,
@@ -19,14 +24,10 @@ import {
 import styles from './styles.module.scss';
 
 class Dashboard extends React.Component {
-  state = {
-    timezones: []
-  };
-
   componentDidMount() {
     get_timezones(
       (timezones) => {
-        this.setState({ timezones });
+        this.props.setTimeZoneList(timezones);
       },
       (error_message) => {
         alert(error_message);
@@ -38,9 +39,7 @@ class Dashboard extends React.Component {
     delete_timezone(
       timezone.id,
       () => {
-        this.setState({
-          timezones: this.state.timezones.filter(tz => tz.id !== timezone.id),
-        });
+        this.props.deleteTimeZoneDetail(timezone);
       },
       () => {
         alert('cant delete');
@@ -49,7 +48,7 @@ class Dashboard extends React.Component {
   };
 
   render() {
-    const { timezones } = this.state;
+    const { timezones } = this.props;
     const description = timezones.length > 0 ?
       "These are the timezones you've added." : "You have not added any timezones.";
     return (
@@ -84,10 +83,18 @@ class Dashboard extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({ 
+  setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
+  deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
+
   addTimeZoneDetailScreen: () => dispatch(addModal(ModalTypes.TimeZoneDetail)),
   addLogoutScreen: () => dispatch(addModal(ModalTypes.LogOut)),
   closeModal: () => dispatch(closeModal()),
 });
 
+const mapStateToProps = state => ({ 
+  timezones: state.timezones,
+});
 
-export default connect(null, mapDispatchToProps)(Dashboard);
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

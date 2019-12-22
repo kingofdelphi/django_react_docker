@@ -6,6 +6,7 @@ import Input from '../../../../components/input';
 import Button from '../../../../components/button';
 
 import { closeModal } from '../../../../modals/actionCreators';
+import { addTimeZoneDetail } from '../../meta/actionCreators';
 
 import { add_timezone } from './api';
 
@@ -34,8 +35,8 @@ class AddNewTimeZone extends React.Component {
     event.preventDefault();
     add_timezone(
       this.state,
-      (msg) => {
-        console.log(msg);
+      (time_zone_detail) => {
+        this.props.addTimeZoneDetail(time_zone_detail);
         this.props.close();
       },
       (msg) => {
@@ -84,6 +85,7 @@ class AddNewTimeZone extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+  addTimeZoneDetail: (time_zone_detail) => dispatch(addTimeZoneDetail(time_zone_detail)),
   close: () => dispatch(closeModal()),
 });
 

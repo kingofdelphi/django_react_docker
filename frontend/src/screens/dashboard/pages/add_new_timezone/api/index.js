@@ -13,7 +13,7 @@ export const add_timezone = (timezone_info, success_callback, failure_callback) 
     }
   ).then(res => {
     if (res.status === 201) {
-      success_callback();
+      res.json().then(success_callback);
     } else {
       failure_callback("Couldnot add");
     }
