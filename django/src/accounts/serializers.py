@@ -12,7 +12,9 @@ class PasswordEqualitySerializer(serializers.Serializer):
     password2 = serializers.CharField()
     def validate(self, data):
         if data.get('password1') != data.get('password2'):
-            raise serializers.ValidationError("Passwords don't match")
+            raise serializers.ValidationError({
+                'password': "Passwords don't match"
+            })
         return super(self.__class__, self).validate(data)
         
 
