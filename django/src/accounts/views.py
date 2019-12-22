@@ -26,19 +26,22 @@ class UserList(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        serializer = PasswordEqualitySerializer(
+        password_equality_serializer = PasswordEqualitySerializer(
             data={
                 'password1': request.data.get('password'),
                 'password2': request.data.get('password1'),
             }
         )
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        register_user_serializer = UserSerializer(data=request.data)
+        valid1 = password_equality_serializer.is_valid()
+        valid2 = register_user_serializer.is_valid()
+        if valid1 and valid2:
+            register_user_serializer.save()
+            return Response(register_user_serializer.data, status=status.HTTP_201_CREATED)
+
+        # CAUTION: non-field-errors must be merged separately *************************
+        errors = { **register_user_serializer.errors, **password_equality_serializer.errors }
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(generics.CreateAPIView):
     
