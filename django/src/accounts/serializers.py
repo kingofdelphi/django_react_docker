@@ -7,23 +7,19 @@ from rest_framework_jwt.settings import api_settings
 
 import django.contrib.auth.password_validation as validators
 
-
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('username',)
-
-class TokenSerializer(serializers.Serializer):
-    """
-    This serializer serializes the token data
-    """
-    token = serializers.CharField(max_length=255)
-
+class PasswordEqualitySerializer(serializers.Serializer):
+    password1 = serializers.CharField()
+    password2 = serializers.CharField()
+    def validate(self, data):
+        if data.get('password1') != data.get('password2'):
+            raise serializers.ValidationError("Passwords don't match")
+        return super(self.__class__, self).validate(data)
+        
 
 # for creating user as well as logging him in
-class UserSerializerWithToken(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
+    # donot generate on api output
     password = serializers.CharField(write_only=True)
 
     # We need to implement this method as we have used a custom

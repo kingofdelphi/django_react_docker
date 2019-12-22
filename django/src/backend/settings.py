@@ -136,6 +136,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'accounts.utils.jwt_response_handler',
     'JWT_VERIFY_EXPIRATION': not DEBUG,
 }

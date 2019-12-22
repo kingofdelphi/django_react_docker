@@ -13,7 +13,7 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
-from .serializers import TokenSerializer, UserSerializerWithToken
+from .serializers import UserSerializer, PasswordEqualitySerializer
 
 # Create your views here.
 
@@ -26,15 +26,21 @@ class UserList(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        serializer = UserSerializerWithToken(data=request.data)
+        serializer = PasswordEqualitySerializer(
+            data={
+                'password1': request.data.get('password'),
+                'password2': request.data.get('password1'),
+            }
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(generics.CreateAPIView):
-    # redundant ??
-    serializer_class = TokenSerializer
     
     permission_classes = (permissions.AllowAny,)
 
@@ -43,12 +49,10 @@ class LoginView(generics.CreateAPIView):
         password = request.data.get("password", "")
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            serializer = TokenSerializer(data={
-                "token": jwt_encode_handler(
-                    jwt_payload_handler(user)
-                )
-            })
-            serializer.is_valid()
-            return Response(serializer.data)
+            data = {
+                "username": username,
+                "token": jwt_encode_handler(jwt_payload_handler(user)),
+            }
+            return Response(data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
