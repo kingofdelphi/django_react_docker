@@ -51,7 +51,7 @@ class Dashboard extends React.Component {
   render() {
     const { timezones } = this.state;
     const description = timezones.length > 0 ?
-      "Timezones you've added" : "You have not added any timezones.";
+      "These are the timezones you've added." : "You have not added any timezones.";
     return (
       <div className={styles['main']}>
         <header>
