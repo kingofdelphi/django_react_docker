@@ -27,6 +27,7 @@ class Input extends React.PureComponent {
         <label htmlFor={id}>{label}</label>
         <input 
           ref={(el) => this.ref = el}
+          autoComplete={id}
           id={id} 
           type={type}
           value={value}

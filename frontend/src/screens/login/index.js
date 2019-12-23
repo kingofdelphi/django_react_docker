@@ -67,6 +67,7 @@ class Login extends React.PureComponent {
           />
           <Input 
             id="password" 
+            autoComplete="current-password"
             type="password"
             onChange={this.onPasswordChange}
             value={password} 
