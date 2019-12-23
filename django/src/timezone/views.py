@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from .models import TimeZone
 from .serializers import TimeZoneSerializer
 
-from .permissions import IsOwner
+from .permissions import IsOwnerOrAdmin
 
 # Create your views here.
 class TimeZoneList(generics.ListCreateAPIView):
@@ -38,4 +38,5 @@ class TimeZoneList(generics.ListCreateAPIView):
 class TimeZoneDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = TimeZone.objects.all()
     serializer_class = TimeZoneSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser | IsOwner, )
+    # bitwise or is not workign
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
