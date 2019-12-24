@@ -23,6 +23,7 @@ class NavBar extends React.PureComponent {
       <div className={styles.main}>
         <div className={styles['app-title']}>TimeZone App</div>
         <div className={styles['profile-actions']}>
+          { isLoggedIn && <span className={styles['username']}>{loginInfo.username}</span> }
           { isLoggedIn && <Button onClick={this.props.showLogOutModal}>LogOut</Button> }
         </div>
       </div>

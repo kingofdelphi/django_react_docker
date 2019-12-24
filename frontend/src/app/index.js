@@ -77,7 +77,7 @@ class App extends React.Component {
   componentDidMount() {
     if (getToken()) {
       this.props.setLoginUserInfo({ 
-        username: 'uttam' 
+        username: localStorage.getItem('username')
       });
     }
   }

@@ -23,6 +23,7 @@ class Login extends React.PureComponent {
     login(
       this.state,
       (userInfo) => {
+        localStorage.setItem('username', userInfo.username);
         localStorage.setItem('token', userInfo.token);
         this.props.setLoginUserInfo({
           ...userInfo

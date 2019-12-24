@@ -11,6 +11,17 @@
   font-size: 1.8rem;
 }
 
+.username {
+  font-weight: bold;
+}
+
 .profile-actions {
   cursor: pointer;
+  button {
+    margin-left: 20px;
+    background: none;
+    border-color: grey;
+    color: white;
+    font-size: .9rem;
+  }
 }
