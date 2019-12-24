@@ -1,5 +1,4 @@
 .main {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,6 +12,13 @@
 }
 
 .header {
+  text-align: center;
+  p {
+    margin: 20px 0;
+  }
+}
+
+.greetings {
   font-size: 2em;
 }
 

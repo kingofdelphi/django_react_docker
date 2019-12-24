@@ -13,7 +13,3 @@ export const showEditTimeZoneDetailModal = (time_zone_detail) => {
     time_zone_detail,
   )
 };
-
-export const showLogOutModal = () => {
-  return addModal(ModalTypes.LogOut);
-};

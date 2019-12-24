@@ -8,21 +8,34 @@ import {
   withRouter,
 } from "react-router-dom";
 
-import HomePage from './screens/home';
-import Login from './screens/login';
-import Logout from './screens/logout';
-import Register from './screens/register';
-import Dashboard from './screens/dashboard';
+import HomePage from '../screens/home';
+import Login from '../screens/login';
+import Logout from '../screens/logout';
+import Register from '../screens/register';
+import Dashboard from '../screens/dashboard';
 
-import { map_modals_config_to_jsx } from './store/modals/utils';
+import NavBar from '../screens/components/navbar';
+
+import styles from './styles.module.scss';
+
+import { map_modals_config_to_jsx } from '../store/modals/utils';
+
+import { setLoginUserInfo } from '../store/login_info/actionCreators';
 
 const guest_user_routes = ['/', '/login', '/register'];
+
+const getToken = () => {
+  const token = localStorage.getItem('token');
+  if (!token || token === 'undefined') {
+    return null;
+  }
+  return token;
+};
 
 class Routes extends React.Component {
   componentDidMount() {
     const location = this.props.location.pathname;
-    const token = localStorage.getItem('token');
-    if (!token || token === 'undefined') {
+    if (!getToken()) {
       // if not logged in
       if (!guest_user_routes.includes(location)) {
         this.props.history.push('/');
@@ -61,21 +74,37 @@ class Routes extends React.Component {
 const RoutesWrapped = withRouter(Routes); 
 
 class App extends React.Component {
+  componentDidMount() {
+    if (getToken()) {
+      this.props.setLoginUserInfo({ 
+        username: 'uttam' 
+      });
+    }
+  }
+
   render() {
     const { modals } = this.props;
     return (
-      <Router>
-        <Switch>
-          <RoutesWrapped />
-        </Switch>
-        {map_modals_config_to_jsx(modals)}
-      </Router>
+      <div className={styles.container}>
+        <NavBar />
+        <Router>
+          <Switch>
+            <RoutesWrapped />
+          </Switch>
+          {map_modals_config_to_jsx(modals)}
+        </Router>
+      </div>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
   modals: state.modals,
+  loginInfo: state.loginInfo
 });
 
-export default connect(mapStateToProps, null)(App);
+const mapDispatchToProps = (dispatch) => ({
+  setLoginUserInfo: (loginUserInfo) => dispatch(setLoginUserInfo(loginUserInfo)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

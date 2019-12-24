@@ -8,9 +8,15 @@ class HomePage extends React.Component {
     return (
       <div className={styles.main}>
         <header className={styles.header}>
-          <div>
-            Welcome to TimeZone app
+          <div className={styles.greetings}>
+            Welcome
           </div>
+          <p>
+            To use the app you need to login.
+            <br />
+            If you don't have an account yet please use the register
+            button below to create one.
+          </p>
         </header>
         <section>
           <div className={styles['navigation-links']}>

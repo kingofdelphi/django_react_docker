@@ -1,4 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { logoutUser } from '../../store/login_info/actionCreators';
+
 import { 
   withRouter,
 } from 'react-router-dom'
@@ -6,6 +10,7 @@ import {
 class Logout extends React.Component {
   componentDidMount() {
     localStorage.removeItem('token');
+    this.props.logoutUser();
     this.props.history.push('/');
   }
 
@@ -16,4 +21,8 @@ class Logout extends React.Component {
   }
 }
 
-export default withRouter(Logout);
+const mapDispatchToProps = (dispatch) => ({
+  logoutUser: () => dispatch(logoutUser()),
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(Logout));

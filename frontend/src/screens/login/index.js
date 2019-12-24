@@ -1,9 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
 
+import { setLoginUserInfo } from '../../store/login_info/actionCreators';
 
 import { login } from './api';
 
@@ -13,19 +15,22 @@ class Login extends React.PureComponent {
   state = {
     username: '',
     password: '',
-    validation_error: '',
+    validationError: '',
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     login(
       this.state,
-      (user_info) => {
-        localStorage.setItem('token', user_info.token);
+      (userInfo) => {
+        localStorage.setItem('token', userInfo.token);
+        this.props.setLoginUserInfo({
+          ...userInfo
+        });
         this.props.history.push('/dashboard');
       },
-      (error_message) => {
-        this.setState({ validation_error: error_message });
+      (errorMessage) => {
+        this.setState({ validationError: errorMessage });
       },
     );
   }
@@ -33,14 +38,14 @@ class Login extends React.PureComponent {
   onUsernameChange = (event) => {
     this.setState({ 
       username: event.target.value,
-      validation_error: '',
+      validationError: '',
     });
   };
 
   onPasswordChange = (event) => {
     this.setState({ 
       password: event.target.value,
-      validation_error: '',
+      validationError: '',
     });
   };
 
@@ -48,7 +53,7 @@ class Login extends React.PureComponent {
     const {
       username,
       password,
-      validation_error,
+      validationError,
     } = this.state;
     return (
       <div className={styles.main}>
@@ -74,11 +79,15 @@ class Login extends React.PureComponent {
             label="Password" 
           />
           <Button>Login</Button>
-          <span className={styles['error-message']}>{validation_error}&nbsp;</span> 
+          <span className={styles['error-message']}>{validationError}&nbsp;</span> 
         </form>
       </div>
     );
   }
 }
 
-export default withRouter(Login);
+const mapDispatchToProps = (dispatch) => ({
+  setLoginUserInfo: (userInfo) => dispatch(setLoginUserInfo(userInfo)),
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(Login));
