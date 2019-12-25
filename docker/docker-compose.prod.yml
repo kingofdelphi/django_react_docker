@@ -6,6 +6,8 @@ services:
     build: 
       dockerfile: docker/django/Dockerfile
       context: ../
+    env_file: 
+      './config/prod.env'
     expose:
       - "8000"
         #environment:

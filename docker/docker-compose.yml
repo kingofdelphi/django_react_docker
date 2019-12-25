@@ -8,11 +8,11 @@ services:
       dockerfile: docker/django/Dockerfile
     volumes:
       - "../django/src:/src"
+    env_file: 
+      './config/dev.env'
     ports:
       - 8000:8000
-        #environment:
-      #DEBUG: 'true'
-      #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
+    #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
   frontend:
     build: 
       context: ../

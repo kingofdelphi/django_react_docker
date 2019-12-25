@@ -21,16 +21,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+mqk!k%c3s$1h1*^vz)x3p3b-r!%d75w(gb0wtyv*neq&nec@)'
+SECRET_KEY = os.getenv('SECRET_KEY', '+mqk!k%c3s$1h1*^vz)x3p3b-r!%d75w(gb0wtyv*neq&nec@)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('MODE', 'dev') == 'dev'
 
+server_name = os.getenv('SERVER_NAME', 'localhost')
 ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS = [server_name]
+# ALLOWED_HOSTS = [server_name, '{}:8000'.format(server_name)]
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-)
+# Please disable all CORS extensions on the UI to see the purpose
+CORS_ORIGIN_WHITELIST = ()
+
+if DEBUG:
+    CORS_ORIGIN_WHITELIST = (
+        'http://{}:3000'.format(server_name),
+    )
 
 # Application definition
 
