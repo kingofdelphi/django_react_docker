@@ -36,8 +36,13 @@ if not DEBUG:
 CORS_ORIGIN_WHITELIST = ()
 
 if DEBUG:
+    # handle cross origin request when using server_namae:3000 (directly accessing CRA app)
+    # handle cross origin request when using server_name
+    # for both cases api requests are to be made only through nginx - server_name/api
+    # the front
     CORS_ORIGIN_WHITELIST = (
         'http://{}:3000'.format(server_name),
+        'http://{}'.format(server_name),
     )
 
 # Application definition
