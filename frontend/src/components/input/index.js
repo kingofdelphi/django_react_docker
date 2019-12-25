@@ -9,8 +9,9 @@ class Input extends React.PureComponent {
 
   componentDidMount() {
     if (this.props.active) {
-      // hacky
-      setTimeout(() => this.ref.focus());
+      // since setTimeout is queued, sometimes ref gets destroyed
+      // due to url redirection
+      setTimeout(() => this.ref && this.ref.focus());
     }
   }
 

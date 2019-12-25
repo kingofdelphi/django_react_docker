@@ -34,6 +34,10 @@ const getToken = () => {
 
 class Routes extends React.Component {
   componentDidMount() {
+    this.validateRoutes();
+  }
+
+  validateRoutes() {
     const location = this.props.location.pathname;
     if (!getToken()) {
       // if not logged in
@@ -46,6 +50,13 @@ class Routes extends React.Component {
         this.props.history.push('/dashboard');
       }
     }
+  }
+
+  // called on browser back or hash name change on url
+  // as we have wrapepd it around withRouter which
+  // will send the changed params as props
+  componentDidUpdate() {
+    this.validateRoutes();
   }
 
   render() {
@@ -83,7 +94,9 @@ class App extends React.Component {
   }
 
   render() {
-    const { modals } = this.props;
+    const { 
+      modals,
+    } = this.props;
     return (
       <div className={styles.container}>
         <NavBar />
