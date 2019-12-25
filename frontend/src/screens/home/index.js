@@ -14,6 +14,7 @@ class HomePage extends React.Component {
           <p>
             To use the app you need to login.
             <br />
+            <br />
             If you don't have an account yet please use the register
             button below to create one.
           </p>

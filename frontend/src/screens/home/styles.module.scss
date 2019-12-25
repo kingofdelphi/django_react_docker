@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: black;
   section {
     margin-top: 80px;
@@ -12,14 +11,20 @@
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   p {
-    margin: 20px 0;
+    font-size: 1.2rem;
+    margin: 20px;
+    width: 60%;
   }
 }
 
 .greetings {
-  font-size: 2em;
+  text-align: center;
+  font-size: 3rem;
 }
 
 .navigation-links {

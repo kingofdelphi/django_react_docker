@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 import {
   showLogOutModal,
@@ -21,7 +22,7 @@ class NavBar extends React.PureComponent {
 
     return (
       <div className={styles.main}>
-        <div className={styles['app-title']}>TimeZone App</div>
+        <div onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
         <div className={styles['profile-actions']}>
           { isLoggedIn && <span className={styles['username']}>{loginInfo.username}</span> }
           { isLoggedIn && <Button onClick={this.props.showLogOutModal}>LogOut</Button> }
@@ -39,4 +40,4 @@ const mapDispatchToProps = dispatch => ({
   showLogOutModal: () => dispatch(showLogOutModal()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(NavBar));
