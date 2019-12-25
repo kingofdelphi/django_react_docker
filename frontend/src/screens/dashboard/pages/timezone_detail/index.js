@@ -84,7 +84,7 @@ class TimeZoneDetailView extends React.Component {
       <Modal>
         <div className={styles.main}>
           <header>
-            <h2 className={styles.title}>{header_title}</h2>
+            {header_title}
           </header>
           <section>
             <form onSubmit={this.handleSubmit}>

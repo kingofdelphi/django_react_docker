@@ -5,3 +5,9 @@ export const showLogOutModal = () => {
   return addModal(ModalTypes.LogOut);
 };
 
+export const showAddNewTimeZoneDetailModal = () => {
+  return addModal(
+    ModalTypes.TimeZoneDetail,
+  )
+};
+

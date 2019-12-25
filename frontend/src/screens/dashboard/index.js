@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
-import Button from '../../components/button';
 import TimeZone from './components/time_zone';
 
 import {
@@ -9,7 +8,6 @@ import {
 } from '../../store/modals/actionCreators';
 
 import {
-  showAddNewTimeZoneDetailModal,
   showEditTimeZoneDetailModal,
 } from './actions';
 
@@ -56,12 +54,9 @@ class Dashboard extends React.Component {
     return (
       <div className={styles['main']}>
         <header>
-          <div className={styles['profile-actions']}>
-            <Button onClick={this.props.showAddNewTimeZoneDetailModal}>Add</Button>
-          </div>
+          {description}
         </header>
         <section>
-          <h3>{description}</h3>
           {
             timezones.map(timezone => {
               return (
@@ -87,7 +82,6 @@ const mapDispatchToProps = dispatch => ({
   setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
   deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
 
-  showAddNewTimeZoneDetailModal: () => dispatch(showAddNewTimeZoneDetailModal()),
   showEditTimeZoneDetailModal: (timezone_detail) => dispatch(showEditTimeZoneDetailModal(timezone_detail)),
   closeModal: () => dispatch(closeModal()),
 });

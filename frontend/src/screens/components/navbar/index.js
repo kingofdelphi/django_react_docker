@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 
 import {
   showLogOutModal,
+  showAddNewTimeZoneDetailModal,
 } from './actions';
 
 import * as LoginStates from '../../../store/login_info/login_states';
@@ -24,6 +25,7 @@ class NavBar extends React.PureComponent {
       <div className={styles.main}>
         <div onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
         <div className={styles['profile-actions']}>
+          { isLoggedIn && <Button onClick={this.props.showAddNewTimeZoneDetailModal}>Add</Button> }
           { isLoggedIn && <span className={styles['username']}>{loginInfo.username}</span> }
           { isLoggedIn && <Button onClick={this.props.showLogOutModal}>LogOut</Button> }
         </div>
@@ -38,6 +40,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({ 
   showLogOutModal: () => dispatch(showLogOutModal()),
+  showAddNewTimeZoneDetailModal: () => dispatch(showAddNewTimeZoneDetailModal()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(NavBar));

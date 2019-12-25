@@ -19,10 +19,12 @@
 .profile-actions {
   cursor: pointer;
   button {
-    margin-left: 20px;
     background: none;
     border-color: grey;
     color: white;
     font-size: .9rem;
+  }
+  > *:not(:first-child) {
+    margin-left: 20px;
   }
 }
