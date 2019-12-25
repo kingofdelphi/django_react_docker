@@ -1,24 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
-import TimeZone from './components/time_zone';
+import TimeZoneList from './components/time_zone_list';
 
 import {
   closeModal
 } from '../../store/modals/actionCreators';
 
 import {
-  showEditTimeZoneDetailModal,
-} from './actions';
-
-import {
   setTimeZoneList,
-  deleteTimeZoneDetail,
 } from '../../store/timezones/actionCreators';
 
 import {
   get_timezones,
-  delete_timezone
 } from './api/timezones';
 
 import styles from './styles.module.scss';
@@ -35,18 +29,6 @@ class Dashboard extends React.Component {
     );
   }
 
-  handleTimeZoneDelete = (timezone) => {
-    delete_timezone(
-      timezone.id,
-      () => {
-        this.props.deleteTimeZoneDetail(timezone);
-      },
-      () => {
-        alert('cant delete');
-      },
-    );
-  };
-
   render() {
     const { timezones } = this.props;
     const description = timezones.length > 0 ?
@@ -57,21 +39,7 @@ class Dashboard extends React.Component {
           {description}
         </header>
         <section>
-          {
-            timezones.map(timezone => {
-              return (
-                <TimeZone
-                  key={timezone.id}
-                  id={timezone.id}
-                  name={timezone.name}
-                  city={timezone.city}
-                  onEdit={() => this.props.showEditTimeZoneDetailModal(timezone)}
-                  onDelete={() => this.handleTimeZoneDelete(timezone)}
-                  difference_to_GMT={timezone.difference_to_GMT}
-                />
-              );
-            })
-          }
+          <TimeZoneList />
         </section>
       </div>
     );
@@ -80,16 +48,12 @@ class Dashboard extends React.Component {
 
 const mapDispatchToProps = dispatch => ({ 
   setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
-  deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
 
-  showEditTimeZoneDetailModal: (timezone_detail) => dispatch(showEditTimeZoneDetailModal(timezone_detail)),
   closeModal: () => dispatch(closeModal()),
 });
 
 const mapStateToProps = state => ({ 
   timezones: state.timezones,
 });
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

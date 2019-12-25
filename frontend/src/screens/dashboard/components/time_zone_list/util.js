@@ -1,9 +1,3 @@
-import React from 'react';
-
-import Button from '../../../components/button';
-
-import styles from './styles.module.scss';
-
 const getMinutesFromTimeDifferenceString = (str) => {
   try {
     const splitted = str.split(' ');
@@ -45,50 +39,9 @@ const getCurrentTimeForTimeZone = (difference_to_GMT) => {
   const tz_difference_to_browser_in_minutes = utc_offset_relative_to_browser + time_difference_in_minutes;
 
   return {
-    time_in_tz,
-    tz_diff_to_browser: convert_minutes_to_hh_mm(tz_difference_to_browser_in_minutes),
+    timeInTimeZone: time_in_tz,
+    timeRelativeToBrowser: convert_minutes_to_hh_mm(tz_difference_to_browser_in_minutes),
   };
 };
 
-class TimeZone extends React.Component {
-  render() {
-    const { 
-      name,
-      city,
-      difference_to_GMT,
-      onEdit,
-      onDelete,
-    } = this.props;
-
-    const { 
-      time_in_tz: time_in_time_zone,
-      tz_diff_to_browser,
-    } = getCurrentTimeForTimeZone(difference_to_GMT);
-
-    return (
-      <div className={styles.main}>
-        <div className={styles.header}>
-          <label className={styles.name}>{name}</label>
-            <div className={styles['action-buttons']}>
-              <Button onClick={onEdit}>Edit</Button>
-              <Button onClick={onDelete}>Delete</Button>
-            </div>
-        </div>
-        <div className={styles.content}>
-          <label>City - {city}</label>
-          <label className={styles['timezone-time']}>
-            {time_in_time_zone}
-          </label>
-          <label className={styles.relative}>
-            <span>Relative To You</span> 
-            <span className={styles.time_diff}>{tz_diff_to_browser}</span>
-          </label>
-        </div>
-      </div>
-    );
-  }
-}
-
-export default TimeZone;
-
-
+export default getCurrentTimeForTimeZone;

@@ -24,7 +24,6 @@ services:
     ports:
       - 3000:3000
   nginx-frontend:
-    tty: true
     build: 
       # set set context to root folder so that we can copy frontend inside nginx
       context: ../
