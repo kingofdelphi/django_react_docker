@@ -14,8 +14,11 @@ services:
       #DEBUG: 'true'
       #command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
   nginx-frontend:
+    env_file: 
+      './config/prod.env'
+    tty: true
     build: 
-      # set set context to root folder so that we can copy frontend inside nginx
+      # set context to root folder so that we can copy frontend inside nginx
       context: ../
       dockerfile: docker/nginx-frontend/Dockerfile.prod
     ports:
