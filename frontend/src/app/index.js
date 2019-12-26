@@ -59,7 +59,7 @@ class Routes extends React.Component {
 
   render() {
     return (
-      <>
+      <div className={styles.body}>
         <Route exact path="/">
           <HomePage />
         </Route>
@@ -75,7 +75,7 @@ class Routes extends React.Component {
         <Route path="/dashboard">
           <Dashboard />
         </Route>
-      </>
+      </div>
     );
   }
 }
