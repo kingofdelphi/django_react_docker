@@ -22,7 +22,7 @@ export const get_timezones = (success_callback, failure_callback) => {
 
 export const delete_timezone = (timezone_id, success_callback, failure_callback) => {
   fetch(
-    E(`/timezones/${timezone_id}`),
+    E(`/timezones/${timezone_id}/`),
     {
       method: 'DELETE',
       headers: {
