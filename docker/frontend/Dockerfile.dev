@@ -4,4 +4,6 @@ WORKDIR /app
 COPY frontend/package*.json .
 RUN yarn install
 
-ENTRYPOINT ["yarn", "start"]
+COPY docker/frontend/entrypoint.sh /
+
+ENTRYPOINT ["sh", "/entrypoint.sh"]

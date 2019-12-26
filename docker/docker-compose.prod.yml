@@ -16,7 +16,6 @@ services:
   nginx-frontend:
     env_file: 
       './config/prod.env'
-    tty: true
     build: 
       # set context to root folder so that we can copy frontend inside nginx
       context: ../

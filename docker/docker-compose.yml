@@ -20,9 +20,10 @@ services:
     volumes:
       - "../frontend:/app"
       - "node_modules:/app/node_modules" # mounting local node_modules is really slow on mac, so we create a data volume
-    tty: true # without terminal sh exists immediately as it has nothing to do
     ports:
       - 3000:3000
+    env_file: 
+      './config/dev.env'
   nginx-frontend:
     build: 
       # set set context to root folder so that we can copy frontend inside nginx
@@ -30,6 +31,8 @@ services:
       dockerfile: docker/nginx-frontend/Dockerfile.dev
     ports:
       - 80:80
+    env_file: 
+      './config/dev.env'
 
 volumes:
   # with each package addition outside the container, need to remove the old volume and build 
