@@ -12,7 +12,7 @@ FROM nginx
 
 WORKDIR /
 # override default conf of nginx
-COPY nginx/nginx.prod.conf /nginx.conf
+COPY nginx/nginx.prod.conf /nginx.template.conf
 COPY nginx/entrypoint.sh entrypoint.sh
 
 # copy static files
@@ -21,4 +21,5 @@ COPY --from=build-frontend /app/build/ /var/www/html
 # if we directly use entrypoint.sh
 # we need to set the permission using RUN command
 # which will create extra image layer
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+
+ENTRYPOINT ["sh", "/entrypoint.sh", "prod"]

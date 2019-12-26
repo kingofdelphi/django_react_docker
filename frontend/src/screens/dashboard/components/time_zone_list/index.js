@@ -18,8 +18,6 @@ import {
 
 import getCurrentTimeForTimeZone from './util';
 
-import styles from './styles.module.scss';
-
 class TimeZoneList extends React.Component {
   state = {
     counter: 0,
@@ -34,7 +32,7 @@ class TimeZoneList extends React.Component {
     );
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     clearInterval(this.timerId);
   }
 

@@ -2,6 +2,7 @@ FROM nginx
 
 WORKDIR /
 # override default conf of nginx
-COPY nginx/nginx.dev.conf /nginx.conf
+COPY nginx/nginx.dev.conf /nginx.template.conf
 COPY nginx/entrypoint.sh entrypoint.sh
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+
+ENTRYPOINT ["sh", "/entrypoint.sh", "dev"]

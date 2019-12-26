@@ -2,34 +2,25 @@ import React from 'react';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import Modal from '../../../../components/modal';
-import Button from '../../../../components/button';
+import ConfirmationModal from '../../../../components/modal/confirmation';
 
 import { closeModal } from '../../../../store/modals/actionCreators';
 
-import styles from './styles.module.scss';
-
 class Logout extends React.Component {
   onSubmit = () => {
+    // need to chain, only change history after modal is closed, otherwise react unmount throws error
+    // to reproduce the output: set interval of the setTimeout to low value like 1000
+    this.props.close();
     this.props.history.push('/logout');
-    this.props.close();
-  }
-
-  onCancel = () => {
-    this.props.close();
   }
 
   render() {
     return (
-      <Modal>
-        <div className={styles.main}>
-          <label>Are you sure you want to log out ?</label>
-          <div>
-            <Button onClick={this.onSubmit}>Yes</Button>
-            <Button onClick={this.onCancel}>No</Button>
-          </div>
-        </div>
-      </Modal>
+      <ConfirmationModal
+        message="Are you sure you want to log out ?"
+        onSubmit={this.onSubmit}
+      >
+      </ConfirmationModal>
     );
   }
 }
