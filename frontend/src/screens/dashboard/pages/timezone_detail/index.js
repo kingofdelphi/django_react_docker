@@ -107,7 +107,7 @@ class TimeZoneDetailView extends React.Component {
               />
               <div className={styles.buttons}>
                 <Button type="submit">{action_title}</Button>
-                <Button onClick={this.props.close}>CANCEL</Button>
+                <Button onClick={this.props.onCancel}>CANCEL</Button>
               </div>
             </form>
           </section>
