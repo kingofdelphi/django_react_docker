@@ -15,7 +15,8 @@ class Login extends React.PureComponent {
   state = {
     username: '',
     password: '',
-    validationError: '',
+    validationErrors: {},
+    validationError: ''
   };
 
   handleSubmit = (event) => {
@@ -30,7 +31,7 @@ class Login extends React.PureComponent {
         });
         this.props.history.push('/dashboard');
       },
-      (errorMessage) => {
+      (errorMessage, errorData) => {
         this.setState({ validationError: errorMessage });
       },
     );

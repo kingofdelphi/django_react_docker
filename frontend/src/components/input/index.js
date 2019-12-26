@@ -22,9 +22,12 @@ class Input extends React.PureComponent {
       type,
       value,
       onChange,
+      invalid,
+      validationMessage,
     } = this.props;
+    const inputModifier = invalid ? styles.invalid : '';
     return (
-      <>
+      <div className={styles.main}>
         <label htmlFor={id}>{label}</label>
         <input 
           ref={(el) => this.ref = el}
@@ -33,9 +36,10 @@ class Input extends React.PureComponent {
           type={type}
           value={value}
           onChange={onChange} 
-          className={styles.input} 
+          className={styles.input + ' ' + inputModifier} 
         />
-      </>
+        <span className={styles['validation-message']}>{ validationMessage }</span>
+      </div>
     );
   }
 }

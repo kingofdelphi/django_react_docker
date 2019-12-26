@@ -13,7 +13,7 @@ class PasswordEqualitySerializer(serializers.Serializer):
     def validate(self, data):
         if data.get('password1') != data.get('password2'):
             raise serializers.ValidationError({
-                'password': "Passwords don't match"
+                'passwords': "Passwords don't match"
             })
         return super(self.__class__, self).validate(data)
         
@@ -42,7 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         # the exception raised here is different than serializers.ValidationError
         except exceptions.ValidationError as e:
-            errors['password'] = list(e.messages)
+            errors['passwords'] = list(e.messages)
 
         if errors:
             raise serializers.ValidationError(errors)

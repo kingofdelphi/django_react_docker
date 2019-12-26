@@ -9,6 +9,14 @@
   }
 }
 
+.registered {
+  padding: 10px;
+  span {
+    font-size: 2rem;
+  }
+
+}
+
 .header {
   padding: 40px;
   font-size: 1.5em;
@@ -24,5 +32,11 @@
 
 .error-message {
   color : red;
+}
+
+
+.password_validation {
+  color: red;
+  font-size: 0.8rem;
 }
 

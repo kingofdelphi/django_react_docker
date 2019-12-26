@@ -14,7 +14,7 @@ export const register = (data, success_callback, failure_callback) => {
     if (res.status === 201) {
       res.json().then(success_callback);
     } else {
-      failure_callback("Error registering");
+      res.json().then(failure_callback);
     }
   }).catch((e) => {
     failure_callback('Unexpected error occurred');

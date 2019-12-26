@@ -56,7 +56,7 @@ export const add_timezone = (timezone_info, success_callback, failure_callback) 
     if (res.status === 201) {
       res.json().then(success_callback);
     } else {
-      failure_callback("Couldnot add");
+      res.json().then(failure_callback);
     }
   }).catch((e) => {
     failure_callback('Unexpected error occurred');
@@ -79,7 +79,7 @@ export const edit_timezone = (id, timezone_info, success_callback, failure_callb
     if (res.status === 200) {
       res.json().then(success_callback);
     } else {
-      failure_callback("Couldnot edit");
+      res.json().then(failure_callback);
     }
   }).catch((e) => {
     failure_callback('Unexpected error occurred');

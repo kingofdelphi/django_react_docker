@@ -19,6 +19,7 @@ class TimeZoneDetailView extends React.Component {
     name: '',
     city: '',
     difference_to_GMT: '',
+    fieldErrors: {}
   }
 
   constructor(props) {
@@ -56,8 +57,8 @@ class TimeZoneDetailView extends React.Component {
           this.props.updateTimeZoneDetail(time_zone_detail);
           this.props.onCancel();
         },
-        (msg) => {
-          console.log(msg);
+        (errors) => {
+          this.setState({ fieldErrors: errors });
         }
       );
     } else {
@@ -67,17 +68,22 @@ class TimeZoneDetailView extends React.Component {
           this.props.addTimeZoneDetail(time_zone_detail);
           this.props.onCancel();
         },
-        (msg) => {
-          console.log(msg);
+        (errors) => {
+          this.setState({ fieldErrors: errors });
         }
       );
     }
   };
 
   render() {
-    const { edit_mode } = this.state;
+    const { 
+      edit_mode,
+      fieldErrors,
+    } = this.state;
+
     const header_title = edit_mode ? 'Edit Time Zone' : 'Add New Time Zone';
     const action_title = edit_mode ? 'UPDATE' : 'ADD';
+
     return (
       <Modal>
         <div className={styles.main}>
@@ -92,18 +98,24 @@ class TimeZoneDetailView extends React.Component {
                 onChange={this.handleNameChange}
                 value={this.state.name} 
                 label="Name" 
+                invalid={fieldErrors['name'] !== ''}
+                validationMessage={fieldErrors['name']}
               />
               <Input 
                 id="city" 
                 onChange={this.handleCityChange}
                 value={this.state.city} 
                 label="City" 
+                invalid={fieldErrors['city'] !== ''}
+                validationMessage={fieldErrors['city']}
               />
               <Input 
                 id="time_delta" 
                 onChange={this.handleTimeDiffChange}
                 value={this.state.difference_to_GMT} 
                 label="Difference to GMT" 
+                invalid={fieldErrors['difference_to_GMT'] !== ''}
+                validationMessage={fieldErrors['difference_to_GMT']}
               />
               <div className={styles.buttons}>
                 <Button type="submit">{action_title}</Button>

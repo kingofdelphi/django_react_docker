@@ -14,7 +14,9 @@ class Register extends React.PureComponent {
     username: '',
     password: '',
     password1: '',
-    validation_error: '',
+    validationError: '',
+    fieldErrors: {},
+    registered: { },
   };
 
   handleSubmit = (event) => {
@@ -27,10 +29,13 @@ class Register extends React.PureComponent {
     register(
       data,
       (user_info) => {
-        console.log(user_info);
+        this.setState({ registered: user_info });
       },
-      (error_message) => {
-        this.setState({ validation_error: error_message });
+      (errors) => {
+        this.setState({ 
+          validationError: 'Error Registering',
+          fieldErrors: errors
+        });
       },
     );
   }
@@ -38,21 +43,21 @@ class Register extends React.PureComponent {
   onUsernameChange = (event) => {
     this.setState({ 
       username: event.target.value,
-      validation_error: '',
+      validationError: '',
     });
   };
 
   onPasswordChange = (event) => {
     this.setState({ 
       password: event.target.value,
-      validation_error: '',
+      validationError: '',
     });
   };
 
   onPassword1Change = (event) => {
     this.setState({ 
       password1: event.target.value,
-      validation_error: '',
+      validationError: '',
     });
   };
 
@@ -61,8 +66,19 @@ class Register extends React.PureComponent {
       username,
       password,
       password1,
-      validation_error,
+      validationError,
+      fieldErrors,
+      registered,
     } = this.state;
+    registered["username"] = 'uttam';
+    if (registered.username) {
+      return (
+        <div className={styles.registered}>
+          <h3>Thank you for registering, <span>{registered.username}</span></h3>
+          You can now use the login page and enter your credentials inorder to use this app.
+        </div>
+      );
+    }
     return (
       <div className={styles.main}>
         <header className={styles.header}>
@@ -77,6 +93,8 @@ class Register extends React.PureComponent {
             onChange={this.onUsernameChange}
             value={username} 
             label="Username" 
+            invalid={fieldErrors['username'] !== ''}
+            validationMessage={fieldErrors['username']}
           />
           <Input 
             id="password" 
@@ -84,6 +102,8 @@ class Register extends React.PureComponent {
             onChange={this.onPasswordChange}
             value={password} 
             label="Password" 
+            invalid={fieldErrors['passwords'] + fieldErrors['password1'] !== ''}
+            validationMessage={fieldErrors['password1']}
           />
           <Input 
             id="password1" 
@@ -91,9 +111,16 @@ class Register extends React.PureComponent {
             onChange={this.onPassword1Change}
             value={password1} 
             label="Reenter Password" 
+            invalid={fieldErrors['passwords'] + fieldErrors['password2'] !== ''}
+            validationMessage={fieldErrors['password2']}
           />
+          {
+            (fieldErrors['passwords'] || []).map(message => (
+              <span className={styles.password_validation}>{message}</span>
+            ))
+          }
           <Button>Register</Button>
-          <span className={styles['error-message']}>{validation_error}&nbsp;</span> 
+          <span className={styles['error-message']}>{validationError}&nbsp;</span> 
         </form>
       </div>
     );
