@@ -5,8 +5,6 @@ import Modal from '../../../../components/modal';
 import Input from '../../../../components/input';
 import Button from '../../../../components/button';
 
-import { closeModal } from '../../../../store/modals/actionCreators';
-
 import { 
   addTimeZoneDetail,
   updateTimeZoneDetail,
@@ -56,7 +54,7 @@ class TimeZoneDetailView extends React.Component {
         data,
         (time_zone_detail) => {
           this.props.updateTimeZoneDetail(time_zone_detail);
-          this.props.close();
+          this.props.onCancel();
         },
         (msg) => {
           console.log(msg);
@@ -67,7 +65,7 @@ class TimeZoneDetailView extends React.Component {
         data,
         (time_zone_detail) => {
           this.props.addTimeZoneDetail(time_zone_detail);
-          this.props.close();
+          this.props.onCancel();
         },
         (msg) => {
           console.log(msg);
@@ -122,7 +120,6 @@ class TimeZoneDetailView extends React.Component {
 const mapDispatchToProps = dispatch => ({
   addTimeZoneDetail: (time_zone_detail) => dispatch(addTimeZoneDetail(time_zone_detail)),
   updateTimeZoneDetail: (time_zone_detail) => dispatch(updateTimeZoneDetail(time_zone_detail)),
-  close: () => dispatch(closeModal()),
 });
 
 export default connect(null, mapDispatchToProps)(TimeZoneDetailView);

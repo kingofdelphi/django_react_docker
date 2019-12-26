@@ -2,25 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux'
 
 import TimeZone from '../time_zone';
+import TimeZoneDetail from '../../pages/timezone_detail';
 
-import {
-  delete_timezone,
-} from '../../api/timezones';
-
-import {
-  showEditTimeZoneDetailModal,
-} from '../../actions';
-
-import {
-  deleteTimeZoneDetail,
-} from '../../../../store/timezones/actionCreators';
-
+import DeleteModal from '../delete_confirm_modal';
 
 import getCurrentTimeForTimeZone from './util';
 
 class TimeZoneList extends React.Component {
   state = {
     counter: 0,
+    deleteModalInfo: null,
+    editTimeZoneModalInfo: null,
   };
 
   componentDidMount() {
@@ -37,21 +29,30 @@ class TimeZoneList extends React.Component {
   }
 
   handleTimeZoneDelete = (timezone) => {
-    delete_timezone(
-      timezone.id,
-      () => {
-        this.props.deleteTimeZoneDetail(timezone);
-      },
-      () => {
-        alert('cant delete');
-      },
-    );
+    this.setState({ deleteModalInfo: timezone });
   };
+
+  closeDeleteModal = () => {
+    this.setState({ deleteModalInfo: null });
+  }
+
+  handleEditTimeZoneDetail = (timezone) => {
+    this.setState({ editTimeZoneModalInfo: timezone });
+  };
+
+  closeTimeZoneDetailModal = () => {
+    this.setState({ editTimeZoneModalInfo: null });
+  }
 
   render() {
     const { 
       timezones,
     } = this.props;
+
+    const { 
+      deleteModalInfo,
+      editTimeZoneModalInfo,
+    } = this.state;
 
     return (
       <>
@@ -70,13 +71,29 @@ class TimeZoneList extends React.Component {
                 city={timezone.city}
                 timeInTimeZone={timeInTimeZone}
                 timeRelativeToBrowser={timeRelativeToBrowser}
-                onEdit={() => this.props.showEditTimeZoneDetailModal(timezone)}
+                onEdit={() => this.handleEditTimeZoneDetail(timezone)}
                 onDelete={() => this.handleTimeZoneDelete(timezone)}
                 difference_to_GMT={timezone.difference_to_GMT}
               />
             );
           })
         }
+      {
+        deleteModalInfo && ( 
+          <DeleteModal 
+            timezone={deleteModalInfo} 
+            onCancel={this.closeDeleteModal}
+          /> 
+        )
+      }
+      {
+        editTimeZoneModalInfo && ( 
+          <TimeZoneDetail 
+            detail={editTimeZoneModalInfo} 
+            onCancel={this.closeTimeZoneDetailModal}
+          /> 
+        )
+      }
       </>
     );
   }
@@ -86,9 +103,4 @@ const mapStateToProps = state => ({
   timezones: state.timezones,
 });
 
-const mapDispatchToProps = dispatch => ({ 
-  deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
-  showEditTimeZoneDetailModal: (timezone_detail) => dispatch(showEditTimeZoneDetailModal(timezone_detail)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TimeZoneList);
+export default connect(mapStateToProps, null)(TimeZoneList);

@@ -18,8 +18,6 @@ import NavBar from '../screens/components/navbar';
 
 import styles from './styles.module.scss';
 
-import { map_modals_config_to_jsx } from '../store/modals/utils';
-
 import { setLoginUserInfo } from '../store/login_info/actionCreators';
 
 const guest_user_routes = ['/', '/login', '/register'];
@@ -94,9 +92,6 @@ class App extends React.Component {
   }
 
   render() {
-    const { 
-      modals,
-    } = this.props;
     return (
       <div className={styles.container}>
         <Router>
@@ -104,20 +99,14 @@ class App extends React.Component {
           <Switch>
             <RoutesWrapped />
           </Switch>
-          {map_modals_config_to_jsx(modals)}
         </Router>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  modals: state.modals,
-  loginInfo: state.loginInfo
-});
-
 const mapDispatchToProps = (dispatch) => ({
   setLoginUserInfo: (loginUserInfo) => dispatch(setLoginUserInfo(loginUserInfo)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);

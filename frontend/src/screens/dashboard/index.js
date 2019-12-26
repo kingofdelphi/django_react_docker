@@ -4,10 +4,6 @@ import { connect } from 'react-redux'
 import TimeZoneList from './components/time_zone_list';
 
 import {
-  closeModal
-} from '../../store/modals/actionCreators';
-
-import {
   setTimeZoneList,
 } from '../../store/timezones/actionCreators';
 
@@ -48,8 +44,6 @@ class Dashboard extends React.Component {
 
 const mapDispatchToProps = dispatch => ({ 
   setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
-
-  closeModal: () => dispatch(closeModal()),
 });
 
 const mapStateToProps = state => ({ 

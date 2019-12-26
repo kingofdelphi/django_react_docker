@@ -1,10 +1,7 @@
 import React from 'react';
-import { connect } from "react-redux";
 
 import Modal from '..';
 import Button from '../../button';
-
-import { closeModal } from '../../../store/modals/actionCreators';
 
 import styles from './styles.module.scss';
 
@@ -29,8 +26,4 @@ class ConfirmationModal extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  onCancel: () => dispatch(closeModal()),
-});
-
-export default connect(null, mapDispatchToProps)(ConfirmationModal);
+export default ConfirmationModal;
