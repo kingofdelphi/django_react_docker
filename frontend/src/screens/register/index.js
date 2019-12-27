@@ -70,7 +70,6 @@ class Register extends React.PureComponent {
       fieldErrors,
       registered,
     } = this.state;
-    registered["username"] = 'uttam';
     if (registered.username) {
       return (
         <div className={styles.registered}>
@@ -93,7 +92,7 @@ class Register extends React.PureComponent {
             onChange={this.onUsernameChange}
             value={username} 
             label="Username" 
-            invalid={fieldErrors['username'] !== ''}
+            invalid={fieldErrors['username']}
             validationMessage={fieldErrors['username']}
           />
           <Input 
@@ -102,7 +101,7 @@ class Register extends React.PureComponent {
             onChange={this.onPasswordChange}
             value={password} 
             label="Password" 
-            invalid={fieldErrors['passwords'] + fieldErrors['password1'] !== ''}
+            invalid={fieldErrors['passwords'] || fieldErrors['password1']}
             validationMessage={fieldErrors['password1']}
           />
           <Input 
@@ -111,12 +110,12 @@ class Register extends React.PureComponent {
             onChange={this.onPassword1Change}
             value={password1} 
             label="Reenter Password" 
-            invalid={fieldErrors['passwords'] + fieldErrors['password2'] !== ''}
+            invalid={fieldErrors['passwords'] || fieldErrors['password2']}
             validationMessage={fieldErrors['password2']}
           />
           {
-            (fieldErrors['passwords'] || []).map(message => (
-              <span className={styles.password_validation}>{message}</span>
+            (fieldErrors['passwords'] || []).map((message, i) => (
+              <span key={i} className={styles.password_validation}>{message}</span>
             ))
           }
           <Button>Register</Button>

@@ -13,7 +13,7 @@ class TimeZoneSerializer(serializers.ModelSerializer):
     
     def validate_difference_to_GMT(self, value):
         if not self.regex.match(value):
-            raise serializers.ValidationError("Incorrect format supplied for GMT time difference")
+            raise serializers.ValidationError("Format must be +/- H:M e.g. + 5:45")
         return value
 
     class Meta:

@@ -98,7 +98,7 @@ class TimeZoneDetailView extends React.Component {
                 onChange={this.handleNameChange}
                 value={this.state.name} 
                 label="Name" 
-                invalid={fieldErrors['name'] !== ''}
+                invalid={fieldErrors['name']}
                 validationMessage={fieldErrors['name']}
               />
               <Input 
@@ -106,7 +106,7 @@ class TimeZoneDetailView extends React.Component {
                 onChange={this.handleCityChange}
                 value={this.state.city} 
                 label="City" 
-                invalid={fieldErrors['city'] !== ''}
+                invalid={fieldErrors['city']}
                 validationMessage={fieldErrors['city']}
               />
               <Input 
@@ -114,7 +114,7 @@ class TimeZoneDetailView extends React.Component {
                 onChange={this.handleTimeDiffChange}
                 value={this.state.difference_to_GMT} 
                 label="Difference to GMT" 
-                invalid={fieldErrors['difference_to_GMT'] !== ''}
+                invalid={fieldErrors['difference_to_GMT']}
                 validationMessage={fieldErrors['difference_to_GMT']}
               />
               <div className={styles.buttons}>
