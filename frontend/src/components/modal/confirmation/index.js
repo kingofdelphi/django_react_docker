@@ -5,7 +5,7 @@ import Button from '../../button';
 
 import styles from './styles.module.scss';
 
-class ConfirmationModal extends React.Component {
+class ConfirmationModal extends React.PureComponent {
   render() {
     const {
       message,

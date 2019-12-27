@@ -44,20 +44,33 @@ class TimeZoneList extends React.Component {
     this.setState({ editTimeZoneModalInfo: null });
   }
 
-  render() {
+  getFilteredTimezones = () => {
     const { 
       timezones,
+      timeZoneFilter,
     } = this.props;
+    const result = timezones.filter(timezone => {
+      return timezone.name.indexOf(timeZoneFilter) !== -1;
+    });
+    const sorted = result.sort((a, b) => {
+      return a.name.indexOf(timeZoneFilter) - b.name.indexOf(timeZoneFilter);
+    });
+    return sorted;
+  }
+
+  render() {
 
     const { 
       deleteModalInfo,
       editTimeZoneModalInfo,
     } = this.state;
 
+    const filteredTimezones = this.getFilteredTimezones();
+
     return (
       <>
         {
-          timezones.map(timezone => {
+          filteredTimezones.map(timezone => {
             const { 
               timeInTimeZone,
               timeRelativeToBrowser,
@@ -78,14 +91,14 @@ class TimeZoneList extends React.Component {
             );
           })
         }
-      {
-        deleteModalInfo && ( 
-          <DeleteModal 
-            timezone={deleteModalInfo} 
-            onCancel={this.closeDeleteModal}
-          /> 
-        )
-      }
+        {
+          deleteModalInfo && ( 
+            <DeleteModal 
+              timezone={deleteModalInfo} 
+              onCancel={this.closeDeleteModal}
+            /> 
+          )
+        }
       {
         editTimeZoneModalInfo && ( 
           <TimeZoneDetail 
@@ -101,6 +114,7 @@ class TimeZoneList extends React.Component {
 
 const mapStateToProps = state => ({ 
   timezones: state.timezones,
+  timeZoneFilter: state.timeZoneFilter,
 });
 
 export default connect(mapStateToProps, null)(TimeZoneList);

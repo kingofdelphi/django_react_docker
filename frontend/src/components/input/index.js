@@ -24,6 +24,7 @@ class Input extends React.PureComponent {
       onChange,
       invalid,
       validationMessage,
+      placeHolder,
     } = this.props;
     const inputModifier = invalid ? styles.invalid : '';
     return (
@@ -31,6 +32,7 @@ class Input extends React.PureComponent {
         <label htmlFor={id}>{label}</label>
         <input 
           ref={(el) => this.ref = el}
+          placeholder={placeHolder}
           autoComplete={id}
           id={id} 
           type={type}

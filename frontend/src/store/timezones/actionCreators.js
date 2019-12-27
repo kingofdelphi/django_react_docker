@@ -29,4 +29,10 @@ export const deleteTimeZoneDetail = (time_zone_detail) => {
   }
 };
 
+export const setTimeZoneListFilter = (filter) => {
+  return {
+    type: ActionTypes.SetTimeZoneListFilter, 
+    data: filter,
+  }
+};
 

@@ -6,7 +6,7 @@ import styles from './styles.module.scss';
 const appRoot = document.getElementById('root');
 const modalRoot = document.getElementById('modal-root');
 
-class Modal extends React.Component {
+class Modal extends React.PureComponent {
   constructor(props) {
     super(props);
     this.el = document.createElement('div');
