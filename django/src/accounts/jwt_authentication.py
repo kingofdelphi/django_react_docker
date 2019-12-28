@@ -19,6 +19,6 @@ class Authentication(JSONWebTokenAuthentication):
 
         last_login_to_utc = timegm(user.last_login.utctimetuple())
         if data['last_login'] != last_login_to_utc:
-            msg = _('Signature has expired due to login from different system.')
+            msg = 'Signature has expired due to login from different system.'
             raise exceptions.AuthenticationFailed(msg)
         return user, payload
