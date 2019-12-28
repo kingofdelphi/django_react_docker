@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 
 import TimeZoneList from './components/time_zone_list';
+import Loading from '../../components/loading';
 
 import {
   setTimeZoneList,
@@ -14,12 +15,17 @@ import {
 import styles from './styles.module.scss';
 
 class Dashboard extends React.Component {
+  state = {
+    loading: true,
+  }
   componentDidMount() {
     get_timezones(
       (timezones) => {
         this.props.setTimeZoneList(timezones);
+        this.setState({ loading: false });
       },
       (error_message) => {
+        this.setState({ loading: false });
         alert(error_message);
       },
     );
@@ -63,6 +69,7 @@ class Dashboard extends React.Component {
 
     return (
       <div className={styles['main']}>
+        { this.state.loading && <Loading /> }
         <header>
           {description}
         </header>

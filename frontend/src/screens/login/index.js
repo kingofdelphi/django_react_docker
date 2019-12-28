@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
+import Loading from '../../components/loading';
 
 import { setLoginUserInfo } from '../../store/login_info/actionCreators';
 
@@ -13,6 +14,7 @@ import styles from './styles.module.scss';
 
 class Login extends React.PureComponent {
   state = {
+    loading: false,
     username: '',
     password: '',
     fieldErrors: {},
@@ -25,6 +27,7 @@ class Login extends React.PureComponent {
       username: this.state.username,
       password: this.state.password,
     };
+    this.setState({ loading: true });
     login(
       data,
       (userInfo) => {
@@ -36,8 +39,8 @@ class Login extends React.PureComponent {
         this.props.history.push('/dashboard');
       },
       (errors) => {
-        console.log(errors);
         this.setState({ 
+          loading: false,
           validationError: 'Invalid credentials',
           fieldErrors: errors
         });
@@ -65,9 +68,11 @@ class Login extends React.PureComponent {
       password,
       fieldErrors,
       validationError,
+      loading,
     } = this.state;
     return (
       <div className={styles.main}>
+        { loading && <Loading /> }
         <header className={styles.header}>
           <div>
             Please enter your credentials to use the TimeZone app

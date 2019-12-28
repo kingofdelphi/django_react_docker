@@ -37,12 +37,6 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  button {
-    background: none;
-    border-color: grey;
-    color: white;
-    font-size: .8rem;
-  }
   > *:not(:first-child) {
     margin-left: 20px;
   }

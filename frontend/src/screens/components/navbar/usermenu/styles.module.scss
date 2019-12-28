@@ -1,16 +1,25 @@
-$active-bg-color: grey;
+$active-bg-color: white;
+$border: 1px solid #d4d5da;
 .main {
   cursor: pointer;
   .profile {
     font-weight: bold;
   }
-  border: none;
+  background: none;
+  color: white;
+  font-size: .75rem;
+  border: 1px solid transparent;
   &:focus {
     outline: none;
   }
   position: relative;
   padding: 5px;
   &:hover, &.active {
+    border-bottom: none;
+    border-left: $border;
+    border-right: $border;
+    border-top: $border;
+    color: black;
     background: $active-bg-color;
   }
 }
@@ -18,10 +27,15 @@ $active-bg-color: grey;
   padding: 5px;
 }
 .dropdown {
+  border-left: $border;
+  border-right: $border;
+  border-bottom: $border;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
   min-width: 150px;
   position: absolute;
   top: 100%;
-  right: 0;
+  right: -1px;
   font-size: .8rem;
   background: $active-bg-color;
   ul {
@@ -29,10 +43,10 @@ $active-bg-color: grey;
     li {
       text-align: left;
       &:hover {
-        background: black;
+        background: #eee;
       }
       cursor: pointer;
-      padding: 10px 20px;
+      padding: 8px 20px;
     }
   }
 }
