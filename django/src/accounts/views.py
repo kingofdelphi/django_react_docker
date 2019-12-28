@@ -1,12 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework import generics
 
+from django.contrib.auth import get_user_model
 from rest_framework_jwt.settings import api_settings
 
 from django.contrib.auth import authenticate
 
 from rest_framework import permissions, status
 from rest_framework.response import Response
+
+from .permissions import IsOwnerOrAdminOrUserManager
 
 # Get the JWT settings, add these lines after the import/from lines
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -59,3 +62,10 @@ class LoginView(generics.CreateAPIView):
             return Response(data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "username"
+    # bitwise or is not working
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager]

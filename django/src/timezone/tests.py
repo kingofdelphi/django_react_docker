@@ -1,34 +1,17 @@
 # Create your tests here.
-# Create your tests here.
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from django.test import override_settings
-from accounts.models import TimeZoneUser
-import json
 from django.contrib.auth import get_user_model
+
+import json
 
 from .models import TimeZone
 
+from accounts.tests import AccountTestCase
 
 # to speed up testing use custom hasher
-@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class BaseViewTest(APITestCase):
-    client = APIClient()
-
-    def login_user(self, username, password):
-        response = self.client.post(
-            '/users/login/',
-            data=json.dumps({
-                'username': username,
-                'password': password
-            }),
-            content_type='application/json'
-        )
-        token = response.data['token']
-        # set the token in the header
-        self.client.credentials(
-            HTTP_AUTHORIZATION='JWT ' + token
-        )
+class TimeZoneTest(AccountTestCase):
 
     def create_timezone(self, data):
         return self.client.post(
@@ -109,24 +92,18 @@ class BaseViewTest(APITestCase):
         # guest 1 tries to delete timezone of guest 1
         response = self.delete_timezone(id1)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
+    
     def setUp(self):
+        super().setUp()
         # create a admin user
         User = get_user_model()
-        User.objects.create_superuser(
-            username="admin",
-            password="changeme"
-        )
-
         # create guest users
-        r = User.objects.create_user(
+        User.objects.create_user(
             username="guest1",
             password="changeme",
         )
-
         User.objects.create_user(
             username="guest2",
             password="changeme",
         )
-
 

@@ -27,6 +27,12 @@ class UserSerializer(serializers.ModelSerializer):
     # serializer. It will pick up the validation config
     # from settings.py
     def validate(self, data):
+        if self.instance:
+            if data.get('username') != self.instance.username:
+                raise serializers.ValidationError(
+                        dict(username="username in form doesnot match requesting users' name")
+                    )
+
         # here data has all the fields which have validated values
         # so we can create a User instance out of it
         user = self.Meta.model(**data)
@@ -53,6 +59,14 @@ class UserSerializer(serializers.ModelSerializer):
         instance = self.Meta.model(**validated_data)
         if password is not None:
             instance.set_password(password)
+        instance.save()
+        return instance
+
+    def update(self, user, validated_data):
+        # username must be same in validated_data i.e. it cant be changed
+        password = validated_data['password']
+        instance = self.Meta.model.objects.get(username=user.get_username())
+        instance.set_password(password)
         instance.save()
         return instance
 
