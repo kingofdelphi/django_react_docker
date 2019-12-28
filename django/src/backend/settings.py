@@ -151,3 +151,5 @@ STATIC_URL = '/static/'
 JWT_AUTH = {
     'JWT_VERIFY_EXPIRATION': not DEBUG,
 }
+
+AUTH_USER_MODEL = 'accounts.TimeZoneUser'

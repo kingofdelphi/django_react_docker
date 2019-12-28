@@ -3,8 +3,9 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from django.test import override_settings
-from django.contrib.auth.models import User
+from accounts.models import TimeZoneUser
 import json
+from django.contrib.auth import get_user_model
 
 from .models import TimeZone
 
@@ -111,6 +112,7 @@ class BaseViewTest(APITestCase):
 
     def setUp(self):
         # create a admin user
+        User = get_user_model()
         User.objects.create_superuser(
             username="admin",
             password="changeme"
