@@ -9,6 +9,8 @@ from django.contrib.auth import authenticate
 from rest_framework import permissions, status
 from rest_framework.response import Response
 
+from django.contrib.auth.models import update_last_login
+
 from .permissions import IsOwnerOrAdminOrUserManager
 
 # Get the JWT settings, add these lines after the import/from lines
@@ -55,6 +57,9 @@ class LoginView(generics.CreateAPIView):
         password = request.data.get("password", "")
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # manually update the last_login time, 
+            # the problem may be because we are just using JWT authentication only
+            update_last_login(None, user)
             data = {
                 "username": username,
                 "token": jwt_encode_handler(jwt_payload_handler(user)),

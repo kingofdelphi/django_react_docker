@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'accounts.jwt_authentication.Authentication',
     ),
 }
 
@@ -150,6 +150,7 @@ STATIC_URL = '/static/'
 
 JWT_AUTH = {
     'JWT_VERIFY_EXPIRATION': not DEBUG,
+    'JWT_PAYLOAD_HANDLER': 'accounts.custom_jwt.jwt_payload_handler',
 }
 
 AUTH_USER_MODEL = 'accounts.TimeZoneUser'
