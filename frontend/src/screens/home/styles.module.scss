@@ -6,7 +6,7 @@
   justify-content: center;
   color: black;
   section {
-    margin-top: 80px;
+    margin-top: 60px;
   }
 
 }
@@ -30,11 +30,18 @@
 
 .navigation-links {
   a {
+    &:hover {
+      background: cadetblue;
+    }
+    border-radius: 2px;
+    display: inline-block;
+    background: rgba(cadetblue, .8);
+    color: white;
     text-decoration: inherit;
-    background: white;
-    width: 200px;
-    font-size: 20px;
-    padding: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 1rem;
+    padding: 15px 20px;
     cursor: pointer;
   }
   > a:not(:first-child) {

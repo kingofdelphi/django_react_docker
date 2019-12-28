@@ -20,8 +20,8 @@ class TimeZone extends React.Component {
         <div className={styles.header}>
           <label className={styles.name}>{name}</label>
             <div className={styles['action-buttons']}>
-              <Button onClick={onEdit}>Edit</Button>
-              <Button onClick={onDelete}>Delete</Button>
+              <Button onClick={onEdit}><i className="fa fa-edit" /></Button>
+              <Button onClick={onDelete}><i className="fa fa-trash" /></Button>
             </div>
         </div>
         <div className={styles.content}>

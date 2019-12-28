@@ -24,6 +24,27 @@
 
 .timezone-actions {
   grid-area: timezone_actions;
+  display: flex;
+  align-items: center;
+  > *:not(first-child) {
+    margin-left: 20px;
+  }
+  button {
+    background: none;
+    border: none;
+    &:hover i {
+      color: white;
+    }
+    &:focus {
+      outline: none;
+    }
+    i {
+      font-size: 1.2rem;
+      color: silver;
+    }
+    height: min-content;
+    padding: 5px 10px;
+  }
 }
 
 .profile-actions {
