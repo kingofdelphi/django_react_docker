@@ -1,8 +1,10 @@
 $padding: 5px 10px;
 .main {
+  background: white;
   margin: 5px;
   display: inline-block;
-  border: 1px solid grey;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
   label {
     padding: 4px;
   }
@@ -13,7 +15,7 @@ $padding: 5px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: skyblue;
+  background: rgba(black, .14);
   .name {
     font-size: 2em;
     padding: 4px;

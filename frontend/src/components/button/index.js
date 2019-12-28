@@ -5,11 +5,13 @@ function Button(props) {
   const { 
     type,
     title,
+    className,
     onClick,
     children, 
   } = props;
+  const classes = [styles.button, className].join(' ');
   return (
-    <button title={title} type={type} onClick={onClick} className={styles.button}>
+    <button className={classes} title={title} type={type} onClick={onClick}>
       {children}
     </button>
   );

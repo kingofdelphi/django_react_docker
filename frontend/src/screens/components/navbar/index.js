@@ -60,7 +60,6 @@ class NavBar extends React.PureComponent {
       <div className={styles.main}>
         <div title="Go to homepage" onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
         <div className={styles['timezone-actions']}>
-          { isLoggedIn && <Button title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && ( 
             <Search 
               value={timeZoneFilter} 
@@ -71,6 +70,7 @@ class NavBar extends React.PureComponent {
           }
         </div>
         <div className={styles['profile-actions']}>
+          { isLoggedIn && <Button className={styles["add-timezone"]} title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && <span className={styles['username']}>{loginInfo.username}</span> }
           { isLoggedIn && <Button onClick={this.showLogOutModal}>LogOut</Button> }
         </div>

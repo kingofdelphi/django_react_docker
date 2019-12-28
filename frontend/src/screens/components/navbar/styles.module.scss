@@ -1,7 +1,7 @@
 
 .main {
   padding: 10px 10px;
-  background: black;
+  background: #24292e;
   color: white;
   display: grid;
   grid-template-areas:
@@ -15,7 +15,7 @@
   grid-area: title;
   white-space: nowrap;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .username {
@@ -29,7 +29,24 @@
   > *:not(first-child) {
     margin-left: 20px;
   }
+  
+}
+
+.profile-actions {
+  grid-area: profile_actions;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
   button {
+    background: none;
+    border-color: grey;
+    color: white;
+    font-size: .8rem;
+  }
+  > *:not(:first-child) {
+    margin-left: 20px;
+  }
+  .add-timezone {
     background: none;
     border: none;
     &:hover i {
@@ -44,21 +61,5 @@
     }
     height: min-content;
     padding: 5px 10px;
-  }
-}
-
-.profile-actions {
-  grid-area: profile_actions;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  button {
-    background: none;
-    border-color: grey;
-    color: white;
-    font-size: .9rem;
-  }
-  > *:not(:first-child) {
-    margin-left: 20px;
   }
 }

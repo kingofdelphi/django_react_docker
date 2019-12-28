@@ -82,7 +82,7 @@ class TimeZoneDetailView extends React.Component {
     } = this.state;
 
     const header_title = edit_mode ? 'Edit Time Zone' : 'Add New Time Zone';
-    const action_title = edit_mode ? 'UPDATE' : 'ADD';
+    const action_title = edit_mode ? 'Update' : 'Add';
 
     return (
       <Modal>
@@ -119,7 +119,7 @@ class TimeZoneDetailView extends React.Component {
               />
               <div className={styles.buttons}>
                 <Button type="submit">{action_title}</Button>
-                <Button onClick={this.props.onCancel}>CANCEL</Button>
+                <Button onClick={this.props.onCancel}>Cancel</Button>
               </div>
             </form>
           </section>
