@@ -1,11 +1,17 @@
 .form {
+  padding: 30px 80px;
+  border-radius: 3px;
+  background: #d4d5da;
+  border: 1px solid silver;
   display: flex;
   flex-direction: column;
-  > *:not(:first-child) {
+  > div:not(:first-child) {
     margin-top: 10px;
   }
   button {
-    padding: 20px;
+    font-size: 1rem;
+    margin-top: 20px;
+    padding: 10px 20px;
   }
 }
 
@@ -23,5 +29,7 @@
 }
 
 .error-message {
+  margin-top: 20px;
   color : red;
+  font-size: 0.9rem;
 }

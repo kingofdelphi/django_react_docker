@@ -19,15 +19,6 @@ const zeroPad = (num, places) => {
   return String(num).padStart(places, '0')
 };
 
-const convert_minutes_to_hh_mm = (minutes) => {
-  const sgn = minutes < 0 ? -1 : 1;
-  minutes *= sgn;
-  const hh = Math.floor(minutes / 60);
-  const mm = minutes % 60;
-  const sign = sgn > 0 ? "+" : "-";
-  return sign + " " + zeroPad(hh, 2) + ":" + zeroPad(mm, 2);
-};
-
 const getCurrentTimeForTimeZone = (difference_to_GMT) => {
   const current_time = new Date();
 
@@ -40,7 +31,7 @@ const getCurrentTimeForTimeZone = (difference_to_GMT) => {
 
   return {
     timeInTimeZone: time_in_tz,
-    timeRelativeToBrowser: convert_minutes_to_hh_mm(tz_difference_to_browser_in_minutes),
+    timeRelativeToBrowser: tz_difference_to_browser_in_minutes,
   };
 };
 
