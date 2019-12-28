@@ -25,17 +25,49 @@ class Dashboard extends React.Component {
     );
   }
 
+  getFilteredTimezones = () => {
+    const { 
+      timezones,
+      timeZoneFilter,
+    } = this.props;
+    const result = timezones.filter(timezone => {
+      return timezone.name.indexOf(timeZoneFilter) !== -1;
+    });
+    const sorted = result.sort((a, b) => {
+      return a.name.indexOf(timeZoneFilter) - b.name.indexOf(timeZoneFilter);
+    });
+    return sorted;
+  }
+
+  getDescription(timezones) {
+    const { 
+      timeZoneFilter,
+    } = this.props;
+    
+    if (timeZoneFilter) {
+      return (
+        <>
+          <span className={styles['results-count']}>{timezones.length}</span>
+          <span> timezone{timezones.length > 1 ? "s" : ""} found containing the search field </span>
+          <span className={styles.searchfield}>{timeZoneFilter}</span>
+        </>
+      );
+    }
+
+    return timezones.length > 0 ? "These are the timezones you've added." : "You have not added any timezones.";
+  }
+
   render() {
-    const { timezones } = this.props;
-    const description = timezones.length > 0 ?
-      "These are the timezones you've added." : "You have not added any timezones.";
+    const timezones = this.getFilteredTimezones();
+    const description = this.getDescription(timezones);
+
     return (
       <div className={styles['main']}>
         <header>
           {description}
         </header>
         <section>
-          <TimeZoneList />
+          <TimeZoneList timezones={timezones} />
         </section>
       </div>
     );
@@ -48,6 +80,7 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => ({ 
   timezones: state.timezones,
+  timeZoneFilter: state.timeZoneFilter,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

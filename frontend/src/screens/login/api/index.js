@@ -2,7 +2,7 @@ import E from '../../../utils';
 
 export const login = (data, success_callback, failure_callback) => {
   fetch(
-    E('/users/login/'),
+    E('/login/'),
     {
       method: "POST",
       headers: {

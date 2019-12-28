@@ -20,6 +20,13 @@ class TimeZoneTest(AccountTestCase):
             content_type="application/json"
         )
 
+    def update_timezone(self, timezone_id, data):
+        return self.client.put(
+            '/timezones/{}/'.format(timezone_id),
+            data=json.dumps(data),
+            content_type="application/json"
+        )
+
     def delete_timezone(self, id):
         return self.client.delete('/timezones/{}/'.format(id))
     
@@ -59,7 +66,7 @@ class TimeZoneTest(AccountTestCase):
         response = self.delete_timezone(id2)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_guest_vs_guest_cross_user_crud(self):
+    def test_user_manager_vs_guest_user_crud(self):
         data = {
                 "name": "Asia",
                 "city": "Kathmandu",
@@ -69,10 +76,46 @@ class TimeZoneTest(AccountTestCase):
         response = self.create_timezone(data)
         id1 = response.data['id']
 
+        self.login_user('usermanager', 'changeme')
+        response = self.delete_timezone(id1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        response = self.create_timezone(data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_timezone_detail_update(self):
+        data = {
+                "name": "Asia",
+                "city": "Kathmandu",
+                "difference_to_GMT": "+ 3:32"
+                }
+        self.login_user('guest1', 'changeme')
+        response = self.create_timezone(data)
+        id1 = response.data['id']
+        data['name'] = "Earth"
+        data['city'] = "Pokhara"
+        response = self.update_timezone(id1, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data['id'] = id1
+        self.assertEqual(response.data, data)
+
+    def test_guest_vs_guest_cross_user_crd(self):
+        data = {
+                "name": "Asia",
+                "city": "Kathmandu",
+                "difference_to_GMT": "+ 3:32"
+                }
+        # guest1 creates timezone
+        self.login_user('guest1', 'changeme')
+        response = self.create_timezone(data)
+        id1 = response.data['id']
+
+        # guest2 creates timezone
         self.login_user('guest2', 'changeme')
         response = self.create_timezone(data)
         id2 = response.data['id']
 
+        # guest2 creates another timezone
         response = self.create_timezone(data)
         id3 = response.data['id']
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux'
 
 import TimeZone from '../time_zone';
 import TimeZoneDetail from '../../pages/timezone_detail';
@@ -44,33 +43,20 @@ class TimeZoneList extends React.Component {
     this.setState({ editTimeZoneModalInfo: null });
   }
 
-  getFilteredTimezones = () => {
-    const { 
-      timezones,
-      timeZoneFilter,
-    } = this.props;
-    const result = timezones.filter(timezone => {
-      return timezone.name.indexOf(timeZoneFilter) !== -1;
-    });
-    const sorted = result.sort((a, b) => {
-      return a.name.indexOf(timeZoneFilter) - b.name.indexOf(timeZoneFilter);
-    });
-    return sorted;
-  }
-
   render() {
+    const {
+      timezones,
+    } = this.props;
 
     const { 
       deleteModalInfo,
       editTimeZoneModalInfo,
     } = this.state;
 
-    const filteredTimezones = this.getFilteredTimezones();
-
     return (
       <>
         {
-          filteredTimezones.map(timezone => {
+          timezones.map(timezone => {
             const { 
               timeInTimeZone,
               timeRelativeToBrowser,
@@ -112,9 +98,4 @@ class TimeZoneList extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ 
-  timezones: state.timezones,
-  timeZoneFilter: state.timeZoneFilter,
-});
-
-export default connect(mapStateToProps, null)(TimeZoneList);
+export default TimeZoneList;
