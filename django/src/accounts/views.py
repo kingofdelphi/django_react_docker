@@ -18,7 +18,7 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
-from .serializers import UserSerializer, PasswordEqualitySerializer
+from .serializers import UserSerializer, PasswordEqualitySerializer, LoginUserSerializer
 
 # Create your views here.
 
@@ -53,6 +53,9 @@ class LoginView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
+        user_serializer = LoginUserSerializer(data=request.data)
+        if not user_serializer.is_valid():
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get("username", "")
         password = request.data.get("password", "")
         user = authenticate(request, username=username, password=password)

@@ -53,7 +53,7 @@ class TimeZone extends React.Component {
             {timeInTimeZone}
           </label>
           <label className={styles.relative}>
-            { faster.sign === 0 && <span>wou both are on the same timezone</span> }
+            { faster.sign === 0 && <span>You both are on the same timezone</span> }
             { faster.sign === -1 && <span>{name} is behind you by {readable_minutes(faster)}</span> }
             { faster.sign === 1 && <span>You are behind {name} by {readable_minutes(faster)}</span> }
           </label>

@@ -15,14 +15,18 @@ class Login extends React.PureComponent {
   state = {
     username: '',
     password: '',
-    validationErrors: {},
+    fieldErrors: {},
     validationError: ''
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const data = {
+      username: this.state.username,
+      password: this.state.password,
+    };
     login(
-      this.state,
+      data,
       (userInfo) => {
         localStorage.setItem('username', userInfo.username);
         localStorage.setItem('token', userInfo.token);
@@ -31,8 +35,12 @@ class Login extends React.PureComponent {
         });
         this.props.history.push('/dashboard');
       },
-      (errorMessage, errorData) => {
-        this.setState({ validationError: errorMessage });
+      (errors) => {
+        console.log(errors);
+        this.setState({ 
+          validationError: 'Invalid credentials',
+          fieldErrors: errors
+        });
       },
     );
   }
@@ -55,6 +63,7 @@ class Login extends React.PureComponent {
     const {
       username,
       password,
+      fieldErrors,
       validationError,
     } = this.state;
     return (
@@ -71,6 +80,8 @@ class Login extends React.PureComponent {
             onChange={this.onUsernameChange}
             value={username} 
             label="Username" 
+            invalid={fieldErrors['username']}
+            validationMessage={fieldErrors['username']}
           />
           <Input 
             id="password" 
@@ -79,6 +90,8 @@ class Login extends React.PureComponent {
             onChange={this.onPasswordChange}
             value={password} 
             label="Password" 
+            invalid={fieldErrors['password']}
+            validationMessage={fieldErrors['password']}
           />
           <Button>Login</Button>
           <span className={styles['error-message']}>{validationError}&nbsp;</span> 

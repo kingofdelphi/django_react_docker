@@ -13,6 +13,7 @@ import Login from '../screens/login';
 import Logout from '../screens/logout';
 import Register from '../screens/register';
 import Dashboard from '../screens/dashboard';
+import Profile from '../screens/profile';
 
 import NavBar from '../screens/components/navbar';
 
@@ -74,6 +75,9 @@ class Routes extends React.Component {
         </Route>
         <Route path="/dashboard">
           <Dashboard />
+        </Route>
+        <Route path="/profile/">
+          <Profile />
         </Route>
       </div>
     );

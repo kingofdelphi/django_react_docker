@@ -1,0 +1,43 @@
+$active-bg-color: grey;
+.main {
+  cursor: pointer;
+  .profile {
+    font-weight: bold;
+  }
+  border: none;
+  &:focus {
+    outline: none;
+  }
+  position: relative;
+  padding: 5px;
+  &:hover, &.active {
+    background: $active-bg-color;
+  }
+}
+.profile {
+  padding: 5px;
+}
+.dropdown {
+  min-width: 150px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  font-size: .8rem;
+  background: $active-bg-color;
+  ul {
+    list-style: none;
+    li {
+      text-align: left;
+      &:hover {
+        background: black;
+      }
+      cursor: pointer;
+      padding: 10px 20px;
+    }
+  }
+}
+.main.inactive {
+  .dropdown {
+    display: none;
+  }
+}

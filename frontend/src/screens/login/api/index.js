@@ -16,7 +16,7 @@ export const login = (data, success_callback, failure_callback) => {
     } else if (res.status === 401) {
       failure_callback('Invalid credentials');
     } else {
-      res.json().then(d => failure_callback('Error logging in', d));
+      res.json().then(errors => failure_callback(errors));
     }
   }).catch((e) => {
     failure_callback('Unexpected error occurred');

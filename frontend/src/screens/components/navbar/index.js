@@ -5,17 +5,16 @@ import { withRouter } from 'react-router-dom'
 import * as LoginStates from '../../../store/login_info/login_states';
 
 import Button from '../../../components/button';
-import LogOut from '../../dashboard/pages/logout';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
 
 import { setTimeZoneListFilter } from '../../../store/timezones/actionCreators';
 import Search from '../search';
 
+import UserMenu from './usermenu';
 import styles from './styles.module.scss';
 
 class NavBar extends React.PureComponent {
   state = {
-    logoutModal: false,
     timeZoneDetailModal: false,
   };
 
@@ -29,16 +28,6 @@ class NavBar extends React.PureComponent {
     this.setState({ timeZoneDetailModal: false });
   }
 
-  showLogOutModal = () => {
-    this.setState({
-      logoutModal: true,
-    });
-  };
-
-  closeLogOutModal = () => {
-    this.setState({ logoutModal: false });
-  }
-
   handleFilterChange = (event) => {
     this.props.setTimeZoneListFilter(event.target.value);
   }
@@ -50,7 +39,6 @@ class NavBar extends React.PureComponent {
     } = this.props;
 
     const { 
-      logoutModal, 
       timeZoneDetailModal,
     } = this.state;
 
@@ -71,10 +59,8 @@ class NavBar extends React.PureComponent {
         </div>
         <div className={styles['profile-actions']}>
           { isLoggedIn && <Button className={styles["add-timezone"]} title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
-          { isLoggedIn && <span className={styles['username']}>{loginInfo.username}</span> }
-          { isLoggedIn && <Button onClick={this.showLogOutModal}>LogOut</Button> }
+          { isLoggedIn && <span className={styles['username']}><UserMenu username={loginInfo.username} /></span> }
         </div>
-          { logoutModal && <LogOut onCancel={this.closeLogOutModal} /> }
           {
             timeZoneDetailModal && ( 
               <TimeZoneDetail onCancel={this.closeTimeZoneDetailModal} /> 
