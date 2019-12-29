@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import MessageBox from '../../components/modal/messagebox';
+import ConfirmationModal from '../../components/modal/confirmation';
 
 import makeApiCall from './actionCreators';
 
@@ -18,25 +18,26 @@ function withAPIHelper(WrappedComponent) {
 
     render() {
       const { sessionValid } = this.state;
+      // replacing div with empty tags <> < /> does not work
       return (
-        <>
+        <div style={{ height: '100%' }}>
           <WrappedComponent 
             {...this.props}
             makeApiCall={(params) => this.props.dispatch(makeApiCall(params), { invalidateSession: this.invalidateSession })} 
           />
           {
             !sessionValid && (
-            <MessageBox 
-              message="Session is invalid. You need to log out." 
+            <ConfirmationModal 
+              message="Session is invalid. Do you want to log out ?." 
               onSubmit={() => {
                 this.setState({ sessionValid: true });
-                // bug: if i use the below line, modal still remains visible
-                // this.props.history.push('/logout');
+                this.props.history.push('/logout');
               }}
+              onCancel={() => this.setState({ sessionValid: true })}
             /> 
             )
           }
-        </>
+        </div>
       );
     }
   }

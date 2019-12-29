@@ -19,6 +19,7 @@ class Modal extends React.PureComponent {
   }
 
   componentWillUnmount() {
+    // TODO: remove blur only if there are no other modals
     appRoot.classList.remove(styles.root);
     modalRoot.removeChild(this.el);
   }
