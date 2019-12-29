@@ -1,21 +1,28 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { logoutUser } from '../../store/login_info/actionCreators';
 
-import { 
-  withRouter,
-} from 'react-router-dom'
-
 class Logout extends React.Component {
+  state = {
+    redirectToHome: false
+  };
   componentDidMount() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     this.props.logoutUser();
-    this.props.history.push('/');
+    this.setState({
+      redirectToHome: true
+    });
   }
 
   render() {
+    if (this.state.redirectToHome) {
+      return (
+        <Redirect to='/' />
+      );
+    }
     return (
       <></>
     );
@@ -26,4 +33,4 @@ const mapDispatchToProps = (dispatch) => ({
   logoutUser: () => dispatch(logoutUser()),
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(Logout));
+export default connect(null, mapDispatchToProps)(Logout);

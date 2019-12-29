@@ -25,6 +25,7 @@ class Input extends React.PureComponent {
       invalid,
       validationMessage,
       placeholder,
+      maxLength,
     } = this.props;
     const inputModifier = invalid ? styles.invalid : '';
     return (
@@ -34,6 +35,7 @@ class Input extends React.PureComponent {
           ref={(el) => this.ref = el}
           placeholder={placeholder}
           autoComplete={id}
+          maxLength={maxLength}
           id={id} 
           type={type}
           value={value}

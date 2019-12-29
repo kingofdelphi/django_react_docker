@@ -7,9 +7,6 @@ import * as LoginStates from '../../../store/login_info/login_states';
 import Button from '../../../components/button';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
 
-import { setTimeZoneListFilter } from '../../../store/timezones/actionCreators';
-import Search from '../search';
-
 import UserMenu from './usermenu';
 import styles from './styles.module.scss';
 
@@ -28,14 +25,9 @@ class NavBar extends React.PureComponent {
     this.setState({ timeZoneDetailModal: false });
   }
 
-  handleFilterChange = (event) => {
-    this.props.setTimeZoneListFilter(event.target.value);
-  }
-
   render() {
     const {
       loginInfo,
-      timeZoneFilter,
     } = this.props;
 
     const { 
@@ -47,16 +39,6 @@ class NavBar extends React.PureComponent {
     return (
       <div className={styles.main}>
         <div title="Go to homepage" onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
-        <div className={styles['timezone-actions']}>
-          { isLoggedIn && ( 
-            <Search 
-              value={timeZoneFilter} 
-              placeholder="Filter by name"
-              onChange={this.handleFilterChange} 
-            />
-          )
-          }
-        </div>
         <div className={styles['profile-actions']}>
           { isLoggedIn && <Button className={styles["add-timezone"]} title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && <span className={styles['username']}><UserMenu username={loginInfo.username} /></span> }
@@ -77,7 +59,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({ 
-  setTimeZoneListFilter: (value) => dispatch(setTimeZoneListFilter(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(NavBar));

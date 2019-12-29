@@ -10,11 +10,13 @@ class Search extends React.PureComponent {
       value,
       onChange,
       placeholder,
+      maxLength,
     } = this.props;
     return (
       <div className={styles.main}>
         <i className="fa fa-search"></i> 
         <Input 
+          maxLength={maxLength}
           placeholder={placeholder}
           value={value}
           onChange={onChange} 

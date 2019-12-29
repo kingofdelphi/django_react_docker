@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import ConfirmationModal from '../../components/modal/confirmation';
 
@@ -10,6 +10,7 @@ function withAPIHelper(WrappedComponent) {
   const cls = class extends React.PureComponent {
     state = {
       sessionValid: true,
+      redirectToHome: false,
     }
 
     invalidateSession = () => {
@@ -17,8 +18,12 @@ function withAPIHelper(WrappedComponent) {
     }
 
     render() {
-      const { sessionValid } = this.state;
-      // replacing div with empty tags <> < /> does not work
+      const { sessionValid, redirectToHome } = this.state;
+      if (redirectToHome) {
+        return (
+          <Redirect to='/logout' />
+        );
+      }
       return (
         <div style={{ height: '100%' }}>
           <WrappedComponent 
@@ -27,21 +32,20 @@ function withAPIHelper(WrappedComponent) {
           />
           {
             !sessionValid && (
-            <ConfirmationModal 
-              message="Session is invalid. Do you want to log out ?." 
-              onSubmit={() => {
-                this.setState({ sessionValid: true });
-                this.props.history.push('/logout');
-              }}
-              onCancel={() => this.setState({ sessionValid: true })}
-            /> 
+              <ConfirmationModal 
+                message="Session is invalid. Do you want to log out ?." 
+                onSubmit={() => {
+                  this.setState({ redirectToHome: true });
+                }}
+                onCancel={() => this.setState({ sessionValid: true })}
+              /> 
             )
           }
         </div>
       );
     }
   }
-  return withRouter(connect()(cls));
+  return connect()(cls);
 }
 
 export default withAPIHelper;

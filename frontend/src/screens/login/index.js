@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
@@ -19,7 +19,8 @@ class Login extends React.PureComponent {
     username: '',
     password: '',
     fieldErrors: {},
-    validationError: ''
+    validationError: '',
+    toDashboard: false,
   };
 
   handleSubmit = (event) => {
@@ -38,7 +39,7 @@ class Login extends React.PureComponent {
           this.props.setLoginUserInfo({
             ...userInfo
           });
-          this.props.history.push('/dashboard');
+          this.setState({ toDashboard: true });
         },
         (message, errorObj) => {
           this.setState({ 
@@ -71,7 +72,13 @@ class Login extends React.PureComponent {
       fieldErrors,
       validationError,
       loading,
+      toDashboard,
     } = this.state;
+    if (toDashboard) {
+      return (
+        <Redirect to='/dashboard' />
+      );
+    }
     return (
       <div className={styles.main}>
         { loading && <Loading /> }
@@ -112,4 +119,4 @@ const mapDispatchToProps = (dispatch) => ({
   setLoginUserInfo: (userInfo) => dispatch(setLoginUserInfo(userInfo)),
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(withAPIHelper(Login)));
+export default connect(null, mapDispatchToProps)(withAPIHelper(Login));

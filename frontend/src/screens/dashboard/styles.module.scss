@@ -1,7 +1,11 @@
 .main {
-  padding: 8px;
   header {
-    padding: 8px 5px;
+    padding: 8px;
+    background: gainsboro;
+    border-bottom: 1px solid #d4d5da;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .results-count {
@@ -16,6 +20,7 @@
   }
 
   section {
+    padding: 8px;
     margin-top: 10px;
   }
 }

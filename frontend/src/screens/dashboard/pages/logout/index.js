@@ -1,15 +1,23 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import ConfirmationModal from '../../../../components/modal/confirmation';
 
 class Logout extends React.Component {
+  state = {
+    exit: false,
+  }
+
   onSubmit = () => {
-    this.props.onCancel();
-    this.props.history.push('/logout');
+    this.setState({ exit: true });
   }
 
   render() {
+    if (this.state.exit) {
+      return (
+        <Redirect to='/logout' />
+      );
+    }
     return (
       <ConfirmationModal
         message="Are you sure you want to log out ?"
@@ -21,4 +29,4 @@ class Logout extends React.Component {
   }
 }
 
-export default withRouter(Logout);
+export default Logout;

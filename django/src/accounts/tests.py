@@ -99,6 +99,9 @@ class UsersTest(AccountTestCase):
         response = self.form_create_user('uttam', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        response = self.form_create_user('uttam', 'Hacker123!', 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_user_manager_crud(self):
         self.login_user('usermanager', 'changeme')
         User.objects.create_user(
@@ -154,6 +157,13 @@ class UsersTest(AccountTestCase):
         response = self.update_user('uttam', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        data = dict(
+                username='uttam',
+                password=None
+                )
+        response = self.update_user('uttam', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_guest_crd(self):
         User.objects.create_user(
             username="uttam",
@@ -192,6 +202,7 @@ class UsersTest(AccountTestCase):
         # delete self
         response = self.delete_user('uttam')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
 
     def test_admin_crud(self):
         self.login_user('admin', 'changeme')
@@ -210,6 +221,9 @@ class UsersTest(AccountTestCase):
         response = self.update_user('uttam', dict(username='uttam', password='1234!!!23a'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        response = self.update_user('uttam', dict(username='uttami', password='1234!!!23a'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
         response = self.delete_user('uttam')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -217,9 +231,14 @@ class UsersTest(AccountTestCase):
         response = self.delete_user('uttam')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+        # admin deletes user manager
+        response = self.delete_user('usermanager')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
         # destroy logged in user 
         response = self.delete_user('admin')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
 
     def test_change_password(self):
         User.objects.create_user(

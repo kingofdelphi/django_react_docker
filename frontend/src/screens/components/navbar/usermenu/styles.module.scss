@@ -27,6 +27,7 @@ $border: 1px solid #d4d5da;
   padding: 5px;
 }
 .dropdown {
+  z-index: 20;
   border-left: $border;
   border-right: $border;
   border-bottom: $border;
@@ -46,7 +47,7 @@ $border: 1px solid #d4d5da;
         background: #eee;
       }
       cursor: pointer;
-      padding: 8px 20px;
+      padding: 10px 20px;
     }
   }
 }
