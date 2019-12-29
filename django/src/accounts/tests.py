@@ -40,6 +40,18 @@ class AccountTestCase(APITestCase):
         )
         return response
 
+    def form_change_password(self, username, current_password, password1, password2):
+        response = self.client.put(
+            '/users/{}/password/'.format(username),
+            data=json.dumps({
+                'current_password': current_password,
+                'password1': password1,
+                'password2': password2
+            }),
+            content_type='application/json'
+        )
+        return response
+
     def delete_user(self, username):
         response = self.client.delete('/users/{}/'.format(username))
         return response
@@ -57,7 +69,6 @@ class AccountTestCase(APITestCase):
         return response
 
     def setUp(self):
-        print('setting up users')
         User.objects.create_superuser(
             username="admin",
             password="changeme"
@@ -197,7 +208,6 @@ class UsersTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         response = self.update_user('uttam', dict(username='uttam', password='1234!!!23a'))
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.delete_user('uttam')
@@ -211,4 +221,35 @@ class UsersTest(AccountTestCase):
         response = self.delete_user('admin')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def test_change_password(self):
+        User.objects.create_user(
+            username="uttam",
+            password="changeme",
+        )
+        response = self.form_change_password('uttam', 'changeme', 'Hacker123!', 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.login_user('admin', 'changeme')
+
+        # try to change other users password
+        response = self.form_change_password('uttam', 'changeme', 'Hacker123!', 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # change own password
+        response = self.form_change_password('admin', 'changeme', None, 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.form_change_password('admin', 'changeme', 'Hacker123!', 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # try login using old password
+        self.assertRaises(TypeError, self.login_user, 'admin', 'changeme')
+        self.login_user('admin', 'Hacker123!')
+
+        #set password to same
+        response = self.form_change_password('admin', 'Hacker123!', 'Hacker123!', 'Hacker123!')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+        # set password to different
+        response = self.form_change_password('admin', 'Hacker123!', 'IHacker123!', 'IHacker123!')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 

@@ -18,7 +18,11 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
-from .serializers import UserSerializer, PasswordEqualitySerializer, LoginUserSerializer
+from .serializers import UserSerializer, \
+        PasswordEqualitySerializer, \
+        LoginUserSerializer, \
+        ChangePasswordSerializer
+
 
 # Create your views here.
 
@@ -70,6 +74,21 @@ class LoginView(generics.CreateAPIView):
             return Response(data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+class PasswordChangeView(generics.UpdateAPIView):
+    
+    queryset = get_user_model().objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "username"
+
+    def put(self, request, *args, **kwargs):
+        if request.user.get_username() != kwargs['username']:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ChangePasswordSerializer(data=request.data, context=dict(user=request.user))
+        if serializer.is_valid():
+            request.user.set_password(request.data['password1'])
+            request.user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()

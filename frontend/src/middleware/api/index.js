@@ -30,6 +30,7 @@ const apiCallMiddleWare = store => {
       alert('unknown status code' + response.status);
     }
   };
+
   return next => (action, context) => {
     if (action.type === ActionTypes.ApiCall) {
       const { failure_callback } = action.data;

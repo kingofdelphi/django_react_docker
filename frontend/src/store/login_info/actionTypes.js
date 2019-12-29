@@ -1,3 +1,3 @@
-export const SetLoginUserInfo = 110;
-export const LogoutUser = 130;
-export const SetGuestUser = 111;
+export const SetLoginUserInfo = '/logininfo/1';
+export const LogoutUser = '/logininfo/2';
+export const SetGuestUser = '/logininfo/3';

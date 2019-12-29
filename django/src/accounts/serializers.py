@@ -8,16 +8,15 @@ from rest_framework_jwt.settings import api_settings
 import django.contrib.auth.password_validation as validators
 
 class PasswordEqualitySerializer(serializers.Serializer):
-    password1 = serializers.CharField()
-    password2 = serializers.CharField()
+    password1 = serializers.CharField(required = True)
+    password2 = serializers.CharField(required = True)
     def validate(self, data):
         if data.get('password1') != data.get('password2'):
             raise serializers.ValidationError({
                 'passwords': "Passwords don't match"
             })
-        return super(self.__class__, self).validate(data)
+        return super().validate(data)
         
-
 class UserSerializer(serializers.ModelSerializer):
 
     # donot generate on api output
@@ -35,8 +34,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         # here data has all the fields which have validated values
         # so we can create a User instance out of it
-        user = self.Meta.model(**data)
-
         # get the password from the data
         password = data.get('password')
 
@@ -52,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         if errors:
             raise serializers.ValidationError(errors)
 
-        return super(self.__class__, self).validate(data)
+        return super().validate(data)
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -65,15 +62,38 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, user, validated_data):
         # username must be same in validated_data i.e. it cant be changed
         password = validated_data['password']
-        instance = self.Meta.model.objects.get(username=user.get_username())
-        instance.set_password(password)
-        instance.save()
-        return instance
+        user.set_password(password)
+        user.save()
+        return user
 
     class Meta:
         model = get_user_model()
         fields = ('username', 'password')
 
+class ChangePasswordSerializer(PasswordEqualitySerializer):
+    current_password = serializers.CharField(required = True)
+    
+    def validate_current_password(self, current_password):
+        if not self.context['user'].check_password(current_password):
+            raise serializers.ValidationError('Current password is wrong.')
+
+        return current_password
+    
+    def validate(self, data):
+        super().validate(data)
+        password = data.get('password1')
+        errors = []
+        if password == data['current_password']:
+            errors.append('Password is same as the old password.')
+        try:
+            validators.validate_password(password=password, user=get_user_model())
+        except exceptions.ValidationError as e:
+            errors = errors + list(e.messages)
+
+        if errors:
+            raise serializers.ValidationError(dict(passwords=errors))
+
+        return data
 
 class LoginUserSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)

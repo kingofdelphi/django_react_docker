@@ -1,1 +1,1 @@
-export const ApiCall = 'api_call';
+export const ApiCall = 'middleware/api_call';
