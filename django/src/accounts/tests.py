@@ -70,6 +70,10 @@ class AccountTestCase(APITestCase):
 
 class UsersTest(AccountTestCase):
 
+    def test_unauthorized(self):
+        response = self.get_user('uttam')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_form_create_user(self):
         # password null supplied error check
         response = self.form_create_user('uttam', None, None)
@@ -186,6 +190,14 @@ class UsersTest(AccountTestCase):
         )
         # destroy account
         response = self.get_user('uttam')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # try updating account
+        response = self.update_user('uttam', dict(username='michael'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.update_user('uttam', dict(username='uttam', password='1234!!!23a'))
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.delete_user('uttam')

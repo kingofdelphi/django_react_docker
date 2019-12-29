@@ -33,11 +33,11 @@ class Register extends React.PureComponent {
       (user_info) => {
         this.setState({ registered: user_info, loading: false });
       },
-      (errors) => {
+      (message, errorObj) => {
         this.setState({ 
           loading: false,
-          validationError: 'Error Registering',
-          fieldErrors: errors
+          validationError: message,
+          fieldErrors: errorObj
         });
       },
     );

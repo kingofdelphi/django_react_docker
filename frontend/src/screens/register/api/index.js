@@ -1,24 +1,19 @@
-import E from '../../../utils';
+import customFetch from '../../../utils';
 
 export const register = (data, success_callback, failure_callback) => {
-  fetch(
-    E('/users/'),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data)
-    }
-  ).then(res => {
+  customFetch({
+    url: '/users/',
+    method: "POST",
+    data,
+  }).then(res => {
     if (res.status === 201) {
       res.json().then(success_callback);
     } else {
-      res.json().then(failure_callback);
+      res.json().then(errors => failure_callback('Some of the form fields are invalid', errors));
     }
   }).catch((e) => {
-    failure_callback('Unexpected error occurred');
-   });
+    failure_callback('Unexpected error occurred', {});
+  });
 };
 
 

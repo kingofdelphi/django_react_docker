@@ -38,11 +38,11 @@ class Login extends React.PureComponent {
         });
         this.props.history.push('/dashboard');
       },
-      (errors) => {
+      (message, errorObj) => {
         this.setState({ 
           loading: false,
-          validationError: 'Invalid credentials',
-          fieldErrors: errors
+          validationError: message,
+          fieldErrors: errorObj
         });
       },
     );
