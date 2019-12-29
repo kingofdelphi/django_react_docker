@@ -13,6 +13,7 @@ import {
 
 import { add_timezone, edit_timezone } from '../../api/timezones';
 
+import withAPIHelper from '../../../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class TimeZoneDetailView extends React.Component {
@@ -53,28 +54,32 @@ class TimeZoneDetailView extends React.Component {
     };
     this.setState({ loading: true });
     if (this.state.edit_mode) {
-      edit_timezone(
-        this.props.detail.id,
-        data,
-        (time_zone_detail) => {
-          this.props.updateTimeZoneDetail(time_zone_detail);
-          this.props.onCancel();
-        },
-        (errorMessage, errors) => {
-          this.setState({ fieldErrors: errors, loading: false });
-        }
+      this.props.makeApiCall(
+        edit_timezone(
+          this.props.detail.id,
+          data,
+          (time_zone_detail) => {
+            this.props.updateTimeZoneDetail(time_zone_detail);
+            this.props.onCancel();
+          },
+          (errorMessage, errors) => {
+            this.setState({ fieldErrors: errors, loading: false });
+          }
+        )
       );
     } else {
-      add_timezone(
-        data,
-        (time_zone_detail) => {
-          this.props.addTimeZoneDetail(time_zone_detail);
-          this.props.onCancel();
-        },
-        (errorMessage, errors) => {
-          this.setState({ fieldErrors: errors });
-          this.setState({ loading: false });
-        }
+      this.props.makeApiCall(
+        add_timezone(
+          data,
+          (time_zone_detail) => {
+            this.props.addTimeZoneDetail(time_zone_detail);
+            this.props.onCancel();
+          },
+          (errorMessage, errors) => {
+            this.setState({ fieldErrors: errors });
+            this.setState({ loading: false });
+          }
+        )
       );
     }
   };
@@ -121,6 +126,7 @@ class TimeZoneDetailView extends React.Component {
                   value={this.state.difference_to_GMT} 
                   label="Difference to GMT" 
                   invalid={fieldErrors['difference_to_GMT']}
+                  placeholder="e.g. + 5:45, - 2:30"
                   validationMessage={fieldErrors['difference_to_GMT']}
                 />
                 <div className={styles.buttons}>
@@ -142,6 +148,6 @@ const mapDispatchToProps = dispatch => ({
   updateTimeZoneDetail: (time_zone_detail) => dispatch(updateTimeZoneDetail(time_zone_detail)),
 });
 
-export default connect(null, mapDispatchToProps)(TimeZoneDetailView);
+export default connect(null, mapDispatchToProps)(withAPIHelper(TimeZoneDetailView));
 
 

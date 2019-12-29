@@ -13,6 +13,8 @@ import {
   delete_timezone,
 } from '../api/timezones';
 
+import withAPIHelper from '../../../middleware/api/util';
+
 class Confirm extends React.Component {
   state = {
     loading: false,
@@ -20,16 +22,17 @@ class Confirm extends React.Component {
   handleDelete = () => {
     const { timezone } = this.props;
     this.setState({ loading: true });
-    delete_timezone(
-      timezone.id,
-      () => {
-        this.props.deleteTimeZoneDetail(timezone);
-        this.props.onCancel();
-      },
-      () => {
-        this.setState({ loading: false });
-        alert('cant delete');
-      },
+    this.props.makeApiCall(
+      delete_timezone(
+        timezone.id,
+        () => {
+          this.props.deleteTimeZoneDetail(timezone);
+          this.props.onCancel();
+        },
+        () => {
+          this.setState({ loading: false });
+        },
+      )
     );
   };
 
@@ -51,6 +54,6 @@ const mapDispatchToProps = dispatch => ({
   deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
 });
 
-export default connect(null, mapDispatchToProps)(Confirm);
+export default connect(null, mapDispatchToProps)(withAPIHelper(Confirm));
 
 

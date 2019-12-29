@@ -7,6 +7,7 @@ import Loading from '../../components/loading';
 
 import { register } from './api';
 
+import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class Register extends React.PureComponent {
@@ -28,18 +29,20 @@ class Register extends React.PureComponent {
       password1: this.state.password1,
     };
     this.setState({ loading: true });
-    register(
-      data,
-      (user_info) => {
-        this.setState({ registered: user_info, loading: false });
-      },
-      (message, errorObj) => {
-        this.setState({ 
-          loading: false,
-          validationError: message,
-          fieldErrors: errorObj
-        });
-      },
+    this.props.makeApiCall(
+      register(
+        data,
+        (user_info) => {
+          this.setState({ registered: user_info, loading: false });
+        },
+        (message, errorObj) => {
+          this.setState({ 
+            loading: false,
+            validationError: message,
+            fieldErrors: errorObj
+          });
+        },
+      )
     );
   }
 
@@ -131,4 +134,4 @@ class Register extends React.PureComponent {
   }
 }
 
-export default withRouter(Register);
+export default withRouter(withAPIHelper(Register));

@@ -1,0 +1,13 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: #e1e4e8;
+  align-items: center;
+  >*:not(:first-child) {
+    margin-top: 10px;
+  }
+  button:not(:first-child) {
+    margin-left: 10px;
+  }
+}

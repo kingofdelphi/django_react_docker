@@ -12,6 +12,7 @@ import {
   get_timezones,
 } from './api/timezones';
 
+import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class Dashboard extends React.Component {
@@ -19,15 +20,16 @@ class Dashboard extends React.Component {
     loading: true,
   }
   componentDidMount() {
-    get_timezones(
-      (timezones) => {
-        this.props.setTimeZoneList(timezones);
-        this.setState({ loading: false });
-      },
-      (error_message) => {
-        this.setState({ loading: false });
-        alert(error_message);
-      },
+    this.props.makeApiCall(
+      get_timezones(
+        (timezones) => {
+          this.props.setTimeZoneList(timezones);
+          this.setState({ loading: false });
+        },
+        (error_message) => {
+          this.setState({ loading: false });
+        },
+      )
     );
   }
 
@@ -90,4 +92,4 @@ const mapStateToProps = state => ({
   timeZoneFilter: state.timeZoneFilter,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Dashboard));

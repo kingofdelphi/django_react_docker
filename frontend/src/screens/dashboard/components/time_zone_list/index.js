@@ -54,7 +54,7 @@ class TimeZoneList extends React.Component {
     } = this.state;
 
     return (
-      <>
+      <div>
         {
           timezones.map(timezone => {
             const { 
@@ -93,7 +93,7 @@ class TimeZoneList extends React.Component {
           /> 
         )
       }
-      </>
+      </div>
     );
   }
 }

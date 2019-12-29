@@ -10,6 +10,7 @@ import {
 class Logout extends React.Component {
   componentDidMount() {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     this.props.logoutUser();
     this.props.history.push('/');
   }

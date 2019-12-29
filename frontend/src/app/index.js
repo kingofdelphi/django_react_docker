@@ -61,24 +61,26 @@ class Routes extends React.Component {
   render() {
     return (
       <div className={styles.body}>
-        <Route exact path="/">
-          <HomePage />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/logout">
-          <Logout />
-        </Route>
-        <Route path="/register">
-          <Register />
-        </Route>
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
-        <Route path="/profile/">
-          <Profile />
-        </Route>
+        <Switch>
+          <Route exact path="/">
+            <HomePage />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <Route path="/logout">
+            <Logout />
+          </Route>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route path="/dashboard">
+            <Dashboard />
+          </Route>
+          <Route path="/profile/">
+            <Profile />
+          </Route>
+        </Switch>
       </div>
     );
   }
@@ -100,9 +102,7 @@ class App extends React.Component {
       <div className={styles.container}>
         <Router>
           <NavBar />
-          <Switch>
-            <RoutesWrapped />
-          </Switch>
+          <RoutesWrapped />
         </Router>
       </div>
     );
