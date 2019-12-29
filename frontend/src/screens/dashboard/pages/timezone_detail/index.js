@@ -60,7 +60,7 @@ class TimeZoneDetailView extends React.Component {
           this.props.updateTimeZoneDetail(time_zone_detail);
           this.props.onCancel();
         },
-        (errors) => {
+        (errorMessage, errors) => {
           this.setState({ fieldErrors: errors, loading: false });
         }
       );
@@ -71,7 +71,7 @@ class TimeZoneDetailView extends React.Component {
           this.props.addTimeZoneDetail(time_zone_detail);
           this.props.onCancel();
         },
-        (errors) => {
+        (errorMessage, errors) => {
           this.setState({ fieldErrors: errors });
           this.setState({ loading: false });
         }
