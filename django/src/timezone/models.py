@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from accounts.models import TimeZoneUser
-
 # Create your models here.
 class TimeZone(models.Model):
     # time zone title

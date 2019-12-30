@@ -1,12 +1,11 @@
 # Create your tests here.
-from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
-from django.test import override_settings
 from django.contrib.auth import get_user_model
 
 import json
 
 from .models import TimeZone
+from .serializers import TimeZoneSerializer
 
 from accounts.tests import AccountTestCase
 
@@ -25,6 +24,11 @@ class TimeZoneTest(AccountTestCase):
             '/timezones/{}/'.format(timezone_id),
             data=json.dumps(data),
             content_type="application/json"
+        )
+
+    def get_timezone(self, timezone_id):
+        return self.client.get(
+            '/timezones/{}/'.format(timezone_id),
         )
 
     def delete_timezone(self, id):
@@ -55,6 +59,26 @@ class TimeZoneTest(AccountTestCase):
         id1 = response.data['id']
 
         self.login_user('admin', 'changeme')
+
+        # admin retrieves timezone of guest1
+        response = self.get_timezone(id1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        expected = {**data, 'id': id1}
+        self.assertEqual(TimeZoneSerializer(response.data).data, expected)
+
+        # admin updates timezone of guest1
+        data = {
+                "name": "Mumbai",
+                "city": "Kathmandu",
+                "difference_to_GMT": "+ 3:32"
+                }
+        response = self.update_timezone(id1, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        expected = {**data, 'id': id1}
+        self.assertEqual(TimeZoneSerializer(response.data).data, expected)
+
         response = self.delete_timezone(id1)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -80,6 +104,9 @@ class TimeZoneTest(AccountTestCase):
         response = self.delete_timezone(id1)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+        response = self.get_timezone(id1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
         response = self.create_timezone(data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -91,13 +118,25 @@ class TimeZoneTest(AccountTestCase):
                 }
         self.login_user('guest1', 'changeme')
         response = self.create_timezone(data)
+
         id1 = response.data['id']
         data['name'] = "Earth"
         data['city'] = "Pokhara"
         response = self.update_timezone(id1, data)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data['id'] = id1
         self.assertEqual(response.data, data)
+
+        # invalid id sent in put data, it is ignored, as resource id is obtained from url
+        data['id'] = id1 + 1
+        response = self.update_timezone(id1, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # missing fields
+        data.pop('name')
+        response = self.update_timezone(id1, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_guest_vs_guest_cross_user_crd(self):
         data = {

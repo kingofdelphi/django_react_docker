@@ -3,8 +3,6 @@ from django.contrib.auth import get_user_model
 
 from django.core import exceptions
 
-from rest_framework_jwt.settings import api_settings
-
 import django.contrib.auth.password_validation as validators
 
 class PasswordEqualitySerializer(serializers.Serializer):

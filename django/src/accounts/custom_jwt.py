@@ -1,6 +1,4 @@
-from datetime import datetime
 from calendar import timegm
-from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.utils  import jwt_payload_handler as base_jwt_payload_handler
 
 def jwt_payload_handler(user):
