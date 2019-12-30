@@ -1,31 +1,26 @@
 from rest_framework.views import APIView
 from rest_framework import generics
-
-from django.contrib.auth import get_user_model
 from rest_framework_jwt.settings import api_settings
-from django.db.models import Q
-
-
-from django.contrib.auth import authenticate
-
 from rest_framework import permissions, status
 from rest_framework.response import Response
 
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 
+from .utils import get_user_role
 from .permissions import \
         IsOwnerOrAdminOrUserManager, \
         UserListPermission
-
-# Get the JWT settings, add these lines after the import/from lines
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
 
 from .serializers import UserSerializer, \
         PasswordEqualitySerializer, \
         LoginUserSerializer, \
         ChangePasswordSerializer
+
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserList(generics.ListCreateAPIView):
@@ -81,10 +76,22 @@ class LoginView(generics.CreateAPIView):
             update_last_login(None, user)
             data = {
                 "username": username,
+                "role": get_user_role(user),
                 "token": jwt_encode_handler(jwt_payload_handler(user)),
             }
             return Response(data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+class LoginInfoView(generics.RetrieveAPIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        data = {
+                "username": request.user.get_username(),
+                "role": get_user_role(request.user),
+                }
+        return Response(data)
 
 class PasswordChangeView(generics.UpdateAPIView):
     

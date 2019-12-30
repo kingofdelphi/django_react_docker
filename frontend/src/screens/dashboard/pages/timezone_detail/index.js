@@ -43,6 +43,14 @@ class TimeZoneDetailView extends React.Component {
     this.setState({ difference_to_GMT: e.target.value });
   };
 
+  getActionUser = () => {
+    const {
+      loginInfo,
+      actionUser,
+    } = this.props;
+    return actionUser || loginInfo.username;
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     const data = {
@@ -50,13 +58,16 @@ class TimeZoneDetailView extends React.Component {
       city: this.state.city,
       difference_to_GMT: this.state.difference_to_GMT,
     };
+
+    const actionUser = this.getActionUser();
+
     if (this.state.edit_mode) {
       this.props.makeApiCall(
         edit_timezone(
           this.props.detail.id,
           data,
           (time_zone_detail) => {
-            this.props.updateTimeZoneDetail(time_zone_detail);
+            this.props.updateTimeZoneDetail(actionUser, time_zone_detail);
             this.props.onCancel();
           },
           (errorMessage, errors) => {
@@ -69,12 +80,13 @@ class TimeZoneDetailView extends React.Component {
         add_timezone(
           data,
           (time_zone_detail) => {
-            this.props.addTimeZoneDetail(time_zone_detail);
+            this.props.addTimeZoneDetail(actionUser, time_zone_detail);
             this.props.onCancel();
           },
           (errorMessage, errors) => {
             this.setState({ fieldErrors: errors });
-          }
+          },
+          actionUser,
         )
       );
     }
@@ -135,11 +147,16 @@ class TimeZoneDetailView extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  addTimeZoneDetail: (time_zone_detail) => dispatch(addTimeZoneDetail(time_zone_detail)),
-  updateTimeZoneDetail: (time_zone_detail) => dispatch(updateTimeZoneDetail(time_zone_detail)),
+const mapStateToProps = state => ({ 
+  actionUser: state.actionUser,
+  loginInfo: state.loginInfo,
 });
 
-export default connect(null, mapDispatchToProps)(withAPIHelper(TimeZoneDetailView));
+const mapDispatchToProps = dispatch => ({
+  addTimeZoneDetail: (username, time_zone_detail) => dispatch(addTimeZoneDetail(username, time_zone_detail)),
+  updateTimeZoneDetail: (username, time_zone_detail) => dispatch(updateTimeZoneDetail(username, time_zone_detail)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(TimeZoneDetailView));
 
 

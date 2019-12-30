@@ -5,6 +5,7 @@ export const setLoginUserInfo = (loginInfo) => {
     type: ActionTypes.SetLoginUserInfo,
     data: {
       username: loginInfo.username,
+      role: loginInfo.role,
     },
   }
 };

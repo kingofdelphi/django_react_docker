@@ -18,7 +18,7 @@ from django.urls import path, include
 
 from django.http import HttpResponse
 
-from accounts.views import LoginView
+from accounts.views import LoginView, LoginInfoView
 
 def index(request):
     return HttpResponse("This is the backend server for TimeZone app")
@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
     path('login/', LoginView.as_view()),
+    path('current_user/', LoginInfoView.as_view()),
     path('users/', include('accounts.urls')),
     path('timezones/', include('timezone.urls'))
 ]

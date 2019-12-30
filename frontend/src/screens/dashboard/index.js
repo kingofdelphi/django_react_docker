@@ -4,31 +4,48 @@ import { connect } from 'react-redux'
 import TimeZoneList from './components/time_zone_list';
 import Search from '../components/search';
 import Button from '../../components/button';
+import Select from '../../components/select';
 
 import * as LoginStates from '../../store/login_info/login_states';
 import {
   setTimeZoneList,
 } from '../../store/timezones/actionCreators';
 
-import { setTimeZoneListFilter } from '../../store/timezones/actionCreators';
+import { setTimeZoneListFilter, setActionUser } from '../../store/timezones/actionCreators';
 
 import {
   get_timezones,
 } from './api/timezones';
 
+import {
+  get_user_list,
+} from './api';
+
 import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
-class Dashboard extends React.Component {
+class Dashboard extends React.PureComponent {
   state = {
     list: false,
     sorted: false,
+    user_list: [],
   };
+
   componentDidMount() {
+    const { username } = this.props.loginInfo;
     this.props.makeApiCall(
       get_timezones(
         (timezones) => {
-          this.props.setTimeZoneList(timezones);
+          this.props.setTimeZoneList(username, timezones);
+        },
+        (error_message) => {
+        },
+      )
+    )
+    this.props.makeApiCall(
+      get_user_list(
+        (user_list) => {
+          this.setState({ user_list });
         },
         (error_message) => {
         },
@@ -36,16 +53,27 @@ class Dashboard extends React.Component {
     );
   }
 
+  getActionUser = () => {
+    const {
+      loginInfo,
+      actionUser,
+    } = this.props;
+    return actionUser || loginInfo.username;
+  };
+
   getFilteredTimezones = () => {
     const { 
       timezones,
       timeZoneFilter,
     } = this.props;
+
     const {
       sorted: sortByName,
     } = this.state;
 
-    const result = timezones.filter(timezone => {
+    const selectedUser = this.getActionUser();
+
+    const result = (timezones[selectedUser] || []).filter(timezone => {
       return timezone.name.indexOf(timeZoneFilter) !== -1;
     });
     // sort my first match
@@ -82,6 +110,21 @@ class Dashboard extends React.Component {
     this.props.setTimeZoneListFilter(event.target.value);
   }
 
+  handleSelectChange = (event) => {
+    const selectedUser = event.target.value;
+    this.props.setActionUser(selectedUser);
+    this.props.makeApiCall(
+      get_timezones(
+        (timezones) => {
+          this.props.setTimeZoneList(selectedUser, timezones);
+        },
+        (error_message) => {
+        },
+        selectedUser,
+      )
+    );
+  }
+
   render() {
     const timezones = this.getFilteredTimezones();
     const description = this.getDescription(timezones);
@@ -92,16 +135,35 @@ class Dashboard extends React.Component {
 
     const isLoggedIn = loginInfo.loginStatus === LoginStates.LoggedIn;
 
-    const { sorted, list } = this.state;
+    const showUserList = isLoggedIn && loginInfo.role === 'admin';
+
+    const { 
+      sorted,
+      list,
+      user_list,
+    } = this.state;
+
+    const filterUser = this.getActionUser();
     
     const listStyles = [styles.timezone_list, list ? styles['active'] : ''].join(' ');
     const buttonStyles = [styles['list-button'], list ? styles['active'] : ''].join(' ');
     const sortedStyles = [styles['sort-button'], sorted ? styles['active'] : ''].join(' ');
+
     return (
       <div className={styles['main']}>
         <header>
           <div className={styles.description}>{description}</div>
           <div className={styles['timezone-actions']}>
+            { showUserList && (
+              <Select 
+                keySelector={item => item.username} 
+                value={filterUser}
+                onChange={this.handleSelectChange}
+                valueSelector={item => item.username} 
+                items={user_list}
+              />
+            )
+            }
             { isLoggedIn && ( 
               <>
                 <Button 
@@ -136,13 +198,15 @@ class Dashboard extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({ 
-  setTimeZoneList: (timezones) => dispatch(setTimeZoneList(timezones)),
+  setTimeZoneList: (username, timezones) => dispatch(setTimeZoneList(username, timezones)),
   setTimeZoneListFilter: (value) => dispatch(setTimeZoneListFilter(value)),
+  setActionUser: (username) => dispatch(setActionUser(username)),
 });
 
 const mapStateToProps = state => ({ 
   timezones: state.timezones,
   timeZoneFilter: state.timeZoneFilter,
+  actionUser: state.actionUser,
   loginInfo: state.loginInfo,
 });
 

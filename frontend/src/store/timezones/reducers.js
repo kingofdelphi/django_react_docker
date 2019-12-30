@@ -1,21 +1,41 @@
 import * as ActionTypes from './actionTypes';
 import * as LoginActionTypes from '../login_info/actionTypes';
 
-const timezones = (state = [], action) => {
-  if (action.type === ActionTypes.ADD_TIME_ZONE_DETAIL) {
-    state = [...state, action.data];
+const timezones = (state = {}, action) => {
+  const { data } = action;
+  if (action.type === ActionTypes.AddTimeZoneDetail) {
+    const { username, time_zone_detail } = data;
+    const old_list = state[username] || [];
+    state = {
+      ...state,
+      [username]: [...old_list, time_zone_detail],
+    }
   }
-  if (action.type === ActionTypes.SET_TIME_ZONE_LIST) {
-    state = action.data;
+  if (action.type === ActionTypes.SetTimeZoneList) {
+    const { username, time_zone_list } = data;
+    state = {
+      ...state,
+      [username]: time_zone_list,
+    }
   }
-  if (action.type === ActionTypes.DELETE_TIME_ZONE_DETAIL) {
-    state = state.filter(tz => tz.id !== action.data.id);
+  if (action.type === ActionTypes.DeleteTimeZoneDetail) {
+    const { username, time_zone_detail } = data;
+    const old_list = state[username] || [];
+    state = {
+      ...state,
+      [username]: old_list.filter(tz => tz.id !== time_zone_detail.id),
+    }
   }
-  if (action.type === ActionTypes.UPDATE_TIME_ZONE_DETAIL) {
-    state = state.map(tz => tz.id === action.data.id ? action.data : tz);
+  if (action.type === ActionTypes.UpdateTimeZoneDetail) {
+    const { username, time_zone_detail } = data;
+    const old_list = state[username] || [];
+    state = {
+      ...state,
+      [username]: old_list.map(tz => tz.id === time_zone_detail.id ? time_zone_detail : tz),
+    }
   }
   if (action.type === LoginActionTypes.LogoutUser) {
-    state = [];
+    state = {};
   }
   return state;
 };

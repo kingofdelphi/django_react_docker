@@ -21,13 +21,21 @@ class Confirm extends React.Component {
       delete_timezone(
         timezone.id,
         () => {
-          this.props.deleteTimeZoneDetail(timezone);
+          this.props.deleteTimeZoneDetail(this.getActionUser(), timezone);
           this.props.onCancel();
         },
         () => {
         },
       )
     );
+  };
+
+  getActionUser = () => {
+    const {
+      loginInfo,
+      actionUser,
+    } = this.props;
+    return actionUser || loginInfo.username;
   };
 
   render() {
@@ -43,10 +51,15 @@ class Confirm extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  deleteTimeZoneDetail: (timezone) => dispatch(deleteTimeZoneDetail(timezone)),
+const mapStateToProps = state => ({ 
+  actionUser: state.actionUser,
+  loginInfo: state.loginInfo,
 });
 
-export default connect(null, mapDispatchToProps)(withAPIHelper(Confirm));
+const mapDispatchToProps = dispatch => ({
+  deleteTimeZoneDetail: (username, timezone) => dispatch(deleteTimeZoneDetail(username, timezone)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Confirm));
 
 

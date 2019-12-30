@@ -10,6 +10,7 @@ const login_info = (state = initialState, action) => {
     state = {
       loginStatus: LoginStates.LoggedIn,
       username: action.data.username,
+      role: action.data.role,
     };
   }
   if (action.type === ActionTypes.LogoutUser) {

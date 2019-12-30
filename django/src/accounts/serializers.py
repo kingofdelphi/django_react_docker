@@ -2,8 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from django.core import exceptions
-
 import django.contrib.auth.password_validation as validators
+
+from .utils import get_user_role
 
 class PasswordEqualitySerializer(serializers.Serializer):
     password1 = serializers.CharField(required = True)
@@ -22,11 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
 
     def get_role(self, user):
-        if user.is_superuser:
-            return 'admin'
-        if user.is_user_manager:
-            return 'user_manager'
-        return 'normal_user'
+        return get_user_role(user)
 
     # We need to implement this method as we have used a custom
     # serializer. It will pick up the validation config
