@@ -1,8 +1,9 @@
-import React from 'react';
+  import React from 'react';
 import { connect } from 'react-redux'
 
 import TimeZoneList from './components/time_zone_list';
 import Search from '../components/search';
+import Button from '../../components/button';
 
 import * as LoginStates from '../../store/login_info/login_states';
 import {
@@ -19,6 +20,10 @@ import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class Dashboard extends React.Component {
+  state = {
+    list: false,
+    sorted: false,
+  };
   componentDidMount() {
     this.props.makeApiCall(
       get_timezones(
@@ -36,12 +41,22 @@ class Dashboard extends React.Component {
       timezones,
       timeZoneFilter,
     } = this.props;
+    const {
+      sorted: sortByName,
+    } = this.state;
+
     const result = timezones.filter(timezone => {
       return timezone.name.indexOf(timeZoneFilter) !== -1;
     });
+    // sort my first match
     const sorted = result.sort((a, b) => {
       return a.name.indexOf(timeZoneFilter) - b.name.indexOf(timeZoneFilter);
     });
+    if (sortByName) {
+      return sorted.sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      }); 
+    }
     return sorted;
   }
 
@@ -77,24 +92,43 @@ class Dashboard extends React.Component {
 
     const isLoggedIn = loginInfo.loginStatus === LoginStates.LoggedIn;
 
+    const { sorted, list } = this.state;
+    
+    const listStyles = [styles.timezone_list, list ? styles['active'] : ''].join(' ');
+    const buttonStyles = [styles['list-button'], list ? styles['active'] : ''].join(' ');
+    const sortedStyles = [styles['sort-button'], sorted ? styles['active'] : ''].join(' ');
     return (
       <div className={styles['main']}>
         <header>
           <div className={styles.description}>{description}</div>
           <div className={styles['timezone-actions']}>
             { isLoggedIn && ( 
-              <Search 
-                maxLength="20"
-                value={timeZoneFilter} 
-                placeholder="Filter by name"
-                onChange={this.handleFilterChange} 
-              />
+              <>
+                <Button 
+                  className={sortedStyles}
+                  onClick={() => this.setState({ sorted: !sorted })}
+                >
+                  <i className="fa fa-sort" />
+                </Button>
+                <Button 
+                  className={buttonStyles}
+                  onClick={() => this.setState({ list: !list })}
+                >
+                  <i className="fa fa-list" />
+                </Button>
+                <Search 
+                  maxLength="20"
+                  value={timeZoneFilter} 
+                  placeholder="Filter by name"
+                  onChange={this.handleFilterChange} 
+                />
+              </>
             )
             }
         </div>
         </header>
         <section>
-          <TimeZoneList timezones={timezones} />
+          <TimeZoneList className={listStyles} timezones={timezones} />
         </section>
       </div>
     );

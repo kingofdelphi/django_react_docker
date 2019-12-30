@@ -26,4 +26,30 @@
     padding: 8px;
     margin-top: 10px;
   }
+  .timezone-actions {
+    display: flex;
+    align-items: center;
+    > *:not(:first-child) {
+      margin-left: 5px;
+    }
+    button {
+      padding: 5px;
+      height: min-content;
+      &:focus {
+        outline: none;
+      }
+      &.active {
+        outline: 2px solid grey;
+      }
+    }
+    .sort-button {
+      padding: 5px 8px;
+    }
+  }
+  .list-button {
+  }
+  .timezone_list.active {
+    display: flex;
+    flex-direction: column;
+  }
 }
