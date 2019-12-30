@@ -52,6 +52,7 @@ const apiCallMiddleWare = store => {
       const api_promise = customFetch(action.data)
       api_promise.then(response => handleResponse(response, action, context))
         .catch((e) => {
+          context.setConnectionStatus(false);
           failure_callback('Unexpected error occurred', {});
         });
       return;

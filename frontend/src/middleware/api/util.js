@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import ConfirmationModal from '../../components/modal/confirmation';
 import Loading from '../../components/loading';
+import MessageBox from '../../components/modal/messagebox';
 
 import makeApiCall from './actionCreators';
 
@@ -13,6 +14,7 @@ function withAPIHelper(WrappedComponent) {
       sessionValid: true,
       redirectToHome: false,
       loading: false,
+      serverUp: true,
     }
 
     invalidateSession = () => {
@@ -23,9 +25,14 @@ function withAPIHelper(WrappedComponent) {
       this.setState({ loading: shown });
     }
 
+    setConnectionStatus = (serverUp) => {
+      this.setState({ serverUp });
+    };
+
     apiContext = { 
       invalidateSession: this.invalidateSession,
       setLoading: this.setLoading,
+      setConnectionStatus: this.setConnectionStatus,
     }
 
     render() {
@@ -33,6 +40,7 @@ function withAPIHelper(WrappedComponent) {
         sessionValid,
         redirectToHome,
         loading,
+        serverUp,
       } = this.state;
 
       if (redirectToHome) {
@@ -58,6 +66,7 @@ function withAPIHelper(WrappedComponent) {
             )
           }
           { loading && <Loading /> }
+          { !serverUp && <MessageBox message="Could not connect to server" onSubmit={() => this.setConnectionStatus(true)} /> }
         </div>
       );
     }
