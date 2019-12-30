@@ -36,14 +36,6 @@ const getToken = () => {
 };
 
 class RoutesValidator extends React.PureComponent {
-  state = {
-    redirectTo: null,
-  };
-
-  componentDidMount() {
-    this.validateRoutes();
-  }
-
   validateRoutes() {
     const location = this.props.location.pathname;
     let redirectTo = '';
@@ -58,22 +50,37 @@ class RoutesValidator extends React.PureComponent {
         redirectTo = '/dashboard';
       }
     }
-    this.setState({ redirectTo });
-  }
-
-  // called on browser back or hash name change on url
-  // as we have wrapepd it around withRouter which
-  // will send the changed params as props
-  componentDidUpdate() {
-    this.validateRoutes();
+    return redirectTo;
   }
 
   render() {
-    if (this.state.redirectTo) {
-      return <Redirect to={this.state.redirectTo} />;
+    const redirection = this.validateRoutes();
+    if (redirection) {
+      return <Redirect to={redirection} />;
     }
     return (
-      <> </>
+      <div className={styles.body}>
+        <Switch>
+          <Route exact path="/">
+            <HomePage />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <Route path="/logout">
+            <Logout />
+          </Route>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route path="/dashboard">
+            <Dashboard />
+          </Route>
+          <Route path="/profile/">
+            <Profile />
+          </Route>
+        </Switch>
+      </div>
     );
   }
 }
@@ -97,28 +104,6 @@ class App extends React.Component {
         <Router>
           <RoutesValidatorE />
           <NavBar />
-          <div className={styles.body}>
-            <Switch>
-              <Route exact path="/">
-                <HomePage />
-              </Route>
-              <Route path="/login">
-                <Login />
-              </Route>
-              <Route path="/logout">
-                <Logout />
-              </Route>
-              <Route path="/register">
-                <Register />
-              </Route>
-              <Route path="/dashboard">
-                <Dashboard />
-              </Route>
-              <Route path="/profile/">
-                <Profile />
-              </Route>
-            </Switch>
-          </div>
         </Router>
       </div>
     );
