@@ -4,7 +4,6 @@ import { Redirect } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
-import Loading from '../../components/loading';
 
 import withAPIHelper from '../../middleware/api/util';
 import { setLoginUserInfo } from '../../store/login_info/actionCreators';
@@ -15,7 +14,6 @@ import styles from './styles.module.scss';
 
 class Login extends React.PureComponent {
   state = {
-    loading: false,
     username: '',
     password: '',
     fieldErrors: {},
@@ -29,7 +27,6 @@ class Login extends React.PureComponent {
       username: this.state.username,
       password: this.state.password,
     };
-    this.setState({ loading: true });
     this.props.makeApiCall(
       login(
         data,
@@ -43,7 +40,6 @@ class Login extends React.PureComponent {
         },
         (message, errorObj) => {
           this.setState({ 
-            loading: false,
             validationError: message,
             fieldErrors: errorObj
           });
@@ -71,7 +67,6 @@ class Login extends React.PureComponent {
       password,
       fieldErrors,
       validationError,
-      loading,
       toDashboard,
     } = this.state;
     if (toDashboard) {
@@ -81,7 +76,6 @@ class Login extends React.PureComponent {
     }
     return (
       <div className={styles.main}>
-        { loading && <Loading /> }
         <header className={styles.header}>
           <div>
             Please enter your credentials to use the TimeZone app

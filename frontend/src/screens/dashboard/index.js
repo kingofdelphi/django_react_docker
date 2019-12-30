@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux'
 
 import TimeZoneList from './components/time_zone_list';
-import Loading from '../../components/loading';
 import Search from '../components/search';
 
 import * as LoginStates from '../../store/login_info/login_states';
@@ -20,18 +19,13 @@ import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class Dashboard extends React.Component {
-  state = {
-    loading: true,
-  }
   componentDidMount() {
     this.props.makeApiCall(
       get_timezones(
         (timezones) => {
           this.props.setTimeZoneList(timezones);
-          this.setState({ loading: false });
         },
         (error_message) => {
-          this.setState({ loading: false });
         },
       )
     );
@@ -85,7 +79,6 @@ class Dashboard extends React.Component {
 
     return (
       <div className={styles['main']}>
-        { this.state.loading && <Loading /> }
         <header>
           <div className={styles.description}>{description}</div>
           <div className={styles['timezone-actions']}>

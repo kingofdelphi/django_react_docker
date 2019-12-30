@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from "react-redux";
 
 import ConfirmationModal from '../../../components/modal/confirmation';
-import Loading from '../../../components/loading';
 
 import {
   deleteTimeZoneDetail,
@@ -16,12 +15,8 @@ import {
 import withAPIHelper from '../../../middleware/api/util';
 
 class Confirm extends React.Component {
-  state = {
-    loading: false,
-  };
   handleDelete = () => {
     const { timezone } = this.props;
-    this.setState({ loading: true });
     this.props.makeApiCall(
       delete_timezone(
         timezone.id,
@@ -30,7 +25,6 @@ class Confirm extends React.Component {
           this.props.onCancel();
         },
         () => {
-          this.setState({ loading: false });
         },
       )
     );
@@ -44,7 +38,6 @@ class Confirm extends React.Component {
           onSubmit={this.handleDelete}
           onCancel={this.props.onCancel}
         />
-        { this.state.loading && <Loading /> }
       </>
     );
   }

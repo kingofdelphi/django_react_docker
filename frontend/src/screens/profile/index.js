@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Button from '../../components/button';
-import Loading from '../../components/loading';
 import Input from '../../components/input';
 import MessageBox from '../../components/modal/messagebox';
 
@@ -55,7 +54,6 @@ class Profile extends React.Component {
         },
         (message, errorObj) => {
           this.setState({ 
-            loading: false,
             fieldErrors: errorObj
           });
         },
@@ -69,12 +67,10 @@ class Profile extends React.Component {
       password1,
       password2,
       fieldErrors,
-      loading,
       showSuccess,
     } = this.state;
     return (
       <div className={styles.main}>
-        { loading && <Loading /> }
           { showSuccess && (
             <MessageBox message="Your password has been changed successully." onSubmit={() => this.setState({ showSuccess: false })} /> 
           )

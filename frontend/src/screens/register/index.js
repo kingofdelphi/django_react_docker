@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
-import Loading from '../../components/loading';
 
 import { register } from './api';
 
@@ -18,7 +17,6 @@ class Register extends React.PureComponent {
     validationError: '',
     fieldErrors: {},
     registered: { },
-    loading: false,
   };
 
   handleSubmit = (event) => {
@@ -28,16 +26,14 @@ class Register extends React.PureComponent {
       password: this.state.password,
       password1: this.state.password1,
     };
-    this.setState({ loading: true });
     this.props.makeApiCall(
       register(
         data,
         (user_info) => {
-          this.setState({ registered: user_info, loading: false });
+          this.setState({ registered: user_info });
         },
         (message, errorObj) => {
           this.setState({ 
-            loading: false,
             validationError: message,
             fieldErrors: errorObj
           });
@@ -75,7 +71,6 @@ class Register extends React.PureComponent {
       validationError,
       fieldErrors,
       registered,
-      loading,
     } = this.state;
     if (registered.username) {
       return (
@@ -87,7 +82,6 @@ class Register extends React.PureComponent {
     }
     return (
       <div className={styles.main}>
-        { loading && <Loading /> }
         <header className={styles.header}>
           <div>
             Enter proper username and password and click the Register button.

@@ -31,13 +31,27 @@ const apiCallMiddleWare = store => {
     }
   };
 
+  const decorateWithRemoveLoader = (fxn, context) => {
+    return function (...args) {
+      context.setLoading(false);
+      const result = fxn.apply(this, args);
+      return result;
+    };
+  };
+
   return next => (action, context) => {
     if (action.type === ActionTypes.ApiCall) {
+      // patch callback to remove loader on response
+      action.data.success_callback = decorateWithRemoveLoader(action.data.success_callback, context);
+      action.data.failure_callback = decorateWithRemoveLoader(action.data.failure_callback, context);
+
       const { failure_callback } = action.data;
+
+      context.setLoading(true);
+
       const api_promise = customFetch(action.data)
       api_promise.then(response => handleResponse(response, action, context))
         .catch((e) => {
-          console.log(e);
           failure_callback('Unexpected error occurred', {});
         });
       return;

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import ConfirmationModal from '../../components/modal/confirmation';
+import Loading from '../../components/loading';
 
 import makeApiCall from './actionCreators';
 
@@ -11,14 +12,29 @@ function withAPIHelper(WrappedComponent) {
     state = {
       sessionValid: true,
       redirectToHome: false,
+      loading: false,
     }
 
     invalidateSession = () => {
       this.setState({ sessionValid: false });
     }
 
+    setLoading = (shown) => {
+      this.setState({ loading: shown });
+    }
+
+    apiContext = { 
+      invalidateSession: this.invalidateSession,
+      setLoading: this.setLoading,
+    }
+
     render() {
-      const { sessionValid, redirectToHome } = this.state;
+      const { 
+        sessionValid,
+        redirectToHome,
+        loading,
+      } = this.state;
+
       if (redirectToHome) {
         return (
           <Redirect to='/logout' />
@@ -28,7 +44,7 @@ function withAPIHelper(WrappedComponent) {
         <div style={{ height: '100%' }}>
           <WrappedComponent 
             {...this.props}
-            makeApiCall={(params) => this.props.dispatch(makeApiCall(params), { invalidateSession: this.invalidateSession })} 
+            makeApiCall={(params) => this.props.dispatch(makeApiCall(params), this.apiContext)} 
           />
           {
             !sessionValid && (
@@ -41,6 +57,7 @@ function withAPIHelper(WrappedComponent) {
               /> 
             )
           }
+          { loading && <Loading /> }
         </div>
       );
     }
