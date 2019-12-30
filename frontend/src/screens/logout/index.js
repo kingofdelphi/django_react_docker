@@ -4,27 +4,20 @@ import { connect } from 'react-redux';
 
 import { logoutUser } from '../../store/login_info/actionCreators';
 
-class Logout extends React.Component {
-  state = {
-    redirectToHome: false
-  };
-  componentDidMount() {
+class Logout extends React.PureComponent {
+  constructor(props) {
+    super(props);
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+  }
+
+  componentDidMount() {
     this.props.logoutUser();
-    this.setState({
-      redirectToHome: true
-    });
   }
 
   render() {
-    if (this.state.redirectToHome) {
-      return (
-        <Redirect to='/' />
-      );
-    }
     return (
-      <></>
+      <Redirect to='/' />
     );
   }
 }
