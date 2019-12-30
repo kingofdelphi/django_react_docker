@@ -87,7 +87,7 @@ class Dashboard extends React.Component {
       <div className={styles['main']}>
         { this.state.loading && <Loading /> }
         <header>
-          <div>{description}</div>
+          <div className={styles.description}>{description}</div>
           <div className={styles['timezone-actions']}>
             { isLoggedIn && ( 
               <Search 

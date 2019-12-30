@@ -6,6 +6,7 @@ import {
   Switch,
   Route,
   withRouter,
+  Redirect,
 } from "react-router-dom";
 
 import HomePage from '../screens/home';
@@ -19,36 +20,45 @@ import NavBar from '../screens/components/navbar';
 
 import styles from './styles.module.scss';
 
-import { setLoginUserInfo } from '../store/login_info/actionCreators';
+import { 
+  setLoginUserInfo,
+  setUserAsGuest,
+} from '../store/login_info/actionCreators';
 
 const guest_user_routes = ['/', '/login', '/register'];
 
 const getToken = () => {
   const token = localStorage.getItem('token');
-  if (!token || token === 'undefined') {
+  if (!token || token === 'null') {
     return null;
   }
   return token;
 };
 
-class Routes extends React.Component {
+class RoutesValidator extends React.PureComponent {
+  state = {
+    redirectTo: null,
+  };
+
   componentDidMount() {
     this.validateRoutes();
   }
 
   validateRoutes() {
     const location = this.props.location.pathname;
+    let redirectTo = '';
     if (!getToken()) {
       // if not logged in
       if (!guest_user_routes.includes(location)) {
-        this.props.history.push('/');
+        redirectTo = '/login';
       }
     } else {
       // if logged in, redirect to dashboard
       if (guest_user_routes.includes(location)) {
-        this.props.history.push('/dashboard');
+        redirectTo = '/dashboard';
       }
     }
+    this.setState({ redirectTo });
   }
 
   // called on browser back or hash name change on url
@@ -59,34 +69,16 @@ class Routes extends React.Component {
   }
 
   render() {
+    if (this.state.redirectTo) {
+      return <Redirect to={this.state.redirectTo} />;
+    }
     return (
-      <div className={styles.body}>
-        <Switch>
-          <Route exact path="/">
-            <HomePage />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/logout">
-            <Logout />
-          </Route>
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route path="/dashboard">
-            <Dashboard />
-          </Route>
-          <Route path="/profile/">
-            <Profile />
-          </Route>
-        </Switch>
-      </div>
+      <> </>
     );
   }
 }
 
-const RoutesWrapped = withRouter(Routes); 
+const RoutesValidatorE = withRouter(RoutesValidator);
 
 class App extends React.Component {
   componentDidMount() {
@@ -94,6 +86,8 @@ class App extends React.Component {
       this.props.setLoginUserInfo({ 
         username: localStorage.getItem('username')
       });
+    } else {
+      this.props.setUserAsGuest();
     }
   }
 
@@ -101,8 +95,30 @@ class App extends React.Component {
     return (
       <div className={styles.container}>
         <Router>
+          <RoutesValidatorE />
           <NavBar />
-          <RoutesWrapped />
+          <div className={styles.body}>
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Route path="/logout">
+                <Logout />
+              </Route>
+              <Route path="/register">
+                <Register />
+              </Route>
+              <Route path="/dashboard">
+                <Dashboard />
+              </Route>
+              <Route path="/profile/">
+                <Profile />
+              </Route>
+            </Switch>
+          </div>
         </Router>
       </div>
     );
@@ -111,6 +127,7 @@ class App extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   setLoginUserInfo: (loginUserInfo) => dispatch(setLoginUserInfo(loginUserInfo)),
+  setUserAsGuest: () => dispatch(setUserAsGuest()),
 });
 
 export default connect(null, mapDispatchToProps)(App);

@@ -9,6 +9,13 @@ export const setLoginUserInfo = (loginInfo) => {
   }
 };
 
+export const setUserAsGuest = () => {
+  return {
+    type: ActionTypes.SetUserAsGuest,
+  }
+};
+
+
 
 export const logoutUser = () => {
   return {

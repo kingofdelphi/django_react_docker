@@ -17,7 +17,7 @@ const login_info = (state = initialState, action) => {
       loginStatus: LoginStates.GuestUser,
     };
   }
-  if (action.type === ActionTypes.SetGuestUser) {
+  if (action.type === ActionTypes.SetUserAsGuest) {
     state = {
       loginStatus: LoginStates.GuestUser,
     };

@@ -1,6 +1,6 @@
 .main {
   header {
-    padding: 8px;
+    padding: 8px 16px;
     background: gainsboro;
     border-bottom: 1px solid #d4d5da;
     display: flex;
@@ -10,7 +10,7 @@
 
   .results-count {
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: brown;
   }
   
@@ -19,6 +19,9 @@
     color: brown;
   }
 
+  .description, .timezone-actions {
+    font-size: .85rem;
+  }
   section {
     padding: 8px;
     margin-top: 10px;
