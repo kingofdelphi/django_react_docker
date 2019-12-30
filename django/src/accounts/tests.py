@@ -8,6 +8,12 @@ import json
 
 User = get_user_model()
 
+def to_dict(userlist):
+    result = dict()
+    for user in userlist:
+        result[user['username']] = user
+    return result
+
 # to speed up testing use custom hasher
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class AccountTestCase(APITestCase):
@@ -54,6 +60,10 @@ class AccountTestCase(APITestCase):
 
     def delete_user(self, username):
         response = self.client.delete('/users/{}/'.format(username))
+        return response
+
+    def get_users(self):
+        response = self.client.get('/users/')
         return response
 
     def get_user(self, username):
@@ -164,6 +174,29 @@ class UsersTest(AccountTestCase):
         response = self.update_user('uttam', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_user_get(self):
+        User.objects.create_user(
+            username="uttam",
+            password="changeme",
+        )
+        self.login_user('admin', 'changeme')
+        response = self.get_user('uttam')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.get_user('usermanager')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.login_user('usermanager', 'changeme')
+
+        response = self.get_user('uttam')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.get_user('admin')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        response = self.get_user('usermanager')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_guest_crd(self):
         User.objects.create_user(
             username="uttam",
@@ -271,4 +304,73 @@ class UsersTest(AccountTestCase):
         # set password to different
         response = self.form_change_password('admin', 'Hacker123!', 'IHacker123!', 'IHacker123!')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_list(self):
+        response = self.get_users()
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.login_user('admin', 'changeme')
+        response = self.get_users()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        users = json.loads(json.dumps(response.data))
+        expected_users = [{"username": "admin", "role": "admin"}, {"username": "usermanager", "role": "user_manager"}]
+
+        self.assertEqual(to_dict(users), to_dict(expected_users))
+
+        User.objects.create_user(
+            username="uttam",
+            password="changeme",
+        )
+        response = self.get_users()
+        users = json.loads(json.dumps(response.data))
+        expected_users = [
+                {"username": "admin", "role": "admin"}, 
+                {"username": "usermanager", "role": "user_manager"},
+                {"username": "uttam", "role": "normal_user"},
+                ]
+
+        self.assertEqual(to_dict(users), to_dict(expected_users))
+
+
+        self.login_user('uttam', 'changeme')
+        response = self.get_users()
+        users = json.loads(json.dumps(response.data))
+        expected_users = [{"username": "uttam", "role": "normal_user"}]
+        self.assertEqual(users, expected_users)
+
+        User.objects.create_usermanager(
+            username="michael",
+            password="changeme",
+        )
+        self.login_user('usermanager', 'changeme')
+        response = self.get_users()
+        users = json.loads(json.dumps(response.data))
+        expected_users = [{"username": "usermanager", "role": "user_manager"}, {"username": "uttam", "role": "normal_user"}]
+        self.assertEqual(to_dict(users), to_dict(expected_users))
+
+        User.objects.create_superuser(
+            username="admin2",
+            password="changeme",
+        )
+        self.login_user('admin2', 'changeme')
+        response = self.get_users()
+        users = json.loads(json.dumps(response.data))
+
+        expected_users = [
+                {"username": "admin2", "role": "admin"}, 
+                {"username": "usermanager", "role": "user_manager"},
+                {"username": "michael", "role": "user_manager"},
+                {"username": "uttam", "role": "normal_user"},
+                ]
+
+        self.assertEqual(to_dict(users), to_dict(expected_users))
+
+        self.login_user('uttam', 'changeme')
+        response = self.get_users()
+        users = json.loads(json.dumps(response.data))
+        expected_users = [
+                {"username": "uttam", "role": "normal_user"},
+                ]
+        self.assertEqual(to_dict(users), to_dict(expected_users))
 

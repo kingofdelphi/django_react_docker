@@ -3,6 +3,8 @@ from rest_framework import generics
 
 from django.contrib.auth import get_user_model
 from rest_framework_jwt.settings import api_settings
+from django.db.models import Q
+
 
 from django.contrib.auth import authenticate
 
@@ -11,7 +13,9 @@ from rest_framework.response import Response
 
 from django.contrib.auth.models import update_last_login
 
-from .permissions import IsOwnerOrAdminOrUserManager
+from .permissions import \
+        IsOwnerOrAdminOrUserManager, \
+        UserListPermission
 
 # Get the JWT settings, add these lines after the import/from lines
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -24,15 +28,23 @@ from .serializers import UserSerializer, \
         ChangePasswordSerializer
 
 
-# Create your views here.
+class UserList(generics.ListCreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (UserListPermission, )
 
-class UserList(APIView):
-    """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
-    """
-
-    permission_classes = (permissions.AllowAny,)
+    def get_queryset(self):
+        queryset = get_user_model().objects.all()
+        if self.request.user.is_superuser:
+            return queryset.filter(
+                    Q(username=self.request.user.get_username()) | 
+                    Q(is_superuser=False)
+                )
+        if self.request.user.is_user_manager:
+            return queryset.filter(
+                    Q(username=self.request.user.get_username()) | 
+                    (Q(is_superuser=False) & Q(is_user_manager=False))
+                )
+        return queryset.filter(Q(username=self.request.user.get_username()))
 
     def post(self, request, format=None):
         password_equality_serializer = PasswordEqualitySerializer(

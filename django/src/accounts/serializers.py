@@ -19,6 +19,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     # donot generate on api output
     password = serializers.CharField(write_only=True)
+    role = serializers.SerializerMethodField()
+
+    def get_role(self, user):
+        if user.is_superuser:
+            return 'admin'
+        if user.is_user_manager:
+            return 'user_manager'
+        return 'normal_user'
 
     # We need to implement this method as we have used a custom
     # serializer. It will pick up the validation config
@@ -66,7 +74,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'password')
+        fields = ('username', 'password', 'role')
 
 class ChangePasswordSerializer(PasswordEqualitySerializer):
     current_password = serializers.CharField(required = True)
