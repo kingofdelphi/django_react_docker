@@ -76,7 +76,7 @@ class LoginView(generics.CreateAPIView):
             update_last_login(None, user)
             data = {
                 "username": username,
-                "id": request.user.id,
+                "id": user.id,
                 "role": get_user_role(user),
                 "token": jwt_encode_handler(jwt_payload_handler(user)),
             }

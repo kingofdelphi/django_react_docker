@@ -142,6 +142,7 @@ class UserDetail extends React.PureComponent {
           ))
         }
         <Button>{submitName}</Button>
+        {this.props.onCancel && <Button onClick={this.props.onCancel}>Cancel</Button>}
         <span className={styles['error-message']}>{validationError}&nbsp;</span> 
       </form>
     );

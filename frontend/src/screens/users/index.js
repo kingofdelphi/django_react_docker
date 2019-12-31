@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import Button from '../../components/button';
 import Input from '../../components/input';
 import MessageBox from '../../components/modal/messagebox';
 import UserDetail from '../components/userdetail';
 
-import { get_users } from './api';
+import { get_users, delete_user } from './api';
 import withAPIHelper from '../../middleware/api/util';
 
 import styles from './styles.module.scss';
@@ -52,6 +53,31 @@ class Users extends React.PureComponent {
     });
   };
 
+  handleUserDelete = () => {
+    const { selectedUser } = this.state;
+    const {
+      loginInfo
+    } = this.props;
+    this.props.makeApiCall(
+      delete_user(
+        selectedUser.id,
+        () => {
+          const users = this.state.users.filter(user => user.id !== selectedUser.id);
+          if (loginInfo.id === selectedUser.id) {
+            this.props.history.push('/logout');
+          } else {
+            this.setState({ 
+              users,
+              selectedUser: users[0],
+            });
+          }
+        },
+        () => {
+        },
+      )
+    )
+  };
+
   render() {
     const { 
       users,
@@ -80,6 +106,7 @@ class Users extends React.PureComponent {
         <div className={styles.form}>
           <header className={styles.header}>
             Enter proper credentials and update
+            <Button onClick={this.handleUserDelete}>Delete User</Button>
           </header>
           <UserDetail 
             mode='update'
@@ -105,5 +132,5 @@ const mapStateToProps = state => ({
   loginInfo: state.loginInfo,
 });
 
-export default connect(mapStateToProps, null)(withAPIHelper(Users));
+export default connect(mapStateToProps, null)(withAPIHelper(withRouter(Users)));
 

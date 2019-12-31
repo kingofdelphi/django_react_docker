@@ -7,6 +7,7 @@ import * as LoginStates from '../../../store/login_info/login_states';
 import Button from '../../../components/button';
 import Menu from '../../../components/menu';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
+import AddUser from './new_user';
 
 import UserMenu from './usermenu';
 import styles from './styles.module.scss';
@@ -14,6 +15,7 @@ import styles from './styles.module.scss';
 class NavBar extends React.PureComponent {
   state = {
     timeZoneDetailModal: false,
+    userAddModal: false,
     selectedItem: this.props.location.pathname.replace(/\//g, ""),
   };
 
@@ -68,6 +70,20 @@ class NavBar extends React.PureComponent {
     return [];
   }
 
+  handleAdd = () => {
+    const { selectedItem } = this.state;
+    if (selectedItem === 'dashboard') {
+      this.showTimeZoneDetailModal();
+    } else {
+      this.setState({ userAddModal: true });
+    }
+  }
+
+  handleAddUser = (user) => {
+    this.setState({ userAddModal: false });
+    console.log(user);
+  };
+
   render() {
     const {
       loginInfo,
@@ -75,6 +91,7 @@ class NavBar extends React.PureComponent {
 
     const { 
       timeZoneDetailModal,
+      userAddModal,
       selectedItem,
     } = this.state;
 
@@ -97,12 +114,17 @@ class NavBar extends React.PureComponent {
           }}
         />
         <div className={styles['profile-actions']}>
-          { isLoggedIn && <Button className={styles["add-timezone"]} title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
+          { isLoggedIn && <Button className={styles["add-btn"]} title="Add" onClick={this.handleAdd}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && <span className={styles['username']}><UserMenu username={loginInfo.username} /></span> }
         </div>
           {
             timeZoneDetailModal && ( 
               <TimeZoneDetail onCancel={this.closeTimeZoneDetailModal} /> 
+            )
+          }
+          {
+            userAddModal && ( 
+              <AddUser onSubmit={this.handleAddUser} onCancel={() => this.setState({ userAddModal: false }) } /> 
             )
           }
       </div>
