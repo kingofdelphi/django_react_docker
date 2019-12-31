@@ -9,6 +9,8 @@ import Menu from '../../../components/menu';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
 import AddUser from './new_user';
 
+import { addUser } from '../../../store/userlist/actionCreators';
+
 import UserMenu from './usermenu';
 import styles from './styles.module.scss';
 
@@ -38,36 +40,18 @@ class NavBar extends React.PureComponent {
   }
 
   getMenuItems() {
-    const {
-      loginInfo,
-    } = this.props;
-
-    const isLoggedIn = loginInfo.loginStatus === LoginStates.LoggedIn;
-
-    if (isLoggedIn) {
-      if (loginInfo.role !== 'normal_user') {
-        return [
-          {
-            name: "Dashboard",
-            key: 'dashboard',
-            path: '/dashboard',
-          },
-          {
-            name: "Users",
-            key: 'users',
-            path: '/users',
-          },
-        ];
-      }
-      return [
-        {
-          name: "Dashboard",
-          key: 'dashboard',
-          path: '/dashboard',
-        }
-      ];
-    }
-    return [];
+    return [
+      {
+        name: "Dashboard",
+        key: 'dashboard',
+        path: '/dashboard',
+      },
+      {
+        name: "Users",
+        key: 'users',
+        path: '/users',
+      },
+    ];
   }
 
   handleAdd = () => {
@@ -81,7 +65,7 @@ class NavBar extends React.PureComponent {
 
   handleAddUser = (user) => {
     this.setState({ userAddModal: false });
-    console.log(user);
+    this.props.addUser(user);
   };
 
   render() {
@@ -99,22 +83,26 @@ class NavBar extends React.PureComponent {
 
     const menuItems = this.getMenuItems();
 
+    const showPlus = isLoggedIn && (selectedItem === 'dashboard' || loginInfo.role !== 'normal_user');
+
     return (
       <div className={styles.main}>
         <div title="Go to homepage" onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
-        <Menu
-          className={styles['nav-menu']}
-          items={menuItems}
-          selectedItem={selectedItem}
-          keySelector={(item) => item.key}
-          labelSelector={(item) => item.name}
-          onChange={(item) => {
-            this.setState({ selectedItem: item.key })
-            this.props.history.push(item.path);
-          }}
-        />
+          { 
+            isLoggedIn && <Menu
+            className={styles['nav-menu']}
+            items={menuItems}
+            selectedItem={selectedItem}
+            keySelector={(item) => item.key}
+            labelSelector={(item) => item.name}
+            onChange={(item) => {
+              this.setState({ selectedItem: item.key })
+              this.props.history.push(item.path);
+            }}
+          />
+          }
         <div className={styles['profile-actions']}>
-          { isLoggedIn && <Button className={styles["add-btn"]} title="Add" onClick={this.handleAdd}><i className='fa fa-plus' /></Button> }
+          { isLoggedIn && showPlus && <Button className={styles["add-btn"]} title="Add" onClick={this.handleAdd}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && <span className={styles['username']}><UserMenu username={loginInfo.username} /></span> }
         </div>
           {
@@ -138,6 +126,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({ 
+  addUser: (user) => dispatch(addUser(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(NavBar));

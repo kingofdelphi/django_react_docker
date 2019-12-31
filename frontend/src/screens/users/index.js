@@ -9,11 +9,12 @@ import UserDetail from '../components/userdetail';
 import { get_users, delete_user } from './api';
 import withAPIHelper from '../../middleware/api/util';
 
+import { setUserList, updateUser, deleteUser } from '../../store/userlist/actionCreators';
+
 import styles from './styles.module.scss';
 
 class Users extends React.PureComponent {
   state = {
-    users: [],
     selectedUser: this.props.loginInfo,
     newUserName: this.props.loginInfo.username,
     showSuccess: false,
@@ -23,7 +24,7 @@ class Users extends React.PureComponent {
     this.props.makeApiCall(
       get_users(
         (users) => {
-          this.setState({ users });
+          this.props.setUserList(users);
         },
         () => {
         },
@@ -45,29 +46,28 @@ class Users extends React.PureComponent {
   }
 
   handleSubmit = (userinfo) => {
-    const users = this.state.users.map(user => user.id === userinfo.id ? userinfo : user);
+    this.props.updateUser(userinfo);
     this.setState({
       showSuccess: true,
-      users: users,
     });
   };
 
   handleUserDelete = () => {
     const { selectedUser } = this.state;
     const {
-      loginInfo
+      loginInfo,
+      userList,
     } = this.props;
     this.props.makeApiCall(
       delete_user(
         selectedUser.id,
         () => {
-          const users = this.state.users.filter(user => user.id !== selectedUser.id);
           if (loginInfo.id === selectedUser.id) {
             this.props.history.push('/logout');
           } else {
+            this.props.deleteUser(selectedUser);
             this.setState({ 
-              users,
-              selectedUser: users[0],
+              selectedUser: userList.find(user => user.id !== selectedUser)
             });
           }
         },
@@ -79,17 +79,20 @@ class Users extends React.PureComponent {
 
   render() {
     const { 
-      users,
       selectedUser,
       newUserName,
       showSuccess,
     } = this.state;
 
+    const {
+      userList
+    } = this.props;
+
     return (
       <div className={styles.main}>
         <ul className={styles.userlist}>
         { 
-          users.map((user) => {
+          userList.map((user) => {
             return (
               <li 
                 className={selectedUser.id === user.id ? styles['active'] : ''}
@@ -129,7 +132,14 @@ class Users extends React.PureComponent {
 
 const mapStateToProps = state => ({ 
   loginInfo: state.loginInfo,
+  userList: state.userList,
 });
 
-export default connect(mapStateToProps, null)(withAPIHelper(withRouter(Users)));
+const mapDispatchToProps = dispatch => ({ 
+  setUserList: (list) => dispatch(setUserList(list)),
+  updateUser: (user_info) => dispatch(updateUser(user_info)),
+  deleteUser: (user_info) => dispatch(deleteUser(user_info)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(withRouter(Users)));
 
