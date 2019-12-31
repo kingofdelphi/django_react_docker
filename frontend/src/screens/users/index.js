@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import Button from '../../components/button';
 import MessageBox from '../../components/modal/messagebox';
+import ConfirmationModal from '../../components/modal/confirmation';
 import UserDetail from '../components/userdetail';
 
 import { get_users, delete_user } from './api';
@@ -18,6 +19,7 @@ class Users extends React.PureComponent {
     selectedUser: this.props.loginInfo,
     newUserName: this.props.loginInfo.username,
     showSuccess: false,
+    showDelete: false,
   }
 
   componentDidMount() {
@@ -72,7 +74,8 @@ class Users extends React.PureComponent {
           } else {
             this.props.deleteUser(selectedUser);
             this.setState({ 
-              selectedUser: userList.find(user => user.id !== selectedUser.id)
+              selectedUser: userList.find(user => user.id !== selectedUser.id),
+              showDelete: false,
             });
           }
         },
@@ -87,6 +90,7 @@ class Users extends React.PureComponent {
       selectedUser,
       newUserName,
       showSuccess,
+      showDelete,
     } = this.state;
 
     const {
@@ -113,7 +117,7 @@ class Users extends React.PureComponent {
         <div className={styles.form}>
           <header className={styles.header}>
             Enter proper credentials and update or 
-            <Button onClick={this.handleUserDelete}>Delete User</Button>
+            <Button onClick={() => this.setState({ showDelete: true })}>Delete User</Button>
           </header>
           <UserDetail 
             mode='update'
@@ -125,11 +129,17 @@ class Users extends React.PureComponent {
             onSubmit={this.handleSubmit} 
           />
         </div>
-          { showSuccess && 
-              <MessageBox onSubmit={() => this.setState({ showSuccess: false })} 
-                message="Profile has been updated" 
-              /> 
-          }
+        { showSuccess && 
+            <MessageBox onSubmit={() => this.setState({ showSuccess: false })} 
+              message="Profile has been updated" 
+            /> 
+        }
+        { showDelete && 
+            <ConfirmationModal onSubmit={this.handleUserDelete} 
+              onCancel={() => this.setState({ showDelete: false })}
+              message={`Are you sure you want to delete ${selectedUser.username} ?`}
+            /> 
+        }
       </div>
     );
   }
