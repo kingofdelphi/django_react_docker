@@ -105,6 +105,7 @@ class UserDetail extends React.PureComponent {
     // controlled vs uncontrolled component
     const { username } = this.props.onUsernameChange ? this.props : this.state;
 
+    console.log(this.props.onUsernameChange);
     const cls = [styles.form, className].join(' ');
 
     return (

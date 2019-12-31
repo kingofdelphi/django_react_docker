@@ -51,24 +51,23 @@ class RoutesValidator extends React.PureComponent {
 
     if (!loginInfo.username) {
       // if not logged in
-      if (!guest_user_routes.includes(pathname)) {
-        return '/login';
+      if (!getToken() && !guest_user_routes.includes(pathname)) {
+        this.props.history.push('/login');
       }
     } else {
       // if logged in, redirect to dashboard
-      if (guest_user_routes.includes(pathname)) {
-        return '/dashboard';
+      if (getToken() && guest_user_routes.includes(pathname)) {
+        this.props.history.push('/dashboard');
       }
     }
     return '';
   }
 
-  render() {
-    const redirection = this.validateRoutes();
+  componentDidUpdate() {
+    this.validateRoutes();
+  }
 
-    if (redirection) {
-      return <Redirect to={redirection} />;
-    }
+  render() {
 
     return (
       <div className={styles.body}>
@@ -106,7 +105,7 @@ const route_mapStateToProps = state => ({
 
 const RoutesValidatorE = connect(route_mapStateToProps)(withRouter(RoutesValidator));
 
-class App extends React.Component {
+class Main extends React.PureComponent {
   componentDidMount() {
     const token = getToken();
     if (token) {
@@ -136,16 +135,16 @@ class App extends React.Component {
     const fetching = loginInfo.loginStatus === LoginStates.Fetching;
 
     if (fetching) {
+      // must determine login status before rendering
+      // as active user must be computed for dashboard routes
       return '';
     }
 
     return (
-      <div className={styles.container}>
-        <Router>
-          <RoutesValidatorE />
-          <NavBar />
-        </Router>
-      </div>
+      <>
+        <RoutesValidatorE />
+        <NavBar />
+      </>
     );
   }
 }
@@ -159,4 +158,18 @@ const mapDispatchToProps = (dispatch) => ({
   setUserAsGuest: () => dispatch(setUserAsGuest()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(App));
+const MainE = connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Main));
+
+class App extends React.PureComponent {
+  render() {
+    return (
+      <div className={styles.container}>
+        <Router>
+          <MainE />
+        </Router>
+      </div>
+    );
+  }
+}
+
+export default App;

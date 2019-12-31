@@ -19,7 +19,7 @@ class Input extends React.PureComponent {
     const { 
       id,
       label,
-      type,
+      type = "text",
       value,
       onChange,
       invalid,
