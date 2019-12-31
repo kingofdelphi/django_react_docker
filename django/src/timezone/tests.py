@@ -12,9 +12,9 @@ from accounts.tests import AccountTestCase
 # to speed up testing use custom hasher
 class TimeZoneTest(AccountTestCase):
 
-    def create_timezone(self, data):
+    def create_timezone(self, data, user = None):
         return self.client.post(
-            '/timezones/',
+            '/timezones/{}'.format('?username={}'.format(user) if user else ''),
             data=json.dumps(data),
             content_type="application/json"
         )
@@ -29,6 +29,11 @@ class TimeZoneTest(AccountTestCase):
     def get_timezone(self, timezone_id):
         return self.client.get(
             '/timezones/{}/'.format(timezone_id),
+        )
+
+    def get_timezones(self, user = None):
+        return self.client.get(
+            '/timezones/{}'.format('?username={}'.format(user) if user else '')
         )
 
     def delete_timezone(self, id):
@@ -47,6 +52,105 @@ class TimeZoneTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         expected = TimeZone.objects.all()
         self.assertEqual(len(expected), 1)
+
+    def test_time_difference_validity(self):
+        self.login_user('admin', 'changeme')
+        data = {
+                "name": "Asia",
+                "city": "Kathmandu",
+                "difference_to_GMT": "+ 3:32"
+                }
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['difference_to_GMT'] = 'a 3:3'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['difference_to_GMT'] = '- 3:3'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['difference_to_GMT'] = '- 12:3'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['difference_to_GMT'] = '- 11:388'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['difference_to_GMT'] = '- 11:38'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['difference_to_GMT'] = '- 11:60'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['difference_to_GMT'] = '- 11:59'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['difference_to_GMT'] = '+ 13:59'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['difference_to_GMT'] = '+ 13:60'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['difference_to_GMT'] = '+ 13:6a'
+        response = self.create_timezone(data, 'admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_timezone_list(self):
+        response = self.get_timezones()
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.login_user('admin', 'changeme')
+        response = self.get_timezones()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = {
+                "name": "Asia",
+                "city": "Kathmandu",
+                "difference_to_GMT": "+ 3:32"
+                }
+        response = self.create_timezone(data, 'admin')
+        result = response.data.pop('id')
+        self.assertEqual(response.data, data)
+
+        data = {
+                "name": "for you",
+                "city": "abcd",
+                "difference_to_GMT": "+ 2:32"
+                }
+        response = self.create_timezone(data, 'guest1')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        id = response.data['id']
+        result = response.data.pop('id')
+        self.assertEqual(response.data, data)
+
+        data = {
+                "name": "for you too",
+                "city": "abcdefgh",
+                "difference_to_GMT": "+ 2:32"
+                }
+        response = self.update_timezone(id, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        result = response.data.pop('id')
+        self.assertEqual(response.data, data)
+
+        response = self.get_timezones('guest1')
+        expected = response.data
+        for i in expected:
+            i.pop('id')
+        self.assertEqual([data], expected)
+
+        self.login_user('usermanager', 'changeme')
+        response = self.get_timezones('guest1')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        response = self.get_timezones('usermanager')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_admin_vs_guest_cross_user_crud(self):
         data = {
@@ -129,7 +233,12 @@ class TimeZoneTest(AccountTestCase):
         self.assertEqual(response.data, data)
 
         # invalid id sent in put data, it is ignored, as resource id is obtained from url
-        data['id'] = id1 + 1
+        data = {
+                'id': 20,
+                "name": "America",
+                "city": "New York",
+                "difference_to_GMT": "- 2:32"
+                }
         response = self.update_timezone(id1, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         

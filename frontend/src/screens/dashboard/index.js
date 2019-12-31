@@ -91,6 +91,7 @@ class Dashboard extends React.PureComponent {
   getDescription(timezones) {
     const { 
       timeZoneFilter,
+      loginInfo,
     } = this.props;
     
     if (timeZoneFilter) {
@@ -102,8 +103,8 @@ class Dashboard extends React.PureComponent {
         </>
       );
     }
-
-    return timezones.length > 0 ? "These are the timezones you've added." : "You have not added any timezones.";
+    const reference = loginInfo.username === this.getActionUser() ? "you have" : `${this.getActionUser()} has`;
+    return timezones.length > 0 ? `These are the timezones ${reference} added.` : `${reference} not added any timezones.`;
   }
 
   handleFilterChange = (event) => {
