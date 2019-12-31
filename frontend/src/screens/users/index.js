@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import Button from '../../components/button';
-import Input from '../../components/input';
 import MessageBox from '../../components/modal/messagebox';
 import UserDetail from '../components/userdetail';
 
@@ -105,7 +104,7 @@ class Users extends React.PureComponent {
         </ul>
         <div className={styles.form}>
           <header className={styles.header}>
-            Enter proper credentials and update
+            Enter proper credentials and update or 
             <Button onClick={this.handleUserDelete}>Delete User</Button>
           </header>
           <UserDetail 

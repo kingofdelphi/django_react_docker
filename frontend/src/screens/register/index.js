@@ -1,8 +1,6 @@
 import React from 'react';
 import { withRouter } from "react-router-dom";
 
-import Button from '../../components/button';
-import Input from '../../components/input';
 import UserDetail from '../components/userdetail';
 
 import withAPIHelper from '../../middleware/api/util';

@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '../../../../components/button';
-import MessageBox from '../../../../components/modal/messagebox';
 import Modal from '../../../../components/modal';
 import UserDetail from '../../../components/userdetail';
 
@@ -17,7 +15,7 @@ class AddUser extends React.PureComponent {
 
   render() {
     return (
-      <Modal className={styles.main}>
+      <Modal contentClass={styles.main}>
         <header className={styles.header}>
           Add New User
         </header>

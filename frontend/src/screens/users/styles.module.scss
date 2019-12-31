@@ -21,7 +21,17 @@
 }
 
 .header {
-  padding: 30px;
+  padding: 10px 20px;
   font-size: 1.5em;
+  border-bottom: 1px solid #d4d5da;
+  button {
+    font-size: 1rem;
+    margin-left: 10px;
+  }
 }
 
+.form {
+  padding: 20px 20px;
+  border: none;
+  background: none;
+}

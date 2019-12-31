@@ -1,7 +1,8 @@
-$padding: 10;
+$padding: 10px 40px;
 
 .main {
-  header {
+  width: 300px;
+  .header {
     color: #24292e;
     font-size: 1.1rem;
     font-weight: bold;
@@ -12,8 +13,13 @@ $padding: 10;
 }
 
 .main {
-  padding: 20px 20px;
   display: flex;
   flex-direction: column;
+}
+
+.form {
+  background: none;
+  padding: $padding;
+  border: none;
 }
 
