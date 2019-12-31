@@ -117,6 +117,9 @@ class UsersTest(AccountTestCase):
         response = self.form_create_user('uttam', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        response = self.form_create_user('michael', 'Hacker1234!', None)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_user_manager_crud(self):
         self.login_user('usermanager', 'changeme')
         uttam = User.objects.create_user(
@@ -127,6 +130,9 @@ class UsersTest(AccountTestCase):
         # user manager doesn't have permission over admin
         response = self.delete_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        response = self.get_user(uttam.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -145,7 +151,16 @@ class UsersTest(AccountTestCase):
             username="uttam",
             password="changeme",
         )
+
+        michael = User.objects.create_user(
+            username="michael",
+            password="changeme",
+        )
         self.login_user('uttam', 'changeme')
+
+        # retrieve info of michael
+        response = self.get_user(michael.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # update with bad password
         data = dict(
@@ -153,7 +168,6 @@ class UsersTest(AccountTestCase):
                 password='hack',
                 password1='hack'
                 )
-        print('sending', data)
         response = self.update_user(uttam.id, data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -294,6 +308,9 @@ class UsersTest(AccountTestCase):
         response = self.delete_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+        # try requesting again
+        response = self.get_user(uttam.id)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_change_password(self):
         uttam = User.objects.create_user(
@@ -333,7 +350,6 @@ class UsersTest(AccountTestCase):
 
         self.login_user('admin', 'changeme')
         response = self.get_users()
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         users = json.loads(json.dumps(response.data))
@@ -408,4 +424,42 @@ class UsersTest(AccountTestCase):
                 {"username": "uttam", "role": "normal_user"},
                 ]
         self.assertEqual(to_dict(users), to_dict(expected_users))
+
+    def test_admin_self_detail(self):
+        # no login
+        response = self.get_user(1)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # login and retrieve
+        self.login_user('admin', 'changeme')
+        response = self.get_user(self.admin.id)
+        expected_user = {'id': self.admin.id, "username": "admin", "role": "admin"}
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_user, response.data)
+
+        data = {"username": "admin", "password": "ok"}
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = {"username": "admin", "password": "ok", "password1": "ok"}
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = {"username": "admin", "password": "Hacker123!", "password1": "Hacker123!"}
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = {"password": "Hacker123!", "password1": "Hacker123!"}
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = {"username": "adminis", "password": "Hacker123!", "password1": "Hacker123!"}
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("token", response.data)
+
+        response = self.get_user(self.admin.id)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.login_user('adminis', 'Hacker123!')
 

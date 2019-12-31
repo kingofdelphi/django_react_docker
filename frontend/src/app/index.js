@@ -6,7 +6,6 @@ import {
   Switch,
   Route,
   withRouter,
-  Redirect,
 } from "react-router-dom";
 
 import HomePage from '../screens/home';

@@ -19,6 +19,14 @@ class PasswordEqualitySerializer(serializers.Serializer):
             raise serializers.ValidationError({
                 'passwords': "Passwords don't match"
             })
+
+        try:
+            validators.validate_password(password=data.get('password'), user=get_user_model())
+        except exceptions.ValidationError as e:
+            errors = dict()
+            errors['passwords'] = list(e.messages)
+            raise serializers.ValidationError(errors)
+
         return super().validate(data)
         
 class UserSerializer(serializers.ModelSerializer):
@@ -34,42 +42,25 @@ class UserSerializer(serializers.ModelSerializer):
         return get_user_role(user)
 
     def validate(self, data):
-        password_equality_serializer = PasswordEqualitySerializer(
-            data={
-                'password': data.get('password'),
-                'password1': data.get('password1'),
-            }
-        )
-        data.pop('password1')
-        password = data.get('password')
+        password_equality_serializer = PasswordEqualitySerializer(data=data)
         if not password_equality_serializer.is_valid():
             raise serializers.ValidationError(password_equality_serializer.errors)
 
-        try:
-            # validate the password and catch the exception
-            validators.validate_password(password=password, user=get_user_model())
-
-        # the exception raised here is different than serializers.ValidationError
-        except exceptions.ValidationError as e:
-            errors = dict()
-            errors['passwords'] = list(e.messages)
-            raise serializers.ValidationError(errors)
-
+        # prevent sending to model part
+        data.pop('password1')
         return super().validate(data)
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
+        instance.set_password(password)
         instance.save()
         return instance
 
     def update(self, user, validated_data):
         password = validated_data['password']
         user.username = validated_data['username']
-        if password:
-            user.set_password(password)
+        user.set_password(password)
         user.save()
         return user
 
@@ -99,18 +90,11 @@ class ChangePasswordSerializer(PasswordEqualitySerializer):
     
     def validate(self, data):
         super().validate(data)
+        # here, both passwords match
         password = data.get('password1')
-        errors = []
         if password == data['current_password']:
-            errors.append('Password is same as the old password.')
-        try:
-            validators.validate_password(password=password, user=get_user_model())
-        except exceptions.ValidationError as e:
-            errors = errors + list(e.messages)
-
-        if errors:
-            raise serializers.ValidationError(dict(passwords=errors))
-
+            error = dict(passwords='Password is same as the old password.')
+            raise serializers.ValidationError(error)
         return data
 
 class LoginUserSerializer(serializers.Serializer):
