@@ -17,7 +17,8 @@ from .permissions import \
 from .serializers import UserSerializer, \
         PasswordEqualitySerializer, \
         LoginUserSerializer, \
-        ChangePasswordSerializer
+        ChangePasswordSerializer, \
+        UserSerializerWithToken
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -44,8 +45,8 @@ class UserList(generics.ListCreateAPIView):
     def post(self, request, format=None):
         password_equality_serializer = PasswordEqualitySerializer(
             data={
-                'password1': request.data.get('password'),
-                'password2': request.data.get('password1'),
+                'password': request.data.get('password'),
+                'password1': request.data.get('password1'),
             }
         )
         register_user_serializer = UserSerializer(data=request.data)
@@ -112,6 +113,9 @@ class PasswordChangeView(generics.UpdateAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    def get_serializer_class(self):
+        if self.request.method == 'PUT' and int(self.kwargs['pk']) == self.request.user.id:
+            return UserSerializerWithToken
+        return UserSerializer
     # bitwise or is not working
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager]

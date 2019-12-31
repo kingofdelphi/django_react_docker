@@ -48,6 +48,8 @@ function withAPIHelper(WrappedComponent) {
           <Redirect to='/logout' />
         );
       }
+      const { loginInfo } = this.props;
+
       return (
         <>
           <WrappedComponent 
@@ -55,7 +57,7 @@ function withAPIHelper(WrappedComponent) {
             makeApiCall={(params) => this.props.dispatch(makeApiCall(params), this.apiContext)} 
           />
           {
-            !sessionValid && (
+            !sessionValid && loginInfo.username && (
               <ConfirmationModal 
                 message="Session is invalid. Do you want to log out ?." 
                 onSubmit={() => {
@@ -71,7 +73,10 @@ function withAPIHelper(WrappedComponent) {
       );
     }
   }
-  return connect()(cls);
+  const mapStateToProps = state => ({
+    loginInfo: state.loginInfo,
+  });
+  return connect(mapStateToProps)(cls);
 }
 
 export default withAPIHelper;

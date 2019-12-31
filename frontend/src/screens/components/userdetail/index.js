@@ -105,7 +105,6 @@ class UserDetail extends React.PureComponent {
     // controlled vs uncontrolled component
     const { username } = this.props.onUsernameChange ? this.props : this.state;
 
-    console.log(this.props.onUsernameChange);
     const cls = [styles.form, className].join(' ');
 
     return (
@@ -125,8 +124,8 @@ class UserDetail extends React.PureComponent {
           onChange={this.onPasswordChange}
           value={password} 
           label="Password" 
-          invalid={fieldErrors['passwords'] || fieldErrors['password1']}
-          validationMessage={fieldErrors['password1']}
+          invalid={fieldErrors['passwords'] || fieldErrors['password']}
+          validationMessage={fieldErrors['password']}
         />
         <Input 
           id="password1" 
@@ -134,8 +133,8 @@ class UserDetail extends React.PureComponent {
           onChange={this.onPassword1Change}
           value={password1} 
           label="Reenter Password" 
-          invalid={fieldErrors['passwords'] || fieldErrors['password2']}
-          validationMessage={fieldErrors['password2']}
+          invalid={fieldErrors['passwords'] || fieldErrors['password1']}
+          validationMessage={fieldErrors['password1']}
         />
         {
           (fieldErrors['passwords'] || []).map((message, i) => (

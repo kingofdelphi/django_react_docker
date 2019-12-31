@@ -60,7 +60,10 @@ class RoutesValidator extends React.PureComponent {
         this.props.history.push('/dashboard');
       }
     }
-    return '';
+  }
+
+  componentDidMount() {
+    this.validateRoutes();
   }
 
   componentDidUpdate() {

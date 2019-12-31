@@ -51,13 +51,13 @@ class AccountTestCase(APITestCase):
         )
         return response
 
-    def form_change_password(self, user_id, current_password, password1, password2):
+    def form_change_password(self, user_id, current_password, password, password1):
         response = self.client.put(
             '/users/{}/password/'.format(user_id),
             data=json.dumps({
                 'current_password': current_password,
-                'password1': password1,
-                'password2': password2
+                'password': password,
+                'password1': password1
             }),
             content_type='application/json'
         )

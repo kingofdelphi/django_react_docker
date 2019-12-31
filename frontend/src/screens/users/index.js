@@ -47,6 +47,11 @@ class Users extends React.PureComponent {
 
   handleSubmit = (userinfo) => {
     this.props.updateUser(userinfo);
+    const { loginInfo } = this.props;
+    if (loginInfo.id === userinfo.id) {
+      localStorage.setItem('token', userinfo.token);
+      delete userinfo.token;
+    }
     this.setState({
       showSuccess: true,
     });
@@ -67,7 +72,7 @@ class Users extends React.PureComponent {
           } else {
             this.props.deleteUser(selectedUser);
             this.setState({ 
-              selectedUser: userList.find(user => user.id !== selectedUser)
+              selectedUser: userList.find(user => user.id !== selectedUser.id)
             });
           }
         },

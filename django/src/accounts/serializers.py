@@ -1,16 +1,21 @@
 from rest_framework import serializers
+from rest_framework_jwt.settings import api_settings
+
 from django.contrib.auth import get_user_model
 
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
 from .utils import get_user_role
 
 class PasswordEqualitySerializer(serializers.Serializer):
+    password = serializers.CharField(required = True)
     password1 = serializers.CharField(required = True)
-    password2 = serializers.CharField(required = True)
     def validate(self, data):
-        if data.get('password1') != data.get('password2'):
+        if data.get('password') != data.get('password1'):
             raise serializers.ValidationError({
                 'passwords': "Passwords don't match"
             })
@@ -63,6 +68,16 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'username', 'password', 'role')
 
+# for update, when username changes token must also be changed
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField()
+
+    def get_token(self, user):
+        return jwt_encode_handler(jwt_payload_handler(user))
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'token', 'password', 'role')
 
 class ChangePasswordSerializer(PasswordEqualitySerializer):
     current_password = serializers.CharField(required = True)
