@@ -118,7 +118,7 @@ class Main extends React.PureComponent {
           },
           (message) => {
             // todo: session expiry refresh no message
-            if (message === 'Invalid Credentials') {
+            if (message === 'Invalid credentials') {
               localStorage.removeItem('token');
               this.props.setUserAsGuest();
             }
@@ -126,7 +126,6 @@ class Main extends React.PureComponent {
         )
       );
     } else {
-      localStorage.removeItem('token');
       this.props.setUserAsGuest();
     }
   }
@@ -141,7 +140,7 @@ class Main extends React.PureComponent {
     if (fetching) {
       // must determine login status before rendering
       // as active user must be computed for dashboard routes
-      return '';
+      return 'fetching...';
     }
 
     return (

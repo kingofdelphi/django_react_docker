@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from "react-router-dom";
-
 import Button from '../../components/button';
 import Input from '../../components/input';
 
@@ -18,7 +16,6 @@ class Login extends React.PureComponent {
     password: '',
     fieldErrors: {},
     validationError: '',
-    toDashboard: false,
   };
 
   handleSubmit = (event) => {
@@ -35,7 +32,6 @@ class Login extends React.PureComponent {
           this.props.setLoginUserInfo({
             ...userInfo
           });
-          this.setState({ toDashboard: true });
         },
         (message, errorObj) => {
           this.setState({ 
@@ -66,13 +62,7 @@ class Login extends React.PureComponent {
       password,
       fieldErrors,
       validationError,
-      toDashboard,
     } = this.state;
-    if (toDashboard) {
-      return (
-        <Redirect to='/dashboard' />
-      );
-    }
     return (
       <div className={styles.main}>
         <header className={styles.header}>
