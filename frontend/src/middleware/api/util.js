@@ -49,7 +49,7 @@ function withAPIHelper(WrappedComponent) {
         );
       }
       return (
-        <div style={{ height: '100%' }}>
+        <>
           <WrappedComponent 
             {...this.props}
             makeApiCall={(params) => this.props.dispatch(makeApiCall(params), this.apiContext)} 
@@ -67,7 +67,7 @@ function withAPIHelper(WrappedComponent) {
           }
           { loading && <Loading /> }
           { !serverUp && <MessageBox message="Could not connect to server" onSubmit={() => this.setConnectionStatus(true)} /> }
-        </div>
+        </>
       );
     }
   }

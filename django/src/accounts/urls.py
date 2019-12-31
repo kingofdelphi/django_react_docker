@@ -5,6 +5,6 @@ from .views import UserDetail, UserList, PasswordChangeView
 
 urlpatterns = [
     path('', UserList.as_view()),
-    path('<username>/', UserDetail.as_view()),
-    path('<username>/password/', PasswordChangeView.as_view()),
+    path('<pk>/', UserDetail.as_view()),
+    path('<pk>/password/', PasswordChangeView.as_view()),
 ]

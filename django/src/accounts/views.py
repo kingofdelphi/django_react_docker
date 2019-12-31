@@ -31,15 +31,15 @@ class UserList(generics.ListCreateAPIView):
         queryset = get_user_model().objects.all()
         if self.request.user.is_superuser:
             return queryset.filter(
-                    Q(username=self.request.user.get_username()) | 
+                    Q(id=self.request.user.id) | 
                     Q(is_superuser=False)
                 )
         if self.request.user.is_user_manager:
             return queryset.filter(
-                    Q(username=self.request.user.get_username()) | 
+                    Q(id=self.request.user.id) | 
                     (Q(is_superuser=False) & Q(is_user_manager=False))
                 )
-        return queryset.filter(Q(username=self.request.user.get_username()))
+        return queryset.filter(Q(id=self.request.user.id))
 
     def post(self, request, format=None):
         password_equality_serializer = PasswordEqualitySerializer(
@@ -76,6 +76,7 @@ class LoginView(generics.CreateAPIView):
             update_last_login(None, user)
             data = {
                 "username": username,
+                "id": request.user.id,
                 "role": get_user_role(user),
                 "token": jwt_encode_handler(jwt_payload_handler(user)),
             }
@@ -89,6 +90,7 @@ class LoginInfoView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         data = {
                 "username": request.user.get_username(),
+                "id": request.user.id,
                 "role": get_user_role(request.user),
                 }
         return Response(data)
@@ -97,10 +99,9 @@ class PasswordChangeView(generics.UpdateAPIView):
     
     queryset = get_user_model().objects.all()
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "username"
 
     def put(self, request, *args, **kwargs):
-        if request.user.get_username() != kwargs['username']:
+        if request.user.id != int(kwargs['pk']):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ChangePasswordSerializer(data=request.data, context=dict(user=request.user))
         if serializer.is_valid():
@@ -112,6 +113,5 @@ class PasswordChangeView(generics.UpdateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
-    lookup_field = "username"
     # bitwise or is not working
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager]

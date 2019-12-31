@@ -15,6 +15,7 @@ import Logout from '../screens/logout';
 import Register from '../screens/register';
 import Dashboard from '../screens/dashboard';
 import Profile from '../screens/profile';
+import Users from '../screens/users';
 
 import NavBar from '../screens/components/navbar';
 
@@ -75,20 +76,23 @@ class RoutesValidator extends React.PureComponent {
           <Route exact path="/">
             <HomePage />
           </Route>
-          <Route path="/login">
+          <Route exact path="/login">
             <Login />
           </Route>
-          <Route path="/logout">
+          <Route exact path="/logout">
             <Logout />
           </Route>
-          <Route path="/register">
+          <Route exact path="/register">
             <Register />
           </Route>
-          <Route path="/dashboard">
+          <Route exact path="/dashboard">
             <Dashboard />
           </Route>
-          <Route path="/profile/">
+          <Route exact path="/profile/">
             <Profile />
+          </Route>
+          <Route exact path="/users/">
+            <Users />
           </Route>
         </Switch>
       </div>

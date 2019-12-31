@@ -3,75 +3,25 @@ import { withRouter } from "react-router-dom";
 
 import Button from '../../components/button';
 import Input from '../../components/input';
-
-import { register } from './api';
+import UserDetail from '../components/userdetail';
 
 import withAPIHelper from '../../middleware/api/util';
 import styles from './styles.module.scss';
 
 class Register extends React.PureComponent {
   state = {
-    username: '',
-    password: '',
-    password1: '',
-    validationError: '',
-    fieldErrors: {},
-    registered: { },
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const data = {
-      username: this.state.username,
-      password: this.state.password,
-      password1: this.state.password1,
-    };
-    this.props.makeApiCall(
-      register(
-        data,
-        (user_info) => {
-          this.setState({ registered: user_info });
-        },
-        (message, errorObj) => {
-          this.setState({ 
-            validationError: message,
-            fieldErrors: errorObj
-          });
-        },
-      )
-    );
+    registered: {}
   }
 
-  onUsernameChange = (event) => {
-    this.setState({ 
-      username: event.target.value,
-      validationError: '',
-    });
-  };
-
-  onPasswordChange = (event) => {
-    this.setState({ 
-      password: event.target.value,
-      validationError: '',
-    });
-  };
-
-  onPassword1Change = (event) => {
-    this.setState({ 
-      password1: event.target.value,
-      validationError: '',
-    });
-  };
+  handleSubmit = (userinfo) => {
+    this.setState({ registered: userinfo });
+  }
 
   render() {
     const {
-      username,
-      password,
-      password1,
-      validationError,
-      fieldErrors,
       registered,
     } = this.state;
+
     if (registered.username) {
       return (
         <div className={styles.registered}>
@@ -80,6 +30,7 @@ class Register extends React.PureComponent {
         </div>
       );
     }
+
     return (
       <div className={styles.main}>
         <header className={styles.header}>
@@ -87,42 +38,7 @@ class Register extends React.PureComponent {
             Enter proper username and password and click the Register button.
           </div>
         </header>
-        <form className={styles.form} onSubmit={this.handleSubmit}>
-          <Input 
-            active
-            id="username" 
-            onChange={this.onUsernameChange}
-            value={username} 
-            label="Username" 
-            invalid={fieldErrors['username']}
-            validationMessage={fieldErrors['username']}
-          />
-          <Input 
-            id="password" 
-            type="password"
-            onChange={this.onPasswordChange}
-            value={password} 
-            label="Password" 
-            invalid={fieldErrors['passwords'] || fieldErrors['password1']}
-            validationMessage={fieldErrors['password1']}
-          />
-          <Input 
-            id="password1" 
-            type="password"
-            onChange={this.onPassword1Change}
-            value={password1} 
-            label="Reenter Password" 
-            invalid={fieldErrors['passwords'] || fieldErrors['password2']}
-            validationMessage={fieldErrors['password2']}
-          />
-          {
-            (fieldErrors['passwords'] || []).map((message, i) => (
-              <span key={i} className={styles.password_validation}>{message}</span>
-            ))
-          }
-          <Button>Register</Button>
-          <span className={styles['error-message']}>{validationError}&nbsp;</span> 
-        </form>
+        <UserDetail onSubmit={this.handleSubmit} />
       </div>
     );
   }

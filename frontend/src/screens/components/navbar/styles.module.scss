@@ -1,17 +1,17 @@
-
+$padding: 10px;
 .main {
-  padding: 10px 10px;
   background: #24292e;
   color: white;
   display: grid;
   grid-template-areas:
-  'title . timezone_actions . profile_actions';
-  grid-template-columns: min-content 1fr min-content 3fr min-content;
-  grid-gap: 0px;
-  align-items: center;
+  'title nav-menu . profile_actions';
+  grid-template-columns: min-content min-content 1fr min-content;
+  grid-gap: 10px;
+  align-items: stretch;
 }
 
 .app-title {
+  padding: $padding;
   grid-area: title;
   white-space: nowrap;
   cursor: pointer;
@@ -22,14 +22,13 @@
   font-weight: bold;
 }
 
-.timezone-actions {
-  grid-area: timezone_actions;
-  display: flex;
-  align-items: center;
-  > *:not(first-child) {
-    margin-left: 20px;
+.nav-menu {
+  grid-area: nav-menu;
+  white-space: nowrap;
+  button {
+    display: inline-block;
+    height: 100%;
   }
-  
 }
 
 .profile-actions {

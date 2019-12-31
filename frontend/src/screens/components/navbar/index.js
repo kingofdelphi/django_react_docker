@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom'
 import * as LoginStates from '../../../store/login_info/login_states';
 
 import Button from '../../../components/button';
+import Menu from '../../../components/menu';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
 
 import UserMenu from './usermenu';
@@ -13,7 +14,12 @@ import styles from './styles.module.scss';
 class NavBar extends React.PureComponent {
   state = {
     timeZoneDetailModal: false,
+    selectedItem: this.props.location.pathname.replace(/\//g, ""),
   };
+
+  componentDidUpdate() {
+    this.setState({ selectedItem: this.props.location.pathname.replace(/\//g, "") });
+  }
 
   showTimeZoneDetailModal = () => {
     this.setState({
@@ -25,6 +31,43 @@ class NavBar extends React.PureComponent {
     this.setState({ timeZoneDetailModal: false });
   }
 
+  selectedItem = (name) => {
+    this.setState({ selectedItem: name });
+  }
+
+  getMenuItems() {
+    const {
+      loginInfo,
+    } = this.props;
+
+    const isLoggedIn = loginInfo.loginStatus === LoginStates.LoggedIn;
+
+    if (isLoggedIn) {
+      if (loginInfo.role !== 'normal_user') {
+        return [
+          {
+            name: "Dashboard",
+            key: 'dashboard',
+            path: '/dashboard',
+          },
+          {
+            name: "Users",
+            key: 'users',
+            path: '/users',
+          },
+        ];
+      }
+      return [
+        {
+          name: "Dashboard",
+          key: 'dashboard',
+          path: '/dashboard',
+        }
+      ];
+    }
+    return [];
+  }
+
   render() {
     const {
       loginInfo,
@@ -32,13 +75,27 @@ class NavBar extends React.PureComponent {
 
     const { 
       timeZoneDetailModal,
+      selectedItem,
     } = this.state;
 
     const isLoggedIn = loginInfo.loginStatus === LoginStates.LoggedIn;
 
+    const menuItems = this.getMenuItems();
+
     return (
       <div className={styles.main}>
         <div title="Go to homepage" onClick={() => this.props.history.push('/')} className={styles['app-title']}>TimeZone App</div>
+        <Menu
+          className={styles['nav-menu']}
+          items={menuItems}
+          selectedItem={selectedItem}
+          keySelector={(item) => item.key}
+          labelSelector={(item) => item.name}
+          onChange={(item) => {
+            this.setState({ selectedItem: item.key })
+            this.props.history.push(item.path);
+          }}
+        />
         <div className={styles['profile-actions']}>
           { isLoggedIn && <Button className={styles["add-timezone"]} title="Add new time zone" onClick={this.showTimeZoneDetailModal}><i className='fa fa-plus' /></Button> }
           { isLoggedIn && <span className={styles['username']}><UserMenu username={loginInfo.username} /></span> }

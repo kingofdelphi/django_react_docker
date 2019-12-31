@@ -47,7 +47,7 @@ class Profile extends React.Component {
     };
     this.props.makeApiCall(
       changePassword(
-        this.props.loginInfo.username,
+        this.props.loginInfo.id,
         data,
         (msg) => {
           this.setState({ showSuccess: true, fieldErrors: {} });

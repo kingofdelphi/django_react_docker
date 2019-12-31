@@ -1,4 +1,8 @@
 .main {
   padding: 5px;
-  color: red;
+  height: 30px;
+  width: 120px;
+  &:focus {
+    outline: none;
+  }
 }

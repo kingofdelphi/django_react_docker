@@ -1,20 +1,3 @@
-.form {
-  padding: 30px 80px;
-  border-radius: 3px;
-  background: #d4d5da;
-  border: 1px solid silver;
-  display: flex;
-  flex-direction: column;
-  > div:not(:first-child) {
-    margin-top: 10px;
-  }
-  button {
-    font-size: 1rem;
-    margin-top: 20px;
-    padding: 10px 20px;
-  }
-}
-
 .registered {
   padding: 10px;
   span {
@@ -34,16 +17,5 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.error-message {
-  margin-top: 20px;
-  color : red;
-  font-size: 0.9rem;
-}
-
-.password_validation {
-  color: red;
-  font-size: 0.8rem;
 }
 

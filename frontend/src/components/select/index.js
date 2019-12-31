@@ -11,7 +11,7 @@ class Select extends React.PureComponent {
       onChange,
     } = this.props;
     return (
-      <select defaultValue={value} className={styles.main} onChange={onChange}>
+      <select value={value} className={styles.main} onChange={onChange}>
         { items.map(item => 
           (
             <option 

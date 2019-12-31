@@ -4,14 +4,14 @@ from django.contrib.auth import get_user_model
 
 from .models import TimeZone
 
-regex = re.compile(r"(\+|-)\s(\d\d?):(\d\d?)")
+regex = re.compile(r"^(\+|-)\s(\d\d?):(\d\d?)$")
 
 class BaseTimeZoneSerializer(serializers.ModelSerializer):
     
     def validate_difference_to_GMT(self, value):
         match_info = regex.match(value)
         if not match_info:
-            raise serializers.ValidationError("Format must be +/- H:M e.g. + 5:45")
+            raise serializers.ValidationError("Format must be +/- hours:mins e.g. + 5:45")
         sign = 1 if match_info.group(1) == '+' else -1
         hours = int(match_info.group(2))
         mins = int(match_info.group(3))

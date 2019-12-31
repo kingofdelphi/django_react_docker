@@ -1,0 +1,27 @@
+.main {
+  display: flex;
+  .form {
+    flex: 1;
+  }
+  height: 100%;
+  .userlist {
+    min-width: 200px;
+    background: white;
+    li {
+      padding: 10px 25px;
+      cursor: pointer;
+      &:hover {
+        background: #e1e4e8;
+      }
+      &.active {
+        background: #d1d4d5;
+      }
+    }
+  }
+}
+
+.header {
+  padding: 30px;
+  font-size: 1.5em;
+}
+

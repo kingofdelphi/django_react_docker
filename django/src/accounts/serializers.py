@@ -17,29 +17,18 @@ class PasswordEqualitySerializer(serializers.Serializer):
         return super().validate(data)
         
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(required = True, write_only=True)
 
     # donot generate on api output
-    password = serializers.CharField(write_only=True)
     role = serializers.SerializerMethodField()
 
     def get_role(self, user):
         return get_user_role(user)
 
-    # We need to implement this method as we have used a custom
-    # serializer. It will pick up the validation config
-    # from settings.py
     def validate(self, data):
-        if self.instance:
-            if data.get('username') != self.instance.username:
-                raise serializers.ValidationError(
-                        dict(username="username in form doesnot match requesting users' name")
-                    )
-
-        # here data has all the fields which have validated values
-        # so we can create a User instance out of it
-        # get the password from the data
+        if not data.get('username'):
+            raise serializers.ValidationError(dict(username='This field is required.'))
         password = data.get('password')
-
         errors = dict()
         try:
             # validate the password and catch the exception
@@ -63,15 +52,17 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, user, validated_data):
-        # username must be same in validated_data i.e. it cant be changed
         password = validated_data['password']
-        user.set_password(password)
+        user.username = validated_data['username']
+        if password:
+            user.set_password(password)
         user.save()
         return user
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'password', 'role')
+        fields = ('id', 'username', 'password', 'role')
+
 
 class ChangePasswordSerializer(PasswordEqualitySerializer):
     current_password = serializers.CharField(required = True)

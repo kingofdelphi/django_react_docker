@@ -18,8 +18,12 @@ def to_dict(userlist):
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class AccountTestCase(APITestCase):
     client = APIClient()
+    
+    loginUser = None
 
     def login_user(self, username, password):
+        # initialize every time to remove previous credentials
+        self.client = APIClient()
         response = self.client.post(
             '/login/',
             data=json.dumps({
@@ -30,6 +34,7 @@ class AccountTestCase(APITestCase):
         )
         token = response.data['token']
         # set the token in the header
+        self.loginUser = User.objects.get(username=username)
         self.client.credentials(
             HTTP_AUTHORIZATION='JWT ' + token
         )
@@ -46,9 +51,9 @@ class AccountTestCase(APITestCase):
         )
         return response
 
-    def form_change_password(self, username, current_password, password1, password2):
+    def form_change_password(self, user_id, current_password, password1, password2):
         response = self.client.put(
-            '/users/{}/password/'.format(username),
+            '/users/{}/password/'.format(user_id),
             data=json.dumps({
                 'current_password': current_password,
                 'password1': password1,
@@ -58,33 +63,33 @@ class AccountTestCase(APITestCase):
         )
         return response
 
-    def delete_user(self, username):
-        response = self.client.delete('/users/{}/'.format(username))
+    def delete_user(self, userid):
+        response = self.client.delete('/users/{}/'.format(userid))
         return response
 
     def get_users(self):
         response = self.client.get('/users/')
         return response
 
-    def get_user(self, username):
-        response = self.client.get('/users/{}/'.format(username))
+    def get_user(self, userid):
+        response = self.client.get('/users/{}/'.format(userid))
         return response
 
-    def update_user(self, username, data):
+    def update_user(self, userid, data):
         response = self.client.put(
-                '/users/{}/'.format(username),
+                '/users/{}/'.format(userid),
                 data=json.dumps(data),
                 content_type='application/json'
                 )
         return response
 
     def setUp(self):
-        User.objects.create_superuser(
+        self.admin = User.objects.create_superuser(
             username="admin",
             password="changeme"
         )
 
-        User.objects.create_usermanager(
+        self.usermanager = User.objects.create_usermanager(
             username="usermanager",
             password="changeme",
         )
@@ -92,7 +97,7 @@ class AccountTestCase(APITestCase):
 class UsersTest(AccountTestCase):
 
     def test_unauthorized(self):
-        response = self.get_user('uttam')
+        response = self.get_user(2)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_form_create_user(self):
@@ -114,29 +119,29 @@ class UsersTest(AccountTestCase):
 
     def test_user_manager_crud(self):
         self.login_user('usermanager', 'changeme')
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
 
         # user manager doesn't have permission over admin
-        response = self.delete_user('admin')
+        response = self.delete_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        response = self.delete_user('uttam')
+        response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # act on other user manager
-        User.objects.create_usermanager(
+        uttam = User.objects.create_usermanager(
             username="uttam",
             password="changeme",
         )
-        response = self.delete_user('uttam')
+        response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_guest_update(self):
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
@@ -147,150 +152,162 @@ class UsersTest(AccountTestCase):
                 username='uttam',
                 password='hack'
                 )
-        response = self.update_user('uttam', data)
+        response = self.update_user(uttam.id, data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        data = dict(
+                username='uttam',
+                )
+        response = self.update_user(uttam.id, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = dict(
+                password='hack123!'
+                )
+        response = self.update_user(uttam.id, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # update with correct password
         data = dict(
                 username='uttam',
                 password='Hacker123!'
                 )
-        response = self.update_user('uttam', data)
+        response = self.update_user(uttam.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # update with username not matching logged in user
+        # update username
         data = dict(
                 username='wrong_user',
                 password='Hacker123!'
                 )
-        response = self.update_user('uttam', data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.update_user(uttam.id, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        data = dict(
-                username='uttam',
-                password=None
-                )
-        response = self.update_user('uttam', data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        #jwt depends on username
+        response = self.get_user(uttam.id)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.login_user('wrong_user', 'Hacker123!')
+        response = self.update_user(uttam.id, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_get(self):
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
         self.login_user('admin', 'changeme')
-        response = self.get_user('uttam')
+        response = self.get_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.get_user('usermanager')
+        response = self.get_user(self.usermanager.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.login_user('usermanager', 'changeme')
 
-        response = self.get_user('uttam')
+        response = self.get_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.get_user('admin')
+        response = self.get_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        response = self.get_user('usermanager')
+        response = self.get_user(self.usermanager.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_guest_crd(self):
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
-        User.objects.create_user(
+        guest = User.objects.create_user(
             username="guest",
             password="changeme",
         )
         self.login_user('uttam', 'changeme')
 
         # retrieve info of admin
-        response = self.get_user('admin')
+        response = self.get_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # retrieve info of user manager
-        response = self.get_user('usermanager')
+        response = self.get_user(self.usermanager.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # retrieve info of guest
-        response = self.get_user('guest')
+        response = self.get_user(guest.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # retrieve info of self
-        response = self.get_user('uttam')
+        response = self.get_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # delete admin
-        response = self.delete_user('admin')
+        response = self.delete_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # delete guest
-        response = self.delete_user('guest')
+        response = self.delete_user(guest.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # delete self
-        response = self.delete_user('uttam')
+        response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         
 
     def test_admin_crud(self):
         self.login_user('admin', 'changeme')
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
         # destroy account
-        response = self.get_user('uttam')
+        response = self.get_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # try updating account
-        response = self.update_user('uttam', dict(username='michael'))
+        response = self.update_user(uttam.id, dict(username='michael'))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.update_user('uttam', dict(username='uttam', password='1234!!!23a'))
+        response = self.update_user(uttam.id, dict(username='okedy', password='1234!!!23a'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.update_user('uttam', dict(username='uttami', password='1234!!!23a'))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.update_user(uttam.id, dict(username='uttami', password='1234!!!23a'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.delete_user('uttam')
+        response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # destroy it again 
-        response = self.delete_user('uttam')
+        response = self.delete_user(uttam.id)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # admin deletes user manager
-        response = self.delete_user('usermanager')
+        response = self.delete_user(self.usermanager.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # destroy logged in user 
-        response = self.delete_user('admin')
+        response = self.delete_user(self.admin.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
     def test_change_password(self):
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
-        response = self.form_change_password('uttam', 'changeme', 'Hacker123!', 'Hacker123!')
+        response = self.form_change_password(uttam.id, 'changeme', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.login_user('admin', 'changeme')
 
         # try to change other users password
-        response = self.form_change_password('uttam', 'changeme', 'Hacker123!', 'Hacker123!')
+        response = self.form_change_password(uttam.id, 'changeme', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        # change own password
-        response = self.form_change_password('admin', 'changeme', None, 'Hacker123!')
+        # change password
+        response = self.form_change_password(self.admin.id, 'changeme', None, 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.form_change_password('admin', 'changeme', 'Hacker123!', 'Hacker123!')
+        response = self.form_change_password(self.admin.id, 'changeme', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # try login using old password
@@ -298,11 +315,11 @@ class UsersTest(AccountTestCase):
         self.login_user('admin', 'Hacker123!')
 
         #set password to same
-        response = self.form_change_password('admin', 'Hacker123!', 'Hacker123!', 'Hacker123!')
+        response = self.form_change_password(self.admin.id, 'Hacker123!', 'Hacker123!', 'Hacker123!')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
         # set password to different
-        response = self.form_change_password('admin', 'Hacker123!', 'IHacker123!', 'IHacker123!')
+        response = self.form_change_password(self.admin.id, 'Hacker123!', 'IHacker123!', 'IHacker123!')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_user_list(self):
@@ -311,19 +328,24 @@ class UsersTest(AccountTestCase):
 
         self.login_user('admin', 'changeme')
         response = self.get_users()
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
         expected_users = [{"username": "admin", "role": "admin"}, {"username": "usermanager", "role": "user_manager"}]
 
         self.assertEqual(to_dict(users), to_dict(expected_users))
 
-        User.objects.create_user(
+        uttam = User.objects.create_user(
             username="uttam",
             password="changeme",
         )
         response = self.get_users()
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
         expected_users = [
                 {"username": "admin", "role": "admin"}, 
                 {"username": "usermanager", "role": "user_manager"},
@@ -336,26 +358,32 @@ class UsersTest(AccountTestCase):
         self.login_user('uttam', 'changeme')
         response = self.get_users()
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
         expected_users = [{"username": "uttam", "role": "normal_user"}]
         self.assertEqual(users, expected_users)
 
-        User.objects.create_usermanager(
+        usermanager = User.objects.create_usermanager(
             username="michael",
             password="changeme",
         )
         self.login_user('usermanager', 'changeme')
         response = self.get_users()
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
         expected_users = [{"username": "usermanager", "role": "user_manager"}, {"username": "uttam", "role": "normal_user"}]
         self.assertEqual(to_dict(users), to_dict(expected_users))
 
-        User.objects.create_superuser(
+        admin2 = User.objects.create_superuser(
             username="admin2",
             password="changeme",
         )
         self.login_user('admin2', 'changeme')
         response = self.get_users()
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
 
         expected_users = [
                 {"username": "admin2", "role": "admin"}, 
@@ -369,6 +397,8 @@ class UsersTest(AccountTestCase):
         self.login_user('uttam', 'changeme')
         response = self.get_users()
         users = json.loads(json.dumps(response.data))
+        for user in users:
+            user.pop('id')
         expected_users = [
                 {"username": "uttam", "role": "normal_user"},
                 ]
