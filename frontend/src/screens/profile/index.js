@@ -15,8 +15,8 @@ class Profile extends React.Component {
   state = {
     showSuccess: false,
     current_password: '',
+    password: '',
     password1: '',
-    password2: '',
     fieldErrors: {},
   };
 
@@ -26,15 +26,15 @@ class Profile extends React.Component {
     });
   };
 
-  onPassword1Change = (event) => {
+  onPasswordChange = (event) => {
     this.setState({ 
-      password1: event.target.value,
+      password: event.target.value,
     });
   };
 
-  onPassword2Change = (event) => {
+  onPassword1Change = (event) => {
     this.setState({ 
-      password2: event.target.value,
+      password1: event.target.value,
     });
   };
 
@@ -42,8 +42,8 @@ class Profile extends React.Component {
     event.preventDefault();
     const data = {
       current_password: this.state.current_password,
+      password: this.state.password,
       password1: this.state.password1,
-      password2: this.state.password2,
     };
     this.props.makeApiCall(
       changePassword(
@@ -64,8 +64,8 @@ class Profile extends React.Component {
   render() {
     const {
       current_password,
+      password,
       password1,
-      password2,
       fieldErrors,
       showSuccess,
     } = this.state;
@@ -90,6 +90,16 @@ class Profile extends React.Component {
                 onChange={this.onCurrentPasswordChange}
               />
               <Input 
+                id="password" 
+                autoComplete="current-password"
+                type="password"
+                value={password} 
+                label="Confirm Password" 
+                invalid={fieldErrors['passwords'] || fieldErrors['password']}
+                validationMessage={fieldErrors['password']}
+                onChange={this.onPasswordChange}
+              />
+              <Input 
                 id="password1" 
                 type="password"
                 value={password1} 
@@ -97,16 +107,6 @@ class Profile extends React.Component {
                 invalid={fieldErrors['passwords'] || fieldErrors['password1']}
                 validationMessage={fieldErrors['password1']}
                 onChange={this.onPassword1Change}
-              />
-              <Input 
-                id="password2" 
-                autoComplete="current-password"
-                type="password"
-                value={password2} 
-                label="Confirm Password" 
-                invalid={fieldErrors['passwords'] || fieldErrors['password2']}
-                validationMessage={fieldErrors['password2']}
-                onChange={this.onPassword2Change}
               />
               {
                 (fieldErrors['passwords'] || []).map((message, i) => (

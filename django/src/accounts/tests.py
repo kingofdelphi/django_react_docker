@@ -150,8 +150,10 @@ class UsersTest(AccountTestCase):
         # update with bad password
         data = dict(
                 username='uttam',
-                password='hack'
+                password='hack',
+                password1='hack'
                 )
+        print('sending', data)
         response = self.update_user(uttam.id, data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -163,14 +165,16 @@ class UsersTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         data = dict(
-                password='hack123!'
+                password='hack123!',
+                password1='hack123!',
                 )
         response = self.update_user(uttam.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # update with correct password
         data = dict(
                 username='uttam',
-                password='Hacker123!'
+                password='Hacker123!',
+                password1='Hacker123!'
                 )
         response = self.update_user(uttam.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -178,7 +182,8 @@ class UsersTest(AccountTestCase):
         # update username
         data = dict(
                 username='wrong_user',
-                password='Hacker123!'
+                password='Hacker123!',
+                password1='Hacker123!'
                 )
         response = self.update_user(uttam.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -268,10 +273,10 @@ class UsersTest(AccountTestCase):
         response = self.update_user(uttam.id, dict(username='michael'))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.update_user(uttam.id, dict(username='okedy', password='1234!!!23a'))
+        response = self.update_user(uttam.id, dict(username='okedy', password='1234!!!23a', password1='1234!!!23a'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.update_user(uttam.id, dict(username='uttami', password='1234!!!23a'))
+        response = self.update_user(uttam.id, dict(username='uttami', password='1234!!!23a', password1='1234!!!23a'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.delete_user(uttam.id)

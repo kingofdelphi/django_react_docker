@@ -24,6 +24,9 @@ class PasswordEqualitySerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required = True, write_only=True)
 
+    # this field is virtual i.e. doesn't exist in database
+    password1 = serializers.CharField(required = True, write_only=True)
+
     # donot generate on api output
     role = serializers.SerializerMethodField()
 
@@ -31,19 +34,25 @@ class UserSerializer(serializers.ModelSerializer):
         return get_user_role(user)
 
     def validate(self, data):
-        if not data.get('username'):
-            raise serializers.ValidationError(dict(username='This field is required.'))
+        password_equality_serializer = PasswordEqualitySerializer(
+            data={
+                'password': data.get('password'),
+                'password1': data.get('password1'),
+            }
+        )
+        data.pop('password1')
         password = data.get('password')
-        errors = dict()
+        if not password_equality_serializer.is_valid():
+            raise serializers.ValidationError(password_equality_serializer.errors)
+
         try:
             # validate the password and catch the exception
             validators.validate_password(password=password, user=get_user_model())
 
         # the exception raised here is different than serializers.ValidationError
         except exceptions.ValidationError as e:
+            errors = dict()
             errors['passwords'] = list(e.messages)
-
-        if errors:
             raise serializers.ValidationError(errors)
 
         return super().validate(data)
@@ -66,7 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'password', 'role')
+        fields = ('id', 'username', 'password', 'password1', 'role')
 
 # for update, when username changes token must also be changed
 class UserSerializerWithToken(UserSerializer):
@@ -77,7 +86,7 @@ class UserSerializerWithToken(UserSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'token', 'password', 'role')
+        fields = ('id', 'username', 'token', 'password', 'password1', 'role')
 
 class ChangePasswordSerializer(PasswordEqualitySerializer):
     current_password = serializers.CharField(required = True)
