@@ -31,6 +31,8 @@ class PasswordEqualitySerializer(serializers.Serializer):
         
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required = True, write_only=True)
+    first_name = serializers.CharField(required = True, allow_blank=True)
+    last_name = serializers.CharField(required = True, allow_blank=True)
 
     # this field is virtual i.e. doesn't exist in database
     password1 = serializers.CharField(required = True, write_only=True)
@@ -58,15 +60,17 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, user, validated_data):
-        password = validated_data['password']
         user.username = validated_data['username']
+        user.first_name = validated_data['first_name']
+        user.last_name = validated_data['last_name']
+        password = validated_data['password']
         user.set_password(password)
         user.save()
         return user
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'password', 'password1', 'role')
+        fields = ('id', 'username', 'first_name', 'last_name', 'password', 'password1', 'role')
 
 # for update, when username changes token must also be changed
 class UserSerializerWithToken(UserSerializer):
@@ -77,7 +81,7 @@ class UserSerializerWithToken(UserSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'token', 'password', 'password1', 'role')
+        fields = ('id', 'username', 'first_name', 'last_name', 'token', 'password', 'password1', 'role')
 
 class ChangePasswordSerializer(PasswordEqualitySerializer):
     current_password = serializers.CharField(required = True)

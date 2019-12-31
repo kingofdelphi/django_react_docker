@@ -17,7 +17,6 @@ import styles from './styles.module.scss';
 class Users extends React.PureComponent {
   state = {
     selectedUser: this.props.loginInfo,
-    newUserName: this.props.loginInfo.username,
     showSuccess: false,
     showDelete: false,
   }
@@ -35,15 +34,9 @@ class Users extends React.PureComponent {
   }
 
   handleUserSelect = (user) => {
+    user = { ...user, password: '', password1: '' };
     this.setState({ 
       selectedUser: user,
-      newUserName: user.username,
-    });
-  }
-
-  handleUserNameChange = (username) => {
-    this.setState({ 
-      newUserName: username,
     });
   }
 
@@ -88,7 +81,6 @@ class Users extends React.PureComponent {
   render() {
     const { 
       selectedUser,
-      newUserName,
       showSuccess,
       showDelete,
     } = this.state;
@@ -96,6 +88,7 @@ class Users extends React.PureComponent {
     const {
       userList
     } = this.props;
+
 
     return (
       <div className={styles.main}>
@@ -123,9 +116,8 @@ class Users extends React.PureComponent {
             mode='update'
             user_id={selectedUser.id}
             className={styles.form}
-            username={newUserName}
+            userInfo={selectedUser}
             submitName="Save"
-            onUsernameChange={this.handleUserNameChange}
             onSubmit={this.handleSubmit} 
           />
         </div>

@@ -11,21 +11,42 @@ import styles from './styles.module.scss';
 
 class UserDetail extends React.PureComponent {
   state = {
-    username: this.props.username || '',
+    username: '',
+    first_name: '',
+    last_name: '',
     password: '',
     password1: '',
     validationError: '',
     fieldErrors: {},
     registered: { },
+    oldUserInfo: null,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = this.handlePropsChange(props);
+  }
+
+  handlePropsChange(props) {
+    if (this.state.oldUserInfo === props.userInfo) return this.state;
+    const { userInfo } = props;
+    if (!userInfo) return this.state;
+    return { ...this.state, ...userInfo, oldUserInfo: userInfo };
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState(this.handlePropsChange(props));
+  }
 
   handleSubmit = (event) => {
     event.preventDefault();
     const { mode } = this.props;
     const data = {
-      username: mode === 'update' ? this.props.username : this.state.username,
+      username: this.state.username,
       password: this.state.password,
       password1: this.state.password1,
+      first_name: this.state.first_name,
+      last_name: this.state.last_name,
     };
     if (mode === 'update') {
       this.props.makeApiCall(
@@ -62,48 +83,39 @@ class UserDetail extends React.PureComponent {
   }
 
   onUsernameChange = (event) => {
-    if (this.props.onUsernameChange) {
-      this.props.onUsernameChange(event.target.value);
-      this.setState({ 
-        validationError: '',
-      });
-    } else {
-      this.setState({ 
-        username: event.target.value,
-        validationError: '',
-      });
-    }
+    this.setState({ 
+      username: event.target.value,
+    });
   };
 
   onPasswordChange = (event) => {
     this.setState({ 
       password: event.target.value,
-      validationError: '',
     });
   };
 
   onPassword1Change = (event) => {
     this.setState({ 
       password1: event.target.value,
-      validationError: '',
     });
   };
 
   render() {
     const {
+      username,
+      first_name,
+      last_name,
       password,
       password1,
       validationError,
       fieldErrors,
     } = this.state;
 
+    console.log(username);
     const {
       className,
       submitName = 'Register',
     } = this.props;
-
-    // controlled vs uncontrolled component
-    const { username } = this.props.onUsernameChange ? this.props : this.state;
 
     const cls = [styles.form, className].join(' ');
 
@@ -117,6 +129,22 @@ class UserDetail extends React.PureComponent {
           label="Username" 
           invalid={fieldErrors['username']}
           validationMessage={fieldErrors['username']}
+        />
+        <Input 
+          id="first_name" 
+          onChange={(e) => this.setState({ first_name: e.target.value })}
+          value={first_name} 
+          label="First Name" 
+          invalid={fieldErrors['first_name']}
+          validationMessage={fieldErrors['first_name']}
+        />
+        <Input 
+          id="last_name" 
+          onChange={(e) => this.setState({ last_name: e.target.value })}
+          value={last_name} 
+          label="Last Name" 
+          invalid={fieldErrors['last_name']}
+          validationMessage={fieldErrors['last_name']}
         />
         <Input 
           id="password" 

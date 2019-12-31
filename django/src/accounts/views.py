@@ -61,6 +61,8 @@ class LoginView(generics.CreateAPIView):
             data = {
                 "username": username,
                 "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
                 "role": get_user_role(user),
                 "token": jwt_encode_handler(jwt_payload_handler(user)),
             }
@@ -75,6 +77,8 @@ class LoginInfoView(generics.RetrieveAPIView):
         data = {
                 "username": request.user.get_username(),
                 "id": request.user.id,
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
                 "role": get_user_role(request.user),
                 }
         return Response(data)

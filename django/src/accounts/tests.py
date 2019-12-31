@@ -44,6 +44,8 @@ class AccountTestCase(APITestCase):
             '/users/',
             data=json.dumps({
                 'username': username,
+                'first_name': '',
+                'last_name': '',
                 'password': password1,
                 'password1': password2
             }),
@@ -165,6 +167,8 @@ class UsersTest(AccountTestCase):
         # update with bad password
         data = dict(
                 username='uttam',
+                first_name='',
+                last_name='',
                 password='hack',
                 password1='hack'
                 )
@@ -187,6 +191,8 @@ class UsersTest(AccountTestCase):
         # update with correct password
         data = dict(
                 username='uttam',
+                first_name='',
+                last_name='',
                 password='Hacker123!',
                 password1='Hacker123!'
                 )
@@ -196,6 +202,8 @@ class UsersTest(AccountTestCase):
         # update username
         data = dict(
                 username='wrong_user',
+                first_name='',
+                last_name='',
                 password='Hacker123!',
                 password1='Hacker123!'
                 )
@@ -287,10 +295,11 @@ class UsersTest(AccountTestCase):
         response = self.update_user(uttam.id, dict(username='michael'))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.update_user(uttam.id, dict(username='okedy', password='1234!!!23a', password1='1234!!!23a'))
+        response = self.update_user(uttam.id, dict(username='okedy', first_name='', last_name='', password='1234!!!23a', password1='1234!!!23a'))
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.update_user(uttam.id, dict(username='uttami', password='1234!!!23a', password1='1234!!!23a'))
+        response = self.update_user(uttam.id, dict(username='uttami', first_name='', last_name='', password='1234!!!23a', password1='1234!!!23a'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.delete_user(uttam.id)
@@ -355,7 +364,10 @@ class UsersTest(AccountTestCase):
         users = json.loads(json.dumps(response.data))
         for user in users:
             user.pop('id')
-        expected_users = [{"username": "admin", "role": "admin"}, {"username": "usermanager", "role": "user_manager"}]
+        expected_users = [
+                {"username": "admin", "role": "admin", "first_name": "", "last_name": ""}, 
+                {"username": "usermanager", "role": "user_manager", "first_name": "", "last_name": ""}
+                ]
 
         self.assertEqual(to_dict(users), to_dict(expected_users))
 
@@ -368,9 +380,9 @@ class UsersTest(AccountTestCase):
         for user in users:
             user.pop('id')
         expected_users = [
-                {"username": "admin", "role": "admin"}, 
-                {"username": "usermanager", "role": "user_manager"},
-                {"username": "uttam", "role": "normal_user"},
+                {"username": "admin", "role": "admin", "first_name": "", "last_name": ""}, 
+                {"username": "usermanager", "role": "user_manager", "first_name": "", "last_name": ""},
+                {"username": "uttam", "role": "normal_user", "first_name": "", "last_name": ""},
                 ]
 
         self.assertEqual(to_dict(users), to_dict(expected_users))
@@ -381,7 +393,7 @@ class UsersTest(AccountTestCase):
         users = json.loads(json.dumps(response.data))
         for user in users:
             user.pop('id')
-        expected_users = [{"username": "uttam", "role": "normal_user"}]
+        expected_users = [{"username": "uttam", "role": "normal_user", "first_name": "", "last_name": ""}]
         self.assertEqual(users, expected_users)
 
         usermanager = User.objects.create_usermanager(
@@ -393,7 +405,10 @@ class UsersTest(AccountTestCase):
         users = json.loads(json.dumps(response.data))
         for user in users:
             user.pop('id')
-        expected_users = [{"username": "usermanager", "role": "user_manager"}, {"username": "uttam", "role": "normal_user"}]
+        expected_users = [
+                {"username": "usermanager", "role": "user_manager", "first_name": "", "last_name": ""}, 
+                {"username": "uttam", "role": "normal_user", "first_name": "", "last_name": ""}
+                ]
         self.assertEqual(to_dict(users), to_dict(expected_users))
 
         admin2 = User.objects.create_superuser(
@@ -407,10 +422,10 @@ class UsersTest(AccountTestCase):
             user.pop('id')
 
         expected_users = [
-                {"username": "admin2", "role": "admin"}, 
-                {"username": "usermanager", "role": "user_manager"},
-                {"username": "michael", "role": "user_manager"},
-                {"username": "uttam", "role": "normal_user"},
+                {"username": "admin2", "role": "admin", "first_name": "", "last_name": ""}, 
+                {"username": "usermanager", "role": "user_manager", "first_name": "", "last_name": ""},
+                {"username": "michael", "role": "user_manager", "first_name": "", "last_name": ""},
+                {"username": "uttam", "role": "normal_user", "first_name": "", "last_name": ""},
                 ]
 
         self.assertEqual(to_dict(users), to_dict(expected_users))
@@ -421,7 +436,7 @@ class UsersTest(AccountTestCase):
         for user in users:
             user.pop('id')
         expected_users = [
-                {"username": "uttam", "role": "normal_user"},
+                {"username": "uttam", "role": "normal_user", "first_name": "", "last_name": ""},
                 ]
         self.assertEqual(to_dict(users), to_dict(expected_users))
 
@@ -433,7 +448,7 @@ class UsersTest(AccountTestCase):
         # login and retrieve
         self.login_user('admin', 'changeme')
         response = self.get_user(self.admin.id)
-        expected_user = {'id': self.admin.id, "username": "admin", "role": "admin"}
+        expected_user = {'id': self.admin.id, "username": "admin", "role": "admin", "first_name": "", "last_name": ""}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_user, response.data)
 
@@ -445,15 +460,15 @@ class UsersTest(AccountTestCase):
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        data = {"username": "admin", "password": "Hacker123!", "password1": "Hacker123!"}
+        data = {"username": "admin", 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        data = {"password": "Hacker123!", "password1": "Hacker123!"}
+        data = {"password": "Hacker123!", 'first_name':'', 'last_name':'', "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        data = {"username": "adminis", "password": "Hacker123!", "password1": "Hacker123!"}
+        data = {"username": "adminis", 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
