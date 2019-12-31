@@ -54,6 +54,7 @@ class UserDetail extends React.PureComponent {
           this.props.user_id,
           data,
           (user_info) => {
+            this.setState({ fieldErrors: {}, validationError: '' });
             this.props.onSubmit(user_info);
           },
           (message, errorObj) => {

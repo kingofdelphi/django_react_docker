@@ -21,6 +21,8 @@ class TimeZoneUserManager(UserManager):
 
 class TimeZoneUser(AbstractUser):
     is_user_manager = models.BooleanField(default=False)
+    username = models.CharField(max_length=30, unique=True)
+    USERNAME_FIELD = 'username'
     
     objects = TimeZoneUserManager()
 

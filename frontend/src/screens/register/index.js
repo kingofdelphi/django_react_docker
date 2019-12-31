@@ -36,7 +36,7 @@ class Register extends React.PureComponent {
             Enter proper username and password and click the Register button.
           </div>
         </header>
-        <UserDetail onSubmit={this.handleSubmit} />
+        <UserDetail className={styles.form} onSubmit={this.handleSubmit} />
       </div>
     );
   }
