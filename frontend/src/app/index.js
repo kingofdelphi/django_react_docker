@@ -116,10 +116,12 @@ class Main extends React.PureComponent {
           (user_info) => {
             this.props.setLoginUserInfo(user_info);
           },
-          () => {
+          (message) => {
             // todo: session expiry refresh no message
-            localStorage.removeItem('token');
-            this.props.setUserAsGuest();
+            if (message === 'Invalid Credentials') {
+              localStorage.removeItem('token');
+              this.props.setUserAsGuest();
+            }
           }
         )
       );
