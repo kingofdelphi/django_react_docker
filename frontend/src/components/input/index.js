@@ -1,10 +1,13 @@
 import React from 'react';
+import _uniqueId from 'lodash/uniqueId';
+
 import styles from './styles.module.scss';
 
 class Input extends React.PureComponent {
   constructor(props) {
     super(props);
     this.ref = React.createRef();
+    this.id = _uniqueId("prefix-");
   }
 
   componentDidMount() {
@@ -17,7 +20,6 @@ class Input extends React.PureComponent {
 
   render() {
     const { 
-      id,
       label,
       type = "text",
       name,
@@ -33,15 +35,15 @@ class Input extends React.PureComponent {
     const cls = [styles.main, type === 'radio' ? styles.radio : ''].join(' ');
     return (
       <div className={cls}>
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={this.id}>{label}</label>
         <input 
+          id={this.id} 
           checked={checked}
           name={name}
           ref={(el) => this.ref = el}
           placeholder={placeholder}
-          autoComplete={id}
+          autoComplete={name}
           maxLength={maxLength}
-          id={id} 
           type={type}
           value={value}
           onChange={onChange} 

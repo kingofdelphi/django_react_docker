@@ -186,7 +186,6 @@ class UserDetail extends React.PureComponent {
               <Input 
                 checked={role === "normal_user"}
                 value="normal_user" 
-                id="normaluser" 
                 name="role" 
                 onChange={this.handleRoleChange} 
                 label="Normal User" 
@@ -195,7 +194,6 @@ class UserDetail extends React.PureComponent {
               <Input 
                 checked={role === "user_manager"}
                 value="user_manager" 
-                id="usermanager" 
                 name="role" 
                 onChange={this.handleRoleChange} 
                 label="User Manager" 
