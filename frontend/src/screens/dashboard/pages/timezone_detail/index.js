@@ -15,7 +15,7 @@ import { add_timezone, edit_timezone } from '../../api/timezones';
 import withAPIHelper from '../../../../middleware/api/util';
 import styles from './styles.module.scss';
 
-class TimeZoneDetailView extends React.Component {
+class TimeZoneDetailView extends React.PureComponent {
   state = {
     name: '',
     city: '',

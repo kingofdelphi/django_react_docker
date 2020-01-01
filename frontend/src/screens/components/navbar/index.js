@@ -40,6 +40,9 @@ class NavBar extends React.PureComponent {
   }
 
   getMenuItems() {
+    const {
+      loginInfo,
+    } = this.props;
     return [
       {
         name: "Dashboard",
@@ -47,7 +50,7 @@ class NavBar extends React.PureComponent {
         path: '/dashboard',
       },
       {
-        name: "Users",
+        name: loginInfo.role === 'normal_user' ? "Settings" : "Users",
         key: 'users',
         path: '/users',
       },

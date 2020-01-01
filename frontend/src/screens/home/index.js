@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import styles from './styles.module.scss';
 
-class HomePage extends React.Component {
+class HomePage extends React.PureComponent {
   render() {
     return (
       <div className={styles.main}>

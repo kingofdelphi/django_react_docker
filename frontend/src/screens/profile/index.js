@@ -11,7 +11,7 @@ import { changePassword } from './api';
 
 import styles from './styles.module.scss';
 
-class Profile extends React.Component {
+class Profile extends React.PureComponent {
   state = {
     showSuccess: false,
     current_password: '',

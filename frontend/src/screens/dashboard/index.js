@@ -180,7 +180,7 @@ class Dashboard extends React.PureComponent {
                   <i className="fa fa-list" />
                 </Button>
                 <Search 
-                  maxLength="20"
+                  maxLength="30"
                   value={timeZoneFilter} 
                   placeholder="Filter by name"
                   onChange={this.handleFilterChange} 
