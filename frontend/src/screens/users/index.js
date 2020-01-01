@@ -7,10 +7,11 @@ import MessageBox from '../../components/modal/messagebox';
 import ConfirmationModal from '../../components/modal/confirmation';
 import UserDetail from '../components/userdetail';
 
+import { logoutUser } from '../../store/login_info/actionCreators';
+import { setUserList, updateUser, deleteUser } from '../../store/userlist/actionCreators';
+
 import { get_users, delete_user } from './api';
 import withAPIHelper from '../../middleware/api/util';
-
-import { setUserList, updateUser, deleteUser } from '../../store/userlist/actionCreators';
 
 import styles from './styles.module.scss';
 
@@ -63,7 +64,7 @@ class Users extends React.PureComponent {
         selectedUser.id,
         () => {
           if (loginInfo.id === selectedUser.id) {
-            this.props.history.push('/logout');
+            this.props.logoutUser();
           } else {
             this.props.deleteUser(selectedUser);
             this.setState({ 
@@ -145,6 +146,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({ 
+  logoutUser: () => dispatch(logoutUser()),
   setUserList: (list) => dispatch(setUserList(list)),
   updateUser: (user_info) => dispatch(updateUser(user_info)),
   deleteUser: (user_info) => dispatch(deleteUser(user_info)),

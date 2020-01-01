@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import LogOut from '../../../dashboard/pages/logout';
+import ConfirmationModal from '../../../../components/modal/confirmation';
+
+import { logoutUser } from '../../../../store/login_info/actionCreators';
 
 import styles from './styles.module.scss';
 
@@ -52,11 +55,23 @@ class UserMenu extends React.PureComponent {
             </ul>
           </div>
         </button>
-        { logoutModal && <LogOut onCancel={this.closeLogOutModal} /> }
+      { 
+        logoutModal && (
+        <ConfirmationModal 
+          message="Are you sure you want to log out ?"
+          onSubmit={this.props.logoutUser} 
+          onCancel={this.closeLogOutModal} 
+          /> 
+        )
+      }
       </>
     );
   }
 }
 
-export default withRouter(UserMenu);
+const mapDispatchToProps = dispatch => ({
+  logoutUser: () => dispatch(logoutUser()),
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(UserMenu));
 

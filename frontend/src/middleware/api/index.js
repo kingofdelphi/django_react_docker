@@ -1,4 +1,5 @@
 import * as ActionTypes from './actionTypes';
+import * as LoginActionTypes from '../../store/login_info/actionTypes';
 
 import customFetch from '../../utils';
 
@@ -56,6 +57,19 @@ const apiCallMiddleWare = store => {
           failure_callback('Unexpected error occurred', {});
         });
       return;
+    }
+    if (action.type === LoginActionTypes.LogoutUser) {
+      localStorage.removeItem('token');
+    }
+    if (action.type === LoginActionTypes.SetLoginUserInfo) {
+      // this is also called when page refreshes after logged in
+      const { data: userInfo } = action;
+      if (userInfo.token) {
+        // during login token is obtained
+        localStorage.setItem('token', userInfo.token);
+        delete action.data.token;
+      }
+      action.data = { ...userInfo };
     }
     return next(action)
   };

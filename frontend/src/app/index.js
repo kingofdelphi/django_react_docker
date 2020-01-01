@@ -5,12 +5,11 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  withRouter,
+  Redirect,
 } from "react-router-dom";
 
 import HomePage from '../screens/home';
 import Login from '../screens/login';
-import Logout from '../screens/logout';
 import Register from '../screens/register';
 import Dashboard from '../screens/dashboard';
 import Profile from '../screens/profile';
@@ -31,8 +30,6 @@ import {
   setUserAsGuest,
 } from '../store/login_info/actionCreators';
 
-const guest_user_routes = ['/', '/login', '/register'];
-
 const getToken = () => {
   const token = localStorage.getItem('token');
   if (!token || token === 'null') {
@@ -41,60 +38,50 @@ const getToken = () => {
   return token;
 };
 
+const routesMap = {
+  auth: [
+    { path: '/dashboard', component: Dashboard },
+    { path: '/profile', component: Profile },
+    { path: '/users', component: Users },
+  ],
+  non_auth: [
+    { path: '/', component: HomePage },
+    { path: '/login', component: Login },
+    { path: '/register', component: Register },
+  ]
+};
+
 class RoutesValidator extends React.PureComponent {
-  validateRoutes() {
+  render() {
     const {
-      location: { pathname },
       loginInfo,
     } = this.props;
 
-    if (!loginInfo.username) {
-      // if not logged in
-      if (!getToken() && !guest_user_routes.includes(pathname)) {
-        this.props.history.push('/login');
-      }
-    } else {
-      // if logged in, redirect to dashboard
-      if (getToken() && guest_user_routes.includes(pathname)) {
-        this.props.history.push('/dashboard');
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.validateRoutes();
-  }
-
-  componentDidUpdate() {
-    this.validateRoutes();
-  }
-
-  render() {
+    const isLoggedIn = loginInfo.username;
 
     return (
       <div className={styles.body}>
         <Switch>
-          <Route exact path="/">
-            <HomePage />
-          </Route>
-          <Route exact path="/login">
-            <Login />
-          </Route>
-          <Route exact path="/logout">
-            <Logout />
-          </Route>
-          <Route exact path="/register">
-            <Register />
-          </Route>
-          <Route exact path="/dashboard">
-            <Dashboard />
-          </Route>
-          <Route exact path="/profile/">
-            <Profile />
-          </Route>
-          <Route exact path="/users/">
-            <Users />
-          </Route>
+          {
+            routesMap.non_auth.map(({ path, component: Component }) => {
+              return (
+                <Route key={path} path={path} exact>
+                  { !isLoggedIn && <Component /> }
+                  { isLoggedIn && <Redirect to='/dashboard' /> }
+                </Route>
+              );
+            })
+          }
+          {
+            routesMap.auth.map(({ path, component: Component }) => {
+              return (
+                <Route key={path} path={path} exact>
+                  { isLoggedIn && <Component /> }
+                  { !isLoggedIn && <Redirect to='/' /> }
+                </Route>
+              );
+            })
+          }
         </Switch>
       </div>
     );
@@ -105,7 +92,7 @@ const route_mapStateToProps = state => ({
   loginInfo: state.loginInfo,
 });
 
-const RoutesValidatorE = connect(route_mapStateToProps)(withRouter(RoutesValidator));
+const RoutesValidatorE = connect(route_mapStateToProps)(RoutesValidator);
 
 class Main extends React.PureComponent {
   componentDidMount() {
@@ -119,8 +106,7 @@ class Main extends React.PureComponent {
           (message) => {
             // todo: session expiry refresh no message
             if (message === 'Invalid credentials') {
-              localStorage.removeItem('token');
-              this.props.setUserAsGuest();
+              this.props.logoutUser();
             }
           }
         )

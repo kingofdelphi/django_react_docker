@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 
 import ConfirmationModal from '../../components/modal/confirmation';
 import Loading from '../../components/loading';
 import MessageBox from '../../components/modal/messagebox';
+
+import { logoutUser } from '../../store/login_info/actionCreators';
 
 import makeApiCall from './actionCreators';
 
@@ -12,7 +13,6 @@ function withAPIHelper(WrappedComponent) {
   const cls = class extends React.PureComponent {
     state = {
       sessionValid: true,
-      redirectToHome: false,
       loading: false,
       serverUp: true,
     }
@@ -38,16 +38,10 @@ function withAPIHelper(WrappedComponent) {
     render() {
       const { 
         sessionValid,
-        redirectToHome,
         loading,
         serverUp,
       } = this.state;
 
-      if (redirectToHome) {
-        return (
-          <Redirect to='/logout' />
-        );
-      }
       const { loginInfo } = this.props;
 
       return (
@@ -61,7 +55,7 @@ function withAPIHelper(WrappedComponent) {
               <ConfirmationModal 
                 message="Session is invalid. Do you want to log out ?." 
                 onSubmit={() => {
-                  this.setState({ redirectToHome: true });
+                  this.props.logoutUser();
                 }}
                 onCancel={() => this.setState({ sessionValid: true })}
               /> 
@@ -73,10 +67,16 @@ function withAPIHelper(WrappedComponent) {
       );
     }
   }
+
   const mapStateToProps = state => ({
     loginInfo: state.loginInfo,
   });
-  return connect(mapStateToProps)(cls);
+
+  const mapDispatchToProps = dispatch => ({
+    dispatch: dispatch,
+    logoutUser: () => dispatch(logoutUser()),
+  });
+  return connect(mapStateToProps, mapDispatchToProps)(cls);
 }
 
 export default withAPIHelper;

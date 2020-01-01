@@ -28,10 +28,7 @@ class Login extends React.PureComponent {
       login(
         data,
         (userInfo) => {
-          localStorage.setItem('token', userInfo.token);
-          this.props.setLoginUserInfo({
-            ...userInfo
-          });
+          this.props.setLoginUserInfo(userInfo);
         },
         (message, errorObj) => {
           this.setState({ 
@@ -80,7 +77,6 @@ class Login extends React.PureComponent {
           />
           <Input 
             id="password" 
-            autoComplete="current-password"
             type="password"
             onChange={this.onPasswordChange}
             value={password} 

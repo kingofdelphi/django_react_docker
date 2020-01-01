@@ -1,23 +1,16 @@
 import React from 'react';
-import { Redirect } from "react-router-dom";
+import { connect } from 'react-redux';
 
 import ConfirmationModal from '../../../../components/modal/confirmation';
 
-class Logout extends React.Component {
-  state = {
-    exit: false,
-  }
+import { logoutUser } from '../../../../store/login_info/actionCreators';
 
+class Logout extends React.PureComponent {
   onSubmit = () => {
-    this.setState({ exit: true });
+    this.props.logoutUser();
   }
 
   render() {
-    if (this.state.exit) {
-      return (
-        <Redirect to='/logout' />
-      );
-    }
     return (
       <ConfirmationModal
         message="Are you sure you want to log out ?"
@@ -29,4 +22,8 @@ class Logout extends React.Component {
   }
 }
 
-export default Logout;
+const mapDispatchToProps = dispatch => ({
+  logoutUser: () => dispatch(logoutUser()),
+});
+
+export default connect(null, mapDispatchToProps)(Logout);
