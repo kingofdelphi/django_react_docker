@@ -126,7 +126,7 @@ class Main extends React.PureComponent {
     if (fetching) {
       // must determine login status before rendering
       // as active user must be computed for dashboard routes
-      return 'fetching...';
+      return '';
     }
 
     return (

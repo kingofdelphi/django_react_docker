@@ -1,6 +1,11 @@
 .main {
   border: none;
   background: none;
+  text-align: center;
+  .message {
+    transform: translateY(-30px);
+    font-size: 1.1rem;
+  }
 }
 .loader,
 .loader:after {
