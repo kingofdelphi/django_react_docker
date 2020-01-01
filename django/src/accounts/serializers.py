@@ -9,8 +9,6 @@ import django.contrib.auth.password_validation as validators
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
-from .utils import get_user_role
-
 class PasswordEqualitySerializer(serializers.Serializer):
     password = serializers.CharField(required = True)
     password1 = serializers.CharField(required = True)
@@ -41,9 +39,12 @@ class UserSerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
 
     def get_role(self, user):
-        return get_user_role(user)
+        return user.role
 
     def validate(self, data):
+        if data.get('role') and data['role'] not in ['normal_user', 'user_manager', 'admin']:
+            raise serializers.ValidationError(dict(role='role must be either normal_user, user_manager or admin'))
+
         password_equality_serializer = PasswordEqualitySerializer(data=data)
         if not password_equality_serializer.is_valid():
             raise serializers.ValidationError(password_equality_serializer.errors)
@@ -53,18 +54,38 @@ class UserSerializer(serializers.ModelSerializer):
         return super().validate(data)
 
     def create(self, validated_data):
-        password = validated_data.pop('password', None)
+        request = self.context['request']
+
         instance = self.Meta.model(**validated_data)
+
+        # guest user can also create so we need to check for user
+        if 'role' in request.data and request.data['role'] == 'user_manager':
+            if request.user and request.user.is_superuser:
+                if request.data['role'] == 'user_manager':
+                    instance.is_user_manager = True
+            else:
+                print('how did this happen ?')
+
+        password = validated_data.pop('password', None)
         instance.set_password(password)
         instance.save()
         return instance
 
     def update(self, user, validated_data):
+        request = self.context['request']
+
+        if 'role' not in request.data:
+            request.data['role'] = 'normal_user'
+
+        if request.user.is_superuser:
+            user.is_user_manager = request.data['role'] == 'user_manager'
+
         user.username = validated_data['username']
         user.first_name = validated_data['first_name']
         user.last_name = validated_data['last_name']
         password = validated_data['password']
         user.set_password(password)
+
         user.save()
         return user
 

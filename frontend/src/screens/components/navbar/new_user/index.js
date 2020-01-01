@@ -14,12 +14,16 @@ class AddUser extends React.PureComponent {
   };
 
   render() {
+    const {
+      loginInfo
+    } = this.props;
     return (
       <Modal contentClass={styles.main}>
         <header className={styles.header}>
           Add New User
         </header>
         <UserDetail 
+          showRoles={loginInfo.role === 'admin'}
           className={styles.form}
           submitName="Save"
           onSubmit={this.handleSubmit} 

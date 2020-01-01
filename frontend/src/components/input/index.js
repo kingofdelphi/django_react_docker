@@ -20,6 +20,8 @@ class Input extends React.PureComponent {
       id,
       label,
       type = "text",
+      name,
+      checked,
       value,
       onChange,
       invalid,
@@ -28,10 +30,13 @@ class Input extends React.PureComponent {
       maxLength,
     } = this.props;
     const inputModifier = invalid ? styles.invalid : '';
+    const cls = [styles.main, type === 'radio' ? styles.radio : ''].join(' ');
     return (
-      <div className={styles.main}>
+      <div className={cls}>
         <label htmlFor={id}>{label}</label>
         <input 
+          checked={checked}
+          name={name}
           ref={(el) => this.ref = el}
           placeholder={placeholder}
           autoComplete={id}

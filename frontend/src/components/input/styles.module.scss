@@ -14,7 +14,13 @@
 
 .main {
   display: flex;
-  flex-direction: column;
+  &:not(.radio) {
+    flex-direction: column;
+  }
+  &.radio {
+    align-items: center;
+    flex-direction: row-reverse;
+  }
   label {
     margin-bottom: 4px;
   }

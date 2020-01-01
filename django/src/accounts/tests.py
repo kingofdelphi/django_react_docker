@@ -39,6 +39,14 @@ class AccountTestCase(APITestCase):
             HTTP_AUTHORIZATION='JWT ' + token
         )
 
+    def form_create_user_dump(self, data):
+        response = self.client.post(
+            '/users/',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+        return response
+
     def form_create_user(self, username, password1, password2):
         response = self.client.post(
             '/users/',
@@ -296,7 +304,6 @@ class UsersTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         response = self.update_user(uttam.id, dict(username='okedy', first_name='', last_name='', password='1234!!!23a', password1='1234!!!23a'))
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.update_user(uttam.id, dict(username='uttami', first_name='', last_name='', password='1234!!!23a', password1='1234!!!23a'))
@@ -452,23 +459,23 @@ class UsersTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_user, response.data)
 
-        data = {"username": "admin", "password": "ok"}
+        data = {"username": "admin", "role": "admin", "password": "ok"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        data = {"username": "admin", "password": "ok", "password1": "ok"}
+        data = {"username": "admin", "role": "admin", "password": "ok", "password1": "ok"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        data = {"username": "admin", 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
+        data = {"username": "admin", 'role': 'admin', 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        data = {"password": "Hacker123!", 'first_name':'', 'last_name':'', "password1": "Hacker123!"}
+        data = {"password": "Hacker123!", 'role': 'admin', 'first_name':'', 'last_name':'', "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        data = {"username": "adminis", 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
+        data = {"username": "adminis", 'role': 'admin', 'first_name':'', 'last_name':'', "password": "Hacker123!", "password1": "Hacker123!"}
         response = self.update_user(self.admin.id, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
@@ -477,4 +484,55 @@ class UsersTest(AccountTestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         self.login_user('adminis', 'Hacker123!')
+
+    def test_create_user_with_role(self):
+        self.login_user('admin', 'changeme')
+        data = {
+                "username": "china", 
+                "role": "admin", 
+                "first_name": "", 
+                "last_name": "", 
+                "password": "Hacker123!",
+                "password1": "Hacker123!",
+                }
+        response = self.form_create_user_dump(data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # admin cannot create user with role admin
+        data['role'] = 'normal_user'
+        response = self.form_create_user_dump(data)
+        self.assertEqual(response.data['role'], 'normal_user')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data['role'] = 'user_manager'
+        data['username'] = 'uttam'
+
+        response = self.form_create_user_dump(data)
+        uttamid = response.data['id']
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['role'], 'user_manager')
+        
+        # demote admin to user manager
+        data['username'] = 'admin'
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        data.pop('role')
+        response = self.update_user(self.admin.id, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        data['role'] = 'nidoormal_user'
+        response = self.update_user(uttamid, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data['role'] = 'normal_user'
+        data['username'] = 'uttam'
+        response = self.update_user(uttamid, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['role'], 'normal_user')
+        self.login_user('uttam', 'Hacker123!')
+
+        data.pop('role')
+        response = self.update_user(uttamid, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['role'], 'normal_user')
 

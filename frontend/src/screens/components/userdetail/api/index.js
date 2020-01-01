@@ -1,8 +1,9 @@
-export const register = (data, success_callback, failure_callback) => ({
+export const register = (data, success_callback, failure_callback, with_auth) => ({
   url: '/users/',
   data,
   success_callback,
   failure_callback,
+  with_auth,
 });
 
 

@@ -56,7 +56,9 @@ class UserDetail extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    const formValues = {};
+    const formValues = {
+      'role': 'normal_user',
+    };
     this.fields.map(field => formValues[field.name] = '');
     this.state.formValues = formValues;
     this.state = this.handlePropsChange(props);
@@ -70,6 +72,7 @@ class UserDetail extends React.PureComponent {
       first_name: userInfo.first_name,
       last_name: userInfo.last_name,
       username: userInfo.username,
+      role: userInfo.role,
       password: '',
       password1: '',
     };
@@ -80,6 +83,10 @@ class UserDetail extends React.PureComponent {
   componentWillReceiveProps(props) {
     this.setState(this.handlePropsChange(props));
   }
+
+  handleRoleChange = (event) => {
+    this.setState({ ...this.state, formValues: { ...this.state.formValues, "role": event.target.value }});
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -115,6 +122,7 @@ class UserDetail extends React.PureComponent {
               fieldErrors: errorObj
             });
           },
+          this.props.showRoles,
         )
       );
     }
@@ -140,9 +148,12 @@ class UserDetail extends React.PureComponent {
     const {
       className,
       submitName = 'Register',
+      showRoles,
     } = this.props;
 
     const cls = [styles.form, className].join(' ');
+
+    const { role } = formValues;
 
     return (
       <form className={cls} onSubmit={this.handleSubmit}>
@@ -167,6 +178,31 @@ class UserDetail extends React.PureComponent {
           (fieldErrors['passwords'] || []).map((message, i) => (
             <span key={i} className={styles.password_validation}>{message}</span>
           ))
+        }
+        {
+          showRoles && (
+            <div className={styles.roles}>
+              <h4>Role</h4><br/>
+              <Input 
+                checked={role === "normal_user"}
+                value="normal_user" 
+                id="normaluser" 
+                name="role" 
+                onChange={this.handleRoleChange} 
+                label="Normal User" 
+                type="radio" 
+              />
+              <Input 
+                checked={role === "user_manager"}
+                value="user_manager" 
+                id="usermanager" 
+                name="role" 
+                onChange={this.handleRoleChange} 
+                label="User Manager" 
+                type="radio" 
+              />
+            </div>
+          )
         }
         <div className={styles.buttons}>
           <Button>{submitName}</Button>

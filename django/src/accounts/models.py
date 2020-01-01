@@ -26,3 +26,12 @@ class TimeZoneUser(AbstractUser):
     
     objects = TimeZoneUserManager()
 
+    @property
+    def role(self):
+        if self.is_superuser:
+            return 'admin'
+        if self.is_user_manager:
+            return 'user_manager'
+        return 'normal_user'
+
+

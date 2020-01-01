@@ -9,10 +9,10 @@ from django.db.models import Q
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 
-from .utils import get_user_role
 from .permissions import \
         IsOwnerOrAdminOrUserManager, \
-        UserListPermission
+        UserListPermission, \
+        IsChangingBelowPermission
 
 from .serializers import UserSerializer, \
         PasswordEqualitySerializer, \
@@ -63,7 +63,7 @@ class LoginView(generics.CreateAPIView):
                 "id": user.id,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
-                "role": get_user_role(user),
+                "role": user.role,
                 "token": jwt_encode_handler(jwt_payload_handler(user)),
             }
             return Response(data)
@@ -79,7 +79,7 @@ class LoginInfoView(generics.RetrieveAPIView):
                 "id": request.user.id,
                 "first_name": request.user.first_name,
                 "last_name": request.user.last_name,
-                "role": get_user_role(request.user),
+                "role": request.user.role,
                 }
         return Response(data)
 
@@ -100,9 +100,12 @@ class PasswordChangeView(generics.UpdateAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager, IsChangingBelowPermission]
+
+    def get_serializer_context(self):
+        return dict(request=self.request)
+
     def get_serializer_class(self):
         if self.request.method == 'PUT' and int(self.kwargs['pk']) == self.request.user.id:
             return UserSerializerWithToken
         return UserSerializer
-    # bitwise or is not working
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager]

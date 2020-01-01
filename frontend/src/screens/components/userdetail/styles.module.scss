@@ -49,4 +49,9 @@
   font-size: 0.8rem;
 }
 
-
+.roles {
+  display: flex;
+  > *:not(:first-child) {
+    margin-left: 20px;
+  }
+}

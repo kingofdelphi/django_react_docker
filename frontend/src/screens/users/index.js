@@ -86,6 +86,7 @@ class Users extends React.PureComponent {
     } = this.state;
 
     const {
+      loginInfo,
       userList
     } = this.props;
 
@@ -113,6 +114,7 @@ class Users extends React.PureComponent {
             <Button onClick={() => this.setState({ showDelete: true })}>Delete User</Button>
           </header>
           <UserDetail 
+            showRoles={loginInfo.role === "admin" && selectedUser.id !== loginInfo.id}
             mode='update'
             user_id={selectedUser.id}
             className={styles.form}
