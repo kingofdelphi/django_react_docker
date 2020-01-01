@@ -1,13 +1,13 @@
 $padding: 10px 40px;
 
 .main {
-  width: 300px;
+  width: 400px;
   .header {
     color: #24292e;
     font-size: 1.1rem;
     font-weight: bold;
     border-bottom: 1px solid #d1d5da;
-    padding: $padding;
+    padding: 20px 40px;
   }
 
 }
@@ -18,6 +18,8 @@ $padding: 10px 40px;
 }
 
 .form {
+  max-height: 70vh;
+  overflow: auto;
   background: none;
   padding: $padding;
   border: none;

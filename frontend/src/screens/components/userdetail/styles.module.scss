@@ -23,6 +23,16 @@
 
 }
 
+.buttons {
+  display: flex;
+  > button:not(:first-child) {
+    margin-left: 10px;
+  }
+  button {
+    flex: 1;
+  }
+}
+
 .header {
   padding: 40px;
   font-size: 1.5em;

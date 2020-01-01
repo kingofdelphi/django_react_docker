@@ -112,7 +112,6 @@ class UserDetail extends React.PureComponent {
       fieldErrors,
     } = this.state;
 
-    console.log(username);
     const {
       className,
       submitName = 'Register',
@@ -170,8 +169,10 @@ class UserDetail extends React.PureComponent {
             <span key={i} className={styles.password_validation}>{message}</span>
           ))
         }
-        <Button>{submitName}</Button>
-        {this.props.onCancel && <Button onClick={this.props.onCancel}>Cancel</Button>}
+        <div className={styles.buttons}>
+          <Button>{submitName}</Button>
+          {this.props.onCancel && <Button onClick={this.props.onCancel}>Cancel</Button>}
+        </div>
         <span className={styles['error-message']}>{validationError}&nbsp;</span> 
       </form>
     );

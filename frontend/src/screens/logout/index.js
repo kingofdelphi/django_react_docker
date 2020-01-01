@@ -8,7 +8,6 @@ class Logout extends React.PureComponent {
   constructor(props) {
     super(props);
     localStorage.removeItem('token');
-    localStorage.removeItem('username');
   }
 
   componentDidMount() {

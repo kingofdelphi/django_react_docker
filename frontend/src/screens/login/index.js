@@ -45,14 +45,12 @@ class Login extends React.PureComponent {
   onUsernameChange = (event) => {
     this.setState({ 
       username: event.target.value,
-      validationError: '',
     });
   };
 
   onPasswordChange = (event) => {
     this.setState({ 
       password: event.target.value,
-      validationError: '',
     });
   };
 
