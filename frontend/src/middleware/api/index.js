@@ -1,5 +1,6 @@
 import * as ActionTypes from './actionTypes';
 import * as LoginActionTypes from '../../store/login_info/actionTypes';
+import * as LoginStates from '../../store/login_info/login_states';
 
 import customFetch from '../../utils';
 
@@ -20,8 +21,8 @@ const apiCallMiddleWare = store => {
     } else if (response.status === 204) {
       success_callback();
     } else if (response.status === 401) {
-      if (with_auth) { // we may check if state.loginInfo status is logged in or not
-        // made a request with authorization
+      if (with_auth && store.getState().loginInfo && store.getState().loginInfo.loginStatus === LoginStates.LoggedIn) {
+        // made a request with authorization, previously logged in but credentials have expired now
         invalidateSession();
       }
       failure_callback('Invalid credentials', {});
@@ -53,6 +54,7 @@ const apiCallMiddleWare = store => {
       const api_promise = customFetch(action.data)
       api_promise.then(response => handleResponse(response, action, context))
         .catch((e) => {
+          console.log(e);
           context.setConnectionStatus(false);
           failure_callback('Unexpected error occurred', {});
         });
