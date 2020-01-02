@@ -142,10 +142,10 @@ const mapStateToProps = state => ({
   loginInfo: state.loginInfo,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setLoginUserInfo: (loginUserInfo) => dispatch(setLoginUserInfo(loginUserInfo)),
-  setUserAsGuest: () => dispatch(setUserAsGuest()),
-});
+const mapDispatchToProps = {
+  setLoginUserInfo,
+  setUserAsGuest,
+};
 
 const MainE = connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Main));
 

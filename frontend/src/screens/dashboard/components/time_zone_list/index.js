@@ -7,7 +7,7 @@ import DeleteModal from '../delete_confirm_modal';
 
 import getCurrentTimeForTimeZone from './util';
 
-class TimeZoneList extends React.Component {
+class TimeZoneList extends React.PureComponent {
   state = {
     counter: 0,
     deleteModalInfo: null,
