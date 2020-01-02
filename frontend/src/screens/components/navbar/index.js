@@ -4,6 +4,8 @@ import { withRouter } from 'react-router-dom'
 
 import * as LoginStates from '../../../store/login_info/login_states';
 
+import { routesMap } from '../../../app';
+
 import Button from '../../../components/button';
 import Menu from '../../../components/menu';
 import TimeZoneDetail from '../../dashboard/pages/timezone_detail';
@@ -22,6 +24,12 @@ class NavBar extends React.PureComponent {
   };
 
   componentDidUpdate() {
+    const guestRoutes = routesMap.non_auth.map(route => route.path);
+
+    if (guestRoutes.includes(this.props.location.pathname)) {
+      // on logout hide the modals
+      this.setState({ userAddModal: false, timeZoneDetailModal: false });
+    }
     this.setState({ selectedItem: this.props.location.pathname.replace(/\//g, "") });
   }
 

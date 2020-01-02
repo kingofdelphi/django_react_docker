@@ -38,7 +38,7 @@ const getToken = () => {
   return token;
 };
 
-const routesMap = {
+export const routesMap = {
   auth: [
     { path: '/dashboard', component: Dashboard },
     { path: '/profile', component: Profile },
