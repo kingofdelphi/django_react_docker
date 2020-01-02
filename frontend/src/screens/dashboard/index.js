@@ -198,17 +198,17 @@ class Dashboard extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ 
-  setTimeZoneList: (username, timezones) => dispatch(setTimeZoneList(username, timezones)),
-  setTimeZoneListFilter: (value) => dispatch(setTimeZoneListFilter(value)),
-  setActionUser: (username) => dispatch(setActionUser(username)),
-});
-
 const mapStateToProps = state => ({ 
   timezones: state.timezones,
   timeZoneFilter: state.timeZoneFilter,
   actionUser: state.actionUser,
   loginInfo: state.loginInfo,
 });
+
+const mapDispatchToProps = {
+  setTimeZoneList,
+  setTimeZoneListFilter,
+  setActionUser,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Dashboard));

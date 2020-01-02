@@ -92,8 +92,8 @@ class Login extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  setLoginUserInfo: (userInfo) => dispatch(setLoginUserInfo(userInfo)),
-});
+const mapDispatchToProps = {
+  setLoginUserInfo,
+};
 
 export default connect(null, mapDispatchToProps)(withAPIHelper(Login));

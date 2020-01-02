@@ -22,8 +22,8 @@ class Logout extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  logoutUser: () => dispatch(logoutUser()),
-});
+const mapDispatchToProps = {
+  logoutUser,
+};
 
 export default connect(null, mapDispatchToProps)(Logout);

@@ -69,9 +69,9 @@ class UserMenu extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  logoutUser: () => dispatch(logoutUser()),
-});
+const mapDispatchToProps = {
+  logoutUser,
+};
 
 export default withRouter(connect(null, mapDispatchToProps)(UserMenu));
 

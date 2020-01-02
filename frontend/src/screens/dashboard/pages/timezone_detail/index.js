@@ -152,10 +152,10 @@ const mapStateToProps = state => ({
   loginInfo: state.loginInfo,
 });
 
-const mapDispatchToProps = dispatch => ({
-  addTimeZoneDetail: (username, time_zone_detail) => dispatch(addTimeZoneDetail(username, time_zone_detail)),
-  updateTimeZoneDetail: (username, time_zone_detail) => dispatch(updateTimeZoneDetail(username, time_zone_detail)),
-});
+const mapDispatchToProps = {
+  addTimeZoneDetail,
+  updateTimeZoneDetail,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(TimeZoneDetailView));
 

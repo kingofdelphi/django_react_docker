@@ -56,9 +56,9 @@ const mapStateToProps = state => ({
   loginInfo: state.loginInfo,
 });
 
-const mapDispatchToProps = dispatch => ({
-  deleteTimeZoneDetail: (username, timezone) => dispatch(deleteTimeZoneDetail(username, timezone)),
-});
+const mapDispatchToProps = {
+  deleteTimeZoneDetail,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(Confirm));
 

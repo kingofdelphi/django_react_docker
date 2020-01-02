@@ -145,12 +145,12 @@ const mapStateToProps = state => ({
   userList: state.userList,
 });
 
-const mapDispatchToProps = dispatch => ({ 
-  logoutUser: () => dispatch(logoutUser()),
-  setUserList: (list) => dispatch(setUserList(list)),
-  updateUser: (user_info) => dispatch(updateUser(user_info)),
-  deleteUser: (user_info) => dispatch(deleteUser(user_info)),
-});
+const mapDispatchToProps = {
+  logoutUser,
+  setUserList,
+  updateUser,
+  deleteUser,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(withRouter(Users)));
 

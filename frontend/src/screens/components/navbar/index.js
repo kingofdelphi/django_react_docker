@@ -128,8 +128,8 @@ const mapStateToProps = state => ({
   timeZoneFilter: state.timeZoneFilter,
 });
 
-const mapDispatchToProps = dispatch => ({ 
-  addUser: (user) => dispatch(addUser(user)),
-});
+const mapDispatchToProps = {
+  addUser,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(NavBar));
