@@ -16,6 +16,14 @@ class Authentication(JSONWebTokenAuthentication):
             return response
         user, payload = response
         data = jwt_decode_handler(payload)
+        
+        if not user.last_login:
+            # extremely rare case
+            # token is valid but database doesn't contain last_login,
+            # this means database was truncated and recreated
+            # but the last login timestsamp has been lost
+            msg = 'Last login info was not found. Maybe due to database reconfiguration in the server side.'
+            raise exceptions.AuthenticationFailed(msg)
 
         last_login_to_utc = timegm(user.last_login.utctimetuple())
         if data['last_login'] != last_login_to_utc:
