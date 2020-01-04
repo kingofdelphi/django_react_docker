@@ -61,13 +61,14 @@ class UserDetail extends React.PureComponent {
     };
     this.fields.map(field => formValues[field.name] = '');
     this.state.formValues = formValues;
-    this.state = this.handlePropsChange(props);
   }
 
-  handlePropsChange(props) {
-    if (this.state.oldUserInfo === props.userInfo) return this.state;
+  static getDerivedStateFromProps(props, state) {
     const { userInfo } = props;
-    if (!userInfo) return this.state;
+    if (!userInfo) return state;
+    if (state.oldUserInfo === props.userInfo) {
+      return state;
+    }
     const new_values = {
       first_name: userInfo.first_name,
       last_name: userInfo.last_name,
@@ -76,12 +77,8 @@ class UserDetail extends React.PureComponent {
       password: '',
       password1: '',
     };
-    const new_state = { ...this.state, formValues: { ...this.state.formValues, ...new_values }, oldUserInfo: userInfo };
+    const new_state = { ...state, formValues: { ...state.formValues, ...new_values }, oldUserInfo: userInfo };
     return new_state;
-  }
-
-  componentWillReceiveProps(props) {
-    this.setState(this.handlePropsChange(props));
   }
 
   handleRoleChange = (event) => {
