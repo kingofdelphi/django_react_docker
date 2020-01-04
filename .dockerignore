@@ -1,3 +1,4 @@
 # this file should be placed at the location that is referenced in build context of nginx-frontend 
 # mentioned in docker-compose
+django/src/db.sqlite3
 frontend/node_modules
