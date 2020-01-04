@@ -1,0 +1,38 @@
+$padding:80px;
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  h3 {
+    padding: 30px $padding;
+    border-bottom: 1px solid #d4d5da;
+  }
+}
+
+.form {
+  padding: 5px $padding;
+  width: 400px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  > div:not(:first-child) {
+    margin-top: 10px;
+  }
+  button {
+    font-size: 1rem;
+    margin-top: 20px;
+    padding: 10px 20px;
+  }
+}
+
+.error-message {
+  margin-top: 20px;
+  color : red;
+  font-size: 0.9rem;
+}
+
+.password_validation {
+  color: red;
+  font-size: 0.8rem;
+}
+

@@ -1,0 +1,14 @@
+# create account
+curl -D - -X POST -H "Content-Type: application/json" -d '{"username":"uttam","password":"changeme"}' http://localhost:8000/users/
+
+# login
+curl -D - -X POST -H "Content-Type: application/json" -d '{"username":"michael","password":"Hacker123!"}' http://localhost:8000/login/
+
+# create timezone
+curl -D - -X POST -H "Content-Type: application/json" -H "Authorization: JWT $token" -d '{"name":"Nepal","city": "ktm", "difference_to_GMT": "+05:45"}' http://localhost:8000/timezones/
+
+# get timezone list
+curl -D - -X GET -H "Authorization: JWT $token" http://localhost:8000/timezones/
+
+# delete time zone
+curl -D - -X DELETE -H "Authorization: JWT $token" http://localhost:8000/timezones/id/

@@ -1,0 +1,64 @@
+$padding: 5px 10px;
+.main {
+  background: white;
+  margin: 5px;
+  display: inline-block;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  label {
+    padding: 4px;
+  }
+}
+
+.header {
+  padding: $padding;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(black, .14);
+  .name {
+    font-size: 2em;
+    padding: 4px;
+  }
+}
+
+.content {
+  padding: $padding;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-buttons {
+  margin-left: 20px;
+  > *:not(:first-child) {
+    margin-left: 5px;
+  }
+  button {
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    padding: 4px;
+    &:focus {
+      outline: none;
+    }
+    color: rgba(0, 0, 0, .7);
+    &:hover {
+      color: black;
+    }
+  }
+}
+
+.timezone-time {
+  font-size: 3em;
+}
+
+.relative {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.time_diff {
+  font-size: 1.8em;
+  margin-left: 10px;
+}

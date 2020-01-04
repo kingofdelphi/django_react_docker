@@ -1,0 +1,58 @@
+$active-bg-color: white;
+$border: 1px solid #d4d5da;
+.main {
+  cursor: pointer;
+  .profile {
+    font-weight: bold;
+  }
+  background: none;
+  color: white;
+  font-size: .75rem;
+  border: 1px solid transparent;
+  &:focus {
+    outline: none;
+  }
+  position: relative;
+  padding: 5px;
+  &:hover, &.active {
+    border-bottom: none;
+    border-left: $border;
+    border-right: $border;
+    border-top: $border;
+    color: black;
+    background: $active-bg-color;
+  }
+}
+.profile {
+  padding: 5px;
+}
+.dropdown {
+  z-index: 20;
+  border-left: $border;
+  border-right: $border;
+  border-bottom: $border;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  min-width: 150px;
+  position: absolute;
+  top: 100%;
+  right: -1px;
+  font-size: .8rem;
+  background: $active-bg-color;
+  ul {
+    list-style: none;
+    li {
+      text-align: left;
+      &:hover {
+        background: #eee;
+      }
+      cursor: pointer;
+      padding: 10px 20px;
+    }
+  }
+}
+.main.inactive {
+  .dropdown {
+    display: none;
+  }
+}

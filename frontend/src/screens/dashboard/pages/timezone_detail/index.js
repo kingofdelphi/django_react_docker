@@ -1,0 +1,162 @@
+import React from 'react';
+import { connect } from "react-redux";
+
+import Modal from '../../../../components/modal';
+import Input from '../../../../components/input';
+import Button from '../../../../components/button';
+
+import { 
+  addTimeZoneDetail,
+  updateTimeZoneDetail,
+} from '../../../../store/timezones/actionCreators';
+
+import { add_timezone, edit_timezone } from '../../api/timezones';
+
+import withAPIHelper from '../../../../middleware/api/util';
+import styles from './styles.module.scss';
+
+class TimeZoneDetailView extends React.PureComponent {
+  state = {
+    name: '',
+    city: '',
+    difference_to_GMT: '',
+    fieldErrors: {},
+  }
+
+  constructor(props) {
+    super(props);
+    this.state['edit_mode'] = props.detail ? true : false;
+    if (this.props.detail) {
+      Object.assign(this.state, this.props.detail);
+    }
+  }
+
+  handleNameChange = (e) => {
+    this.setState({ name: e.target.value });
+  };
+
+  handleCityChange = (e) => {
+    this.setState({ city: e.target.value });
+  };
+
+  handleTimeDiffChange = (e) => {
+    this.setState({ difference_to_GMT: e.target.value });
+  };
+
+  getActionUser = () => {
+    const {
+      loginInfo,
+      actionUser,
+    } = this.props;
+    return actionUser || loginInfo.username;
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const data = {
+      name: this.state.name,
+      city: this.state.city,
+      difference_to_GMT: this.state.difference_to_GMT,
+    };
+
+    const actionUser = this.getActionUser();
+
+    if (this.state.edit_mode) {
+      this.props.makeApiCall(
+        edit_timezone(
+          this.props.detail.id,
+          data,
+          (time_zone_detail) => {
+            this.props.updateTimeZoneDetail(actionUser, time_zone_detail);
+            this.props.onCancel();
+          },
+          (errorMessage, errors) => {
+            this.setState({ fieldErrors: errors });
+          }
+        )
+      );
+    } else {
+      this.props.makeApiCall(
+        add_timezone(
+          data,
+          (time_zone_detail) => {
+            this.props.addTimeZoneDetail(actionUser, time_zone_detail);
+            this.props.onCancel();
+          },
+          (errorMessage, errors) => {
+            this.setState({ fieldErrors: errors });
+          },
+          actionUser,
+        )
+      );
+    }
+  };
+
+  render() {
+    const { 
+      edit_mode,
+      fieldErrors,
+    } = this.state;
+
+    const header_title = edit_mode ? 'Edit Time Zone' : 'Add New Time Zone';
+    const action_title = edit_mode ? 'Update' : 'Add';
+
+    return (
+      <Modal>
+        <div className={styles.main}>
+          <header>
+            {header_title}
+          </header>
+          <section>
+            <form onSubmit={this.handleSubmit}>
+              <Input 
+                active
+                id="name" 
+                onChange={this.handleNameChange}
+                value={this.state.name} 
+                label="Name" 
+                invalid={fieldErrors['name']}
+                validationMessage={fieldErrors['name']}
+              />
+              <Input 
+                id="city" 
+                onChange={this.handleCityChange}
+                value={this.state.city} 
+                label="City" 
+                invalid={fieldErrors['city']}
+                validationMessage={fieldErrors['city']}
+              />
+              <Input 
+                id="time_delta" 
+                onChange={this.handleTimeDiffChange}
+                value={this.state.difference_to_GMT} 
+                label="Difference to GMT" 
+                invalid={fieldErrors['difference_to_GMT']}
+                placeholder="e.g. + 5:45, - 2:30"
+                validationMessage={fieldErrors['difference_to_GMT']}
+              />
+              <div className={styles.buttons}>
+                <Button type="submit">{action_title}</Button>
+                <Button onClick={this.props.onCancel}>Cancel</Button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </Modal>
+    );
+  }
+}
+
+const mapStateToProps = state => ({ 
+  actionUser: state.actionUser,
+  loginInfo: state.loginInfo,
+});
+
+const mapDispatchToProps = {
+  addTimeZoneDetail,
+  updateTimeZoneDetail,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withAPIHelper(TimeZoneDetailView));
+
+

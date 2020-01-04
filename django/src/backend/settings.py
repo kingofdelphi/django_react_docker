@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,13 +21,29 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+mqk!k%c3s$1h1*^vz)x3p3b-r!%d75w(gb0wtyv*neq&nec@)'
+SECRET_KEY = os.getenv('SECRET_KEY', '+mqk!k%c3s$1h1*^vz)x3p3b-r!%d75w(gb0wtyv*neq&nec@)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('MODE', 'dev') == 'dev'
 
+server_name = os.getenv('SERVER_NAME', 'localhost')
 ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS = [server_name]
+# ALLOWED_HOSTS = [server_name, '{}:8000'.format(server_name)]
 
+# Please disable all CORS extensions on the UI to see the purpose
+CORS_ORIGIN_WHITELIST = ()
+
+if DEBUG:
+    # handle cross origin request when using server_namae:3000 (directly accessing CRA app)
+    # handle cross origin request when using server_name
+    # for both cases api requests are to be made only through nginx - server_name/api
+    # the front
+    CORS_ORIGIN_WHITELIST = (
+        'http://{}:3000'.format(server_name),
+        'http://{}'.format(server_name),
+    )
 
 # Application definition
 
@@ -37,11 +54,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'timezone',
+    'accounts',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Note that this needs to be placed above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -99,6 +120,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'accounts.jwt_authentication.Authentication',
+    ),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -118,3 +147,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': not DEBUG,
+    'JWT_PAYLOAD_HANDLER': 'accounts.custom_jwt.jwt_payload_handler',
+}
+
+AUTH_USER_MODEL = 'accounts.TimeZoneUser'

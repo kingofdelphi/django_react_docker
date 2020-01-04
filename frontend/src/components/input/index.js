@@ -1,0 +1,59 @@
+import React from 'react';
+import _uniqueId from 'lodash/uniqueId';
+
+import styles from './styles.module.scss';
+
+class Input extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.ref = React.createRef();
+    this.id = _uniqueId("prefix-");
+  }
+
+  componentDidMount() {
+    if (this.props.active) {
+      // since setTimeout is queued, sometimes ref gets destroyed
+      // due to url redirection
+      setTimeout(() => this.ref && this.ref.focus());
+    }
+  }
+
+  render() {
+    const { 
+      label,
+      type = "text",
+      name,
+      checked,
+      value,
+      onChange,
+      invalid,
+      validationMessage,
+      placeholder,
+      maxLength,
+    } = this.props;
+    const inputModifier = invalid ? styles.invalid : '';
+    const cls = [styles.main, type === 'radio' ? styles.radio : ''].join(' ');
+    return (
+      <div className={cls}>
+        <label htmlFor={this.id}>{label}</label>
+        <input 
+          id={this.id} 
+          checked={checked}
+          name={name}
+          ref={(el) => this.ref = el}
+          placeholder={placeholder}
+          autoComplete={name}
+          maxLength={maxLength}
+          type={type}
+          value={value}
+          onChange={onChange} 
+          className={styles.input + ' ' + inputModifier} 
+        />
+        <span className={styles['validation-message']}>{ validationMessage }</span>
+      </div>
+    );
+  }
+}
+
+export default Input;
+

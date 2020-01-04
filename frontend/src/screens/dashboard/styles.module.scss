@@ -1,0 +1,55 @@
+.main {
+  header {
+    padding: 8px 16px;
+    background: gainsboro;
+    border-bottom: 1px solid #d4d5da;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .results-count {
+    font-weight: bold;
+    font-size: 1rem;
+    color: brown;
+  }
+  
+  .searchfield {
+    font-weight: bold;
+    color: brown;
+  }
+
+  .description, .timezone-actions {
+    font-size: .85rem;
+  }
+  section {
+    padding: 8px;
+    margin-top: 10px;
+  }
+  .timezone-actions {
+    display: flex;
+    align-items: center;
+    > *:not(:first-child) {
+      margin-left: 5px;
+    }
+    button {
+      padding: 5px;
+      height: min-content;
+      &:focus {
+        outline: none;
+      }
+      &.active {
+        outline: 2px solid grey;
+      }
+    }
+    .sort-button {
+      padding: 5px 8px;
+    }
+  }
+  .list-button {
+  }
+  .timezone_list.active {
+    display: flex;
+    flex-direction: column;
+  }
+}

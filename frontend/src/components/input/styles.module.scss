@@ -1,0 +1,31 @@
+
+.input {
+  font-size: 1em;
+  padding: 10px;
+  border: 1px solid grey;
+  border-radius: 3px;
+}
+
+.validation-message {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: red;
+}
+
+.main {
+  display: flex;
+  &:not(.radio) {
+    flex-direction: column;
+  }
+  &.radio {
+    align-items: center;
+    flex-direction: row-reverse;
+  }
+  label {
+    margin-bottom: 4px;
+  }
+}
+
+.invalid {
+  border-color: red;
+}

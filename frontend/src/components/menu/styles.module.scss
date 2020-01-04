@@ -1,0 +1,14 @@
+.main {
+  button {
+    background: black;
+    color: white;
+    border: none;
+    &:focus {
+      outline: none;
+    }
+    &.active {
+      background: gainsboro;
+      color: black;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.main {
+  padding: 5px;
+  height: 30px;
+  width: 120px;
+  &:focus {
+    outline: none;
+  }
+  option {
+    padding: 10px;
+  }
+}

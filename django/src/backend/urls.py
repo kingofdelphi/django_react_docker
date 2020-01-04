@@ -14,14 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from django.http import HttpResponse
 
+from accounts.views import LoginView, LoginInfoView
+
 def index(request):
-    return HttpResponse("Hello world")
+    return HttpResponse("This is the backend server for TimeZone app")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', index, name='index'),
+    path('', index, name='index'),
+    path('login/', LoginView.as_view()),
+    path('current_user/', LoginInfoView.as_view()),
+    path('users/', include('accounts.urls')),
+    path('timezones/', include('timezone.urls'))
 ]

@@ -1,0 +1,27 @@
+$padding: 10px 40px;
+
+.main {
+  width: 400px;
+  .header {
+    color: #24292e;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-bottom: 1px solid #d1d5da;
+    padding: 20px 40px;
+  }
+
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  max-height: 70vh;
+  overflow: auto;
+  background: none;
+  padding: $padding;
+  border: none;
+}
+

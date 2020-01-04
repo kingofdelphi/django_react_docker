@@ -1,0 +1,111 @@
+from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework_jwt.settings import api_settings
+from rest_framework import permissions, status
+from rest_framework.response import Response
+
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import update_last_login
+
+from .permissions import \
+        IsOwnerOrAdminOrUserManager, \
+        UserListPermission, \
+        IsChangingBelowPermission
+
+from .serializers import UserSerializer, \
+        PasswordEqualitySerializer, \
+        LoginUserSerializer, \
+        ChangePasswordSerializer, \
+        UserSerializerWithToken
+
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+
+class UserList(generics.ListCreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (UserListPermission, )
+
+    def get_queryset(self):
+        queryset = get_user_model().objects.all()
+        if self.request.user.is_superuser:
+            return queryset.filter(
+                    Q(id=self.request.user.id) | 
+                    Q(is_superuser=False)
+                )
+        if self.request.user.is_user_manager:
+            return queryset.filter(
+                    Q(id=self.request.user.id) | 
+                    (Q(is_superuser=False) & Q(is_user_manager=False))
+                )
+        return queryset.filter(Q(id=self.request.user.id))
+
+
+class LoginView(generics.CreateAPIView):
+    
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        user_serializer = LoginUserSerializer(data=request.data)
+        if not user_serializer.is_valid():
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        username = request.data.get("username", "")
+        password = request.data.get("password", "")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            # manually update the last_login time, 
+            # the problem may be because we are just using JWT authentication only
+            update_last_login(None, user)
+            data = {
+                "username": username,
+                "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role": user.role,
+                "token": jwt_encode_handler(jwt_payload_handler(user)),
+            }
+            return Response(data)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+class LoginInfoView(generics.RetrieveAPIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        data = {
+                "username": request.user.get_username(),
+                "id": request.user.id,
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "role": request.user.role,
+                }
+        return Response(data)
+
+class PasswordChangeView(generics.UpdateAPIView):
+    
+    queryset = get_user_model().objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        if request.user.id != int(kwargs['pk']):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ChangePasswordSerializer(data=request.data, context=dict(user=request.user))
+        if serializer.is_valid():
+            request.user.set_password(request.data['password1'])
+            request.user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = get_user_model().objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrUserManager, IsChangingBelowPermission]
+
+    def get_serializer_context(self):
+        return dict(request=self.request)
+
+    def get_serializer_class(self):
+        if self.request.method == 'PUT' and int(self.kwargs['pk']) == self.request.user.id:
+            return UserSerializerWithToken
+        return UserSerializer

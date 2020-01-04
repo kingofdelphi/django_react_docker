@@ -1,0 +1,18 @@
+.main {
+  display: flex;
+  align-items: center;
+  position: relative;
+  i {
+    position: absolute;
+    color: black;
+    left: 10px;
+  }
+  input {
+    border-radius: 20px;
+    width: 200px;
+    padding-left: 35px;
+    &:focus {
+      outline: none;
+    }
+  }
+}

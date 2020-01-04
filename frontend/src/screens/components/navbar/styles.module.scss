@@ -1,0 +1,58 @@
+$padding: 10px;
+.main {
+  background: #24292e;
+  color: white;
+  display: grid;
+  grid-template-areas:
+  'title nav-menu . profile_actions';
+  grid-template-columns: min-content min-content 1fr min-content;
+  grid-gap: 10px;
+  align-items: stretch;
+}
+
+.app-title {
+  padding: $padding;
+  grid-area: title;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.nav-menu {
+  grid-area: nav-menu;
+  white-space: nowrap;
+  button {
+    display: inline-block;
+    height: 100%;
+  }
+}
+
+.profile-actions {
+  grid-area: profile_actions;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  > *:not(:first-child) {
+    margin-left: 20px;
+  }
+  .add-btn {
+    background: none;
+    border: none;
+    &:hover i {
+      color: white;
+    }
+    &:focus {
+      outline: none;
+    }
+    i {
+      font-size: 1.2rem;
+      color: silver;
+    }
+    height: min-content;
+    padding: 5px 10px;
+  }
+}
