@@ -115,7 +115,6 @@ class UserDetail extends React.PureComponent {
             fieldErrors: errorObj
           });
         },
-        this.props.showRoles,
       );
     }
   }
