@@ -20,17 +20,18 @@ class NavBar extends React.PureComponent {
   state = {
     timeZoneDetailModal: false,
     userAddModal: false,
-    selectedItem: this.props.location.pathname.replace(/\//g, ""),
+    selectedItem: null, // the current tab selected, either dashboard or users
   };
 
-  componentDidUpdate() {
+  static getDerivedStateFromProps(props, state) {
     const guestRoutes = routesMap.non_auth.map(route => route.path);
-
-    if (guestRoutes.includes(this.props.location.pathname)) {
+    const mods = {};
+    if (guestRoutes.includes(props.location.pathname)) {
       // on logout hide the modals
-      this.setState({ userAddModal: false, timeZoneDetailModal: false });
+      Object.assign(mods, { userAddModal: false, timeZoneDetailModal: false });
     }
-    this.setState({ selectedItem: this.props.location.pathname.replace(/\//g, "") });
+    const selectedItem = props.location.pathname.replace(/\//g, "");
+    return { ...state, mods, selectedItem };
   }
 
   showTimeZoneDetailModal = () => {
@@ -41,10 +42,6 @@ class NavBar extends React.PureComponent {
 
   closeTimeZoneDetailModal = () => {
     this.setState({ timeZoneDetailModal: false });
-  }
-
-  selectedItem = (name) => {
-    this.setState({ selectedItem: name });
   }
 
   getMenuItems() {
