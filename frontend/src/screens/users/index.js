@@ -24,13 +24,12 @@ class Users extends React.PureComponent {
 
   componentDidMount() {
     this.props.makeApiCall(
-      get_users(
-        (users) => {
-          this.props.setUserList(users);
-        },
-        () => {
-        },
-      )
+      get_users(),
+      (users) => {
+        this.props.setUserList(users);
+      },
+      () => {
+      },
     );
   }
 
@@ -60,23 +59,21 @@ class Users extends React.PureComponent {
       userList,
     } = this.props;
     this.props.makeApiCall(
-      delete_user(
-        selectedUser.id,
-        () => {
-          if (loginInfo.id === selectedUser.id) {
-            this.props.logoutUser();
-          } else {
-            this.props.deleteUser(selectedUser);
-            this.setState({ 
-              selectedUser: userList.find(user => user.id !== selectedUser.id),
-              showDelete: false,
-            });
-          }
-        },
-        () => {
-        },
-      )
-    )
+      delete_user(selectedUser.id),
+      () => {
+        if (loginInfo.id === selectedUser.id) {
+          this.props.logoutUser();
+        } else {
+          this.props.deleteUser(selectedUser);
+          this.setState({ 
+            selectedUser: userList.find(user => user.id !== selectedUser.id),
+            showDelete: false,
+          });
+        }
+      },
+      () => {
+      },
+    );
   };
 
   render() {

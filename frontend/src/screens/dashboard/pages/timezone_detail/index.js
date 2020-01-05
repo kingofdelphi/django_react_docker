@@ -63,31 +63,25 @@ class TimeZoneDetailView extends React.PureComponent {
 
     if (this.state.edit_mode) {
       this.props.makeApiCall(
-        edit_timezone(
-          this.props.detail.id,
-          data,
-          (time_zone_detail) => {
-            this.props.updateTimeZoneDetail(actionUser, time_zone_detail);
-            this.props.onCancel();
-          },
-          (errorMessage, errors) => {
-            this.setState({ fieldErrors: errors });
-          }
-        )
+        edit_timezone(this.props.detail.id, data),
+        (time_zone_detail) => {
+          this.props.updateTimeZoneDetail(actionUser, time_zone_detail);
+          this.props.onCancel();
+        },
+        (errorMessage, errors) => {
+          this.setState({ fieldErrors: errors });
+        }
       );
     } else {
       this.props.makeApiCall(
-        add_timezone(
-          data,
-          (time_zone_detail) => {
-            this.props.addTimeZoneDetail(actionUser, time_zone_detail);
-            this.props.onCancel();
-          },
-          (errorMessage, errors) => {
-            this.setState({ fieldErrors: errors });
-          },
-          actionUser,
-        )
+        add_timezone(data, actionUser),
+        (time_zone_detail) => {
+          this.props.addTimeZoneDetail(actionUser, time_zone_detail);
+          this.props.onCancel();
+        },
+        (errorMessage, errors) => {
+          this.setState({ fieldErrors: errors });
+        },
       );
     }
   };

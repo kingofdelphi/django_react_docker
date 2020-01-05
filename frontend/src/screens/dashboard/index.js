@@ -34,22 +34,20 @@ class Dashboard extends React.PureComponent {
   componentDidMount() {
     const { username } = this.props.loginInfo;
     this.props.makeApiCall(
-      get_timezones(
-        (timezones) => {
-          this.props.setTimeZoneList(username, timezones);
-        },
-        (error_message) => {
-        },
-      )
-    )
+      get_timezones(),
+      (timezones) => {
+        this.props.setTimeZoneList(username, timezones);
+      },
+      (error_message) => {
+      },
+    );
     this.props.makeApiCall(
-      get_user_list(
-        (user_list) => {
-          this.setState({ user_list });
-        },
-        (error_message) => {
-        },
-      )
+      get_user_list(),
+      (user_list) => {
+        this.setState({ user_list });
+      },
+      (error_message) => {
+      },
     );
   }
 
@@ -115,14 +113,12 @@ class Dashboard extends React.PureComponent {
     const selectedUser = event.target.value;
     this.props.setActionUser(selectedUser);
     this.props.makeApiCall(
-      get_timezones(
-        (timezones) => {
-          this.props.setTimeZoneList(selectedUser, timezones);
-        },
-        (error_message) => {
-        },
-        selectedUser,
-      )
+      get_timezones(selectedUser),
+      (timezones) => {
+        this.props.setTimeZoneList(selectedUser, timezones);
+      },
+      (error_message) => {
+      },
     );
   }
 

@@ -46,19 +46,16 @@ class Profile extends React.PureComponent {
       password1: this.state.password1,
     };
     this.props.makeApiCall(
-      changePassword(
-        this.props.loginInfo.id,
-        data,
-        (msg) => {
-          this.setState({ showSuccess: true, fieldErrors: {} });
-        },
-        (message, errorObj) => {
-          this.setState({ 
-            fieldErrors: errorObj
-          });
-        },
-      ));
-
+      changePassword(this.props.loginInfo.id, data),
+      (msg) => {
+        this.setState({ showSuccess: true, fieldErrors: {} });
+      },
+      (message, errorObj) => {
+        this.setState({ 
+          fieldErrors: errorObj
+        });
+      },
+    );
   };
 
   render() {

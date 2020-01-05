@@ -1,19 +1,14 @@
-export const register = (data, success_callback, failure_callback, with_auth) => ({
+export const register = (data) => ({
   url: '/users/',
   data,
-  success_callback,
-  failure_callback,
-  with_auth,
 });
 
 
-export const updateUser = (userid, data, success_callback, failure_callback) => ({
+export const updateUser = (userid, data) => ({
   url: `/users/${userid}/`,
   method: 'PUT',
   with_auth: true,
   data,
-  success_callback,
-  failure_callback,
 });
 
 

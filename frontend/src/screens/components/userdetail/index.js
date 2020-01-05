@@ -91,36 +91,31 @@ class UserDetail extends React.PureComponent {
     const { mode } = this.props;
     if (mode === 'update') {
       this.props.makeApiCall(
-        updateUser(
-          this.props.user_id,
-          formValues,
-          (user_info) => {
-            this.setState({ fieldErrors: {}, validationError: '' });
-            this.props.onSubmit(user_info);
-          },
-          (message, errorObj) => {
-            this.setState({ 
-              validationError: message,
-              fieldErrors: errorObj
-            });
-          },
-        )
+        updateUser(this.props.user_id, formValues),
+        (user_info) => {
+          this.setState({ fieldErrors: {}, validationError: '' });
+          this.props.onSubmit(user_info);
+        },
+        (message, errorObj) => {
+          this.setState({ 
+            validationError: message,
+            fieldErrors: errorObj
+          });
+        },
       );
     } else {
       this.props.makeApiCall(
-        register(
-          formValues,
-          (user_info) => {
-            this.props.onSubmit(user_info);
-          },
-          (message, errorObj) => {
-            this.setState({ 
-              validationError: message,
-              fieldErrors: errorObj
-            });
-          },
-          this.props.showRoles,
-        )
+        register(formValues),
+        (user_info) => {
+          this.props.onSubmit(user_info);
+        },
+        (message, errorObj) => {
+          this.setState({ 
+            validationError: message,
+            fieldErrors: errorObj
+          });
+        },
+        this.props.showRoles,
       );
     }
   }

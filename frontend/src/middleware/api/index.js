@@ -5,11 +5,9 @@ import * as LoginStates from '../../store/login_info/login_states';
 import customFetch from '../../utils';
 
 const apiCallMiddleWare = store => {
-  const handleResponse = (response, action, context) => {
+  const handleResponse = (response, action, success_callback, failure_callback, context) => {
     const {
       with_auth,
-      success_callback,
-      failure_callback
     } = action.data;
 
     const {
@@ -41,22 +39,21 @@ const apiCallMiddleWare = store => {
     };
   };
 
-  return next => (action, context) => {
+  return next => (action, ...extraArgs) => {
     if (action.type === ActionTypes.ApiCall) {
       // patch callback to remove loader on response
-      action.data.success_callback = decorateWithRemoveLoader(action.data.success_callback, context);
-      action.data.failure_callback = decorateWithRemoveLoader(action.data.failure_callback, context);
-
-      const { failure_callback } = action.data;
+      const [success_callback, failure_callback, context] = extraArgs;
+      const decorated_success_callback = decorateWithRemoveLoader(success_callback, context);
+      const decorated_failure_callback = decorateWithRemoveLoader(failure_callback, context);
 
       context.setLoading(true);
 
       const api_promise = customFetch(action.data)
-      api_promise.then(response => handleResponse(response, action, context))
+      api_promise.then(response => handleResponse(response, action, decorated_success_callback, decorated_failure_callback, context))
         .catch((e) => {
           console.log(e);
           context.setConnectionStatus(false);
-          failure_callback('Unexpected error occurred', {});
+          decorated_failure_callback('Unexpected error occurred', {});
         });
       return;
     }

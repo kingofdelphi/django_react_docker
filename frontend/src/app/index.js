@@ -99,17 +99,16 @@ class Main extends React.PureComponent {
     const token = getToken();
     if (token) {
       this.props.makeApiCall(
-        get_user_info(
-          (user_info) => {
-            this.props.setLoginUserInfo(user_info);
-          },
-          (message) => {
-            // todo: session expiry refresh no message
-            if (message === 'Invalid credentials') {
-              this.props.logoutUser();
-            }
+        get_user_info(),
+        (user_info) => {
+          this.props.setLoginUserInfo(user_info);
+        },
+        (message) => {
+          // todo: session expiry refresh no message
+          if (message === 'Invalid credentials') {
+            this.props.logoutUser();
           }
-        )
+        }
       );
     } else {
       this.props.setUserAsGuest();

@@ -1,9 +1,7 @@
-export const get_user_info = (success_callback, failure_callback) => 
+export const get_user_info = () => 
   ({
     url: `/current_user/`,
     with_auth: true,
-    success_callback,
-    failure_callback,
   });
 
 

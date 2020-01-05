@@ -18,15 +18,13 @@ class Confirm extends React.Component {
   handleDelete = () => {
     const { timezone } = this.props;
     this.props.makeApiCall(
-      delete_timezone(
-        timezone.id,
-        () => {
-          this.props.deleteTimeZoneDetail(this.getActionUser(), timezone);
-          this.props.onCancel();
-        },
-        () => {
-        },
-      )
+      delete_timezone(timezone.id),
+      () => {
+        this.props.deleteTimeZoneDetail(this.getActionUser(), timezone);
+        this.props.onCancel();
+      },
+      () => {
+      },
     );
   };
 

@@ -46,7 +46,9 @@ function withAPIHelper(WrappedComponent) {
         <>
           <WrappedComponent 
             {...this.props}
-            makeApiCall={(params) => this.props.dispatch(makeApiCall(params), this.apiContext)} 
+            makeApiCall={
+              (params, success_callback, failure_callback) => this.props.dispatch(makeApiCall(params), success_callback, failure_callback, this.apiContext)
+            } 
           />
           {
             !sessionValid && (

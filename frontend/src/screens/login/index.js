@@ -25,18 +25,17 @@ class Login extends React.PureComponent {
       password: this.state.password,
     };
     this.props.makeApiCall(
-      login(
-        data,
-        (userInfo) => {
-          this.props.setLoginUserInfo(userInfo);
-        },
-        (message, errorObj) => {
-          this.setState({ 
-            validationError: message,
-            fieldErrors: errorObj
-          });
-        },
-      ));
+      login(data),
+      (userInfo) => {
+        this.props.setLoginUserInfo(userInfo);
+      },
+      (message, errorObj) => {
+        this.setState({ 
+          validationError: message,
+          fieldErrors: errorObj
+        });
+      },
+    );
   }
 
   onUsernameChange = (event) => {
