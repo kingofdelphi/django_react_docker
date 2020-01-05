@@ -105,7 +105,6 @@ class TimeZoneDetailView extends React.PureComponent {
             <form onSubmit={this.handleSubmit}>
               <Input 
                 active
-                id="name" 
                 onChange={this.handleNameChange}
                 value={this.state.name} 
                 label="Name" 
@@ -113,7 +112,6 @@ class TimeZoneDetailView extends React.PureComponent {
                 validationMessage={fieldErrors['name']}
               />
               <Input 
-                id="city" 
                 onChange={this.handleCityChange}
                 value={this.state.city} 
                 label="City" 
@@ -121,7 +119,6 @@ class TimeZoneDetailView extends React.PureComponent {
                 validationMessage={fieldErrors['city']}
               />
               <Input 
-                id="time_delta" 
                 onChange={this.handleTimeDiffChange}
                 value={this.state.difference_to_GMT} 
                 label="Difference to GMT" 

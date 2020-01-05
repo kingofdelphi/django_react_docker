@@ -1,6 +1,7 @@
-export const register = (data) => ({
+export const register = (data, with_auth = false) => ({
   url: '/users/',
   data,
+  with_auth,
 });
 
 

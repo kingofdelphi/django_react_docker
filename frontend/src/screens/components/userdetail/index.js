@@ -105,7 +105,7 @@ class UserDetail extends React.PureComponent {
       );
     } else {
       this.props.makeApiCall(
-        register(formValues),
+        register(formValues, this.props.showRoles),
         (user_info) => {
           this.props.onSubmit(user_info);
         },

@@ -78,7 +78,6 @@ class Profile extends React.PureComponent {
               <Input 
                 active
                 autoComplete="current-password"
-                id="current_password" 
                 type="password"
                 value={current_password} 
                 label="Current Password" 
@@ -87,7 +86,6 @@ class Profile extends React.PureComponent {
                 onChange={this.onCurrentPasswordChange}
               />
               <Input 
-                id="password" 
                 autoComplete="current-password"
                 type="password"
                 value={password} 
@@ -97,7 +95,6 @@ class Profile extends React.PureComponent {
                 onChange={this.onPasswordChange}
               />
               <Input 
-                id="password1" 
                 type="password"
                 value={password1} 
                 label="Password" 

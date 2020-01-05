@@ -67,7 +67,6 @@ class Login extends React.PureComponent {
         <form className={styles.form} onSubmit={this.handleSubmit}>
           <Input 
             active
-            id="username" 
             onChange={this.onUsernameChange}
             value={username} 
             label="Username" 
@@ -75,7 +74,6 @@ class Login extends React.PureComponent {
             validationMessage={fieldErrors['username']}
           />
           <Input 
-            id="password" 
             type="password"
             onChange={this.onPasswordChange}
             value={password} 
